@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140">
+  <rect width="100" height="140" fill="#ffffff"/>
+  <g stroke="#111" stroke-width="3" fill="none" stroke-linecap="round">
+    <circle cx="50" cy="18" r="10"/>
+    <path d="M50 28 L50 60"/>
+    <path d="M38 38 L50 28 L62 38"/>
+    <path d="M50 60 L50 120"/>
+    <path d="M50 80 L68 92"/>
+    <path d="M68 92 L58 112"/>
+    <path d="M50 120 L46 136"/>
+  </g>
+  <text x="50" y="132" text-anchor="middle" font-family="system-ui,Segoe UI,Arial" font-size="10" fill="#444">Tree Pose (Front)</text>
+</svg>

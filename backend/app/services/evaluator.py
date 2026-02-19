@@ -1,0 +1,161 @@
+from __future__ import annotations
+
+import re
+import time
+from dataclasses import dataclass
+from typing import Any
+
+from app.ai.groq_client import GroqClient
+from app.core.config import settings
+from app.models.contracts import GeminiAlignmentResponse
+from app.pose.biomechanics import Metrics, compute_metrics, metrics_distance, round_for_summary
+from app.pose.templates import POSE_TEMPLATES
+from app.utils.hash import stable_hash
+
+
+_DIGITS_RE = re.compile(r"\d+(?:\.\d+)?")
+
+
+def _strip_digits(text: str) -> str:
+    # Keep this intentionally simple: users asked for plain-English feedback
+    # without numbers/angles/ranges.
+    t = _DIGITS_RE.sub("", text)
+    t = t.replace("°", "")
+    # Preserve newlines (formatting) but collapse repeated spaces/tabs.
+    t = re.sub(r"[ \t]{2,}", " ", t).strip()
+    return t
+
+
+def _sanitize_alignment_response(resp: dict[str, Any]) -> dict[str, Any]:
+    msg = resp.get("correction_message")
+    if isinstance(msg, str):
+        resp["correction_message"] = _strip_digits(msg)
+
+    devs = resp.get("deviations")
+    if isinstance(devs, list):
+        for d in devs:
+            if isinstance(d, dict):
+                issue = d.get("issue")
+                ideal = d.get("ideal_range")
+                if isinstance(issue, str):
+                    d["issue"] = _strip_digits(issue)
+                if isinstance(ideal, str):
+                    d["ideal_range"] = _strip_digits(ideal)
+    return resp
+
+
+@dataclass
+class ClientState:
+    last_metrics: Metrics | None = None
+    last_metrics_ts: float = 0.0
+    last_summary_hash: str | None = None
+    last_gemini_call_ts: float = 0.0
+    last_response: dict[str, Any] | None = None
+
+
+class AlignmentEvaluator:
+    def __init__(self) -> None:
+        self._llm = GroqClient()
+        self._state: dict[str, ClientState] = {}
+
+    def evaluate(self, client_id: str, expected_pose: str, user_level: str, landmarks: list[dict[str, float]]) -> dict[str, Any]:
+        now = time.time()
+        state = self._state.get(client_id) or ClientState()
+
+        metrics = compute_metrics(landmarks=landmarks, expected_pose=expected_pose)
+
+        # Edge: low visibility
+        if metrics.visibility_mean < 0.5:
+            resp = {
+                "pose_match": "misaligned",
+                "confidence": "low",
+                "primary_focus_area": "none",
+                "deviations": [],
+                "correction_message": "Ensure full body is visible.",
+            }
+            state.last_metrics = metrics
+            state.last_metrics_ts = now
+            state.last_response = resp
+            self._state[client_id] = state
+            return resp
+
+        # Note: avoid short-circuiting here; even if the student isn't fully in position,
+        # we still want the LLM to provide concrete, instructor-style cues to get them into the pose.
+
+        template = POSE_TEMPLATES.get(expected_pose)
+        ideal_ranges = template.ideal_ranges if template else {}
+
+        biomech_summary = {
+            "expected_pose": expected_pose,
+            **round_for_summary(metrics),
+            "user_level": user_level,
+            "ideal_ranges": ideal_ranges,
+        }
+
+        summary_hash = stable_hash(biomech_summary)
+
+        # Throttle <= 1/sec
+        if state.last_response is not None and (now - state.last_gemini_call_ts) < settings.gemini_min_interval_s:
+            state.last_metrics = metrics
+            state.last_metrics_ts = now
+            self._state[client_id] = state
+            return state.last_response
+
+        # Don't re-call Gemini if unchanged within 3 seconds
+        if (
+            state.last_response is not None
+            and state.last_summary_hash == summary_hash
+            and (now - state.last_gemini_call_ts) < settings.gemini_unchanged_cooldown_s
+        ):
+            state.last_metrics = metrics
+            state.last_metrics_ts = now
+            self._state[client_id] = state
+            return state.last_response
+
+        # Stability / significant change gating
+        stable = False
+        significant_change = False
+        if state.last_metrics is not None:
+            d = metrics_distance(metrics, state.last_metrics)
+            significant_change = d >= settings.significant_delta_threshold
+            stable = (d <= settings.stable_delta_threshold) and ((now - state.last_metrics_ts) >= settings.stable_window_s)
+
+        if state.last_response is not None and not (stable or significant_change):
+            state.last_metrics = metrics
+            state.last_metrics_ts = now
+            self._state[client_id] = state
+            return state.last_response
+
+        # Call LLM (Groq)
+        try:
+            raw = self._llm.evaluate_alignment(biomech_summary)
+            parsed = GeminiAlignmentResponse.model_validate(raw).model_dump()
+            parsed = _sanitize_alignment_response(parsed)
+        except Exception as e:
+            msg = str(e)
+            if "rate_limit" in msg.lower() or "429" in msg or "RESOURCE_EXHAUSTED" in msg or "quota" in msg.lower():
+                correction = "Groq rate limit/quota exceeded. Please retry shortly."
+            elif "GROQ_API_KEY is not set" in msg:
+                correction = "Groq API key is missing. Set GROQ_API_KEY and retry."
+            elif "decommission" in msg.lower() or "model" in msg.lower() and ("not found" in msg.lower() or "invalid" in msg.lower() or "does not exist" in msg.lower()):
+                correction = "Groq model misconfigured. Set GROQ_MODEL (recommended: llama-3.3-70b-versatile) and retry."
+            else:
+                correction = "Analyzing alignment..."
+
+            parsed = {
+                "pose_match": "partially_aligned",
+                "confidence": "low",
+                "primary_focus_area": "none",
+                "deviations": [],
+                "correction_message": correction,
+            }
+
+        parsed = _sanitize_alignment_response(parsed)
+
+        state.last_metrics = metrics
+        state.last_metrics_ts = now
+        state.last_summary_hash = summary_hash
+        state.last_gemini_call_ts = now
+        state.last_response = parsed
+        self._state[client_id] = state
+        return parsed

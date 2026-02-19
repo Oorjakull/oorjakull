@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140">
+  <rect width="100" height="140" fill="#ffffff"/>
+  <g stroke="#111" stroke-width="3" fill="none" stroke-linecap="round">
+    <circle cx="50" cy="18" r="10"/>
+    <path d="M50 28 L50 62"/>
+    <path d="M10 42 L90 42"/>
+    <path d="M50 62 L38 95"/>
+    <path d="M38 95 L34 120"/>
+    <path d="M50 62 L70 92"/>
+    <path d="M70 92 L84 120"/>
+    <path d="M34 120 L30 136"/>
+    <path d="M84 120 L88 136"/>
+  </g>
+  <text x="50" y="132" text-anchor="middle" font-family="system-ui,Segoe UI,Arial" font-size="10" fill="#444">Warrior II (Front)</text>
+</svg>

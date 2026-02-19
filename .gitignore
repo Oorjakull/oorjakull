@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+*.pyo
+*.pdb
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Environment files (DO NOT COMMIT)
+.env
+backend/.env
+frontend/.env
+
+# Local datasets (do not commit)
+/TRAIN/
+/TEST/
+
+# Node
+frontend/node_modules/
+frontend/dist/
+*.tsbuildinfo
+
+# OS / tooling
+.DS_Store
+Thumbs.db
+.vscode/
