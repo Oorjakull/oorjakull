@@ -24,6 +24,7 @@ export type AlignmentResponse = {
   primary_focus_area: FocusArea
   deviations: Deviation[]
   correction_message: string
+  score?: number | null
 }
 
 export type Landmark = { x: number; y: number; z: number; visibility: number }

@@ -2,16 +2,17 @@ import type { ExpectedPose, FocusArea, Severity } from '../api/client'
 
 export type PoseReference = {
   pose: ExpectedPose
-  imageSrc: string
+  kind: 'image' | 'video'
+  src: string
 }
 
 export const POSE_REFERENCES: PoseReference[] = [
-  { pose: 'Tadasana', imageSrc: '/poses/tadasana.svg' },
-  { pose: 'Warrior II', imageSrc: '/poses/train/warrior2.jpg' },
-  { pose: 'Tree Pose', imageSrc: '/poses/train/tree.jpg' },
-  { pose: 'Down Dog', imageSrc: '/poses/train/downdog.jpg' },
-  { pose: 'Goddess', imageSrc: '/poses/train/goddess.jpg' },
-  { pose: 'Plank', imageSrc: '/poses/train/plank.jpg' }
+  { pose: 'Tadasana', kind: 'image', src: '/poses/tadasana.svg' },
+  { pose: 'Warrior II', kind: 'video', src: '/train/Warrior_Pose.mp4' },
+  { pose: 'Tree Pose', kind: 'video', src: '/train/Tree_Pose.mp4' },
+  { pose: 'Down Dog', kind: 'image', src: '/poses/train/downdog.jpg' },
+  { pose: 'Goddess', kind: 'image', src: '/poses/train/goddess.jpg' },
+  { pose: 'Plank', kind: 'image', src: '/poses/train/plank.jpg' }
 ]
 
 export function severityColor(sev: Severity): string {

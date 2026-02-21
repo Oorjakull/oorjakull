@@ -146,3 +146,50 @@ def round_for_summary(metrics: Metrics) -> dict[str, object]:
         "symmetry": {k: float(round(v, 4)) for k, v in metrics.symmetry.items()},
         "stability": {k: float(round(v, 4)) for k, v in metrics.stability.items()},
     }
+
+
+def _parse_range(range_text: str) -> tuple[float, float] | None:
+    parts = range_text.split("-")
+    if len(parts) != 2:
+        return None
+    try:
+        lo = float(parts[0].strip())
+        hi = float(parts[1].strip())
+    except ValueError:
+        return None
+    return (min(lo, hi), max(lo, hi))
+
+
+def compute_pose_score(metrics: Metrics, ideal_ranges: dict[str, str]) -> int | None:
+    scores: list[float] = []
+
+    def add_score(metric_key: str, actual: float) -> None:
+        if math.isnan(actual) or math.isinf(actual):
+            return
+        range_text = ideal_ranges.get(metric_key)
+        if not range_text:
+            return
+        parsed = _parse_range(range_text)
+        if not parsed:
+            return
+        lo, hi = parsed
+        if lo <= actual <= hi:
+            scores.append(1.0)
+            return
+        distance = min(abs(actual - lo), abs(actual - hi))
+        width = max(hi - lo, 1e-6)
+        metric_score = max(0.0, 1.0 - (distance / width))
+        scores.append(metric_score)
+
+    for k, v in metrics.angles.items():
+        add_score(k, v)
+    for k, v in metrics.symmetry.items():
+        add_score(k, v)
+    for k, v in metrics.stability.items():
+        add_score(k, v)
+
+    if not scores:
+        return None
+
+    avg = sum(scores) / len(scores)
+    return int(round(avg * 100))

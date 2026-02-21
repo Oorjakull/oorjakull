@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import type { AlignmentResponse, ExpectedPose, Landmark, Severity, UserLevel } from './api/client'
 import { evaluateAlignment } from './api/client'
-import LivePanel from './components/LivePanel'
-import ReferencePanel from './components/ReferencePanel'
+import InstructorPanel from './components/InstructorPanel'
+import LayoutToggle, { type LayoutMode } from './components/LayoutToggle'
+import UserCameraPanel from './components/UserCameraPanel'
+import { useThrottledState } from './hooks/useThrottledState'
 import { POSE_REFERENCES, worstSeverity } from './poses/reference'
 
 function newClientId(): string {
@@ -15,17 +17,22 @@ export default function App() {
   const [running, setRunning] = useState(false)
   const [countdown, setCountdown] = useState(0)
   const [voiceOn, setVoiceOn] = useState(false)
-  const [visibilityMean, setVisibilityMean] = useState(1)
-  const [hasEvaluated, setHasEvaluated] = useState(false)
+  const [layoutMode, setLayoutMode] = useState<LayoutMode>('laptop')
+  const [evaluating, setEvaluating] = useState(false)
 
   const [statusText, setStatusText] = useState('Press Start to evaluate once.')
-  const [alignment, setAlignment] = useState<AlignmentResponse>({
+
+  const [alignment, setAlignment] = useThrottledState<AlignmentResponse>(
+    {
     pose_match: 'partially_aligned',
     confidence: 'low',
     primary_focus_area: 'none',
     deviations: [],
-    correction_message: 'Press Start to evaluate once.'
-  })
+    correction_message: 'Press Start to evaluate once.',
+    score: null
+    },
+    2
+  )
 
   const clientIdRef = useRef<string>(newClientId())
   const lastSpokenRef = useRef<string>('')
@@ -36,11 +43,25 @@ export default function App() {
   const countdownTimerRef = useRef<number | null>(null)
   const latestLandmarksRef = useRef<Landmark[] | null>(null)
   const latestVisibilityRef = useRef<number>(0)
-  const lastVisUiUpdateRef = useRef<number>(0)
+  const alignedPulseTimerRef = useRef<number | null>(null)
+  const [alignedPulseActive, setAlignedPulseActive] = useState(false)
+  const [alignedPulseKey, setAlignedPulseKey] = useState(0)
 
   const severity: Severity | null = alignment.deviations.length
     ? worstSeverity(alignment.deviations)
     : null
+
+  const isAnalyzing = running || evaluating
+
+  const pageLayoutClass =
+    layoutMode === 'laptop'
+      ? 'grid min-h-0 flex-1 grid-cols-1 gap-3 lg:grid-cols-2'
+      : 'flex min-h-0 flex-1 flex-col gap-3'
+
+  const deviceFrame =
+    layoutMode === 'mobile'
+      ? 'mx-auto flex h-full w-full max-w-[440px] flex-col rounded-[32px] border border-white/10 bg-black/20 p-3 shadow-2xl shadow-black/40'
+      : 'flex h-full flex-col'
 
   useEffect(() => {
     if (!voiceOn) return
@@ -59,13 +80,13 @@ export default function App() {
 
   function startSession() {
     clientIdRef.current = newClientId()
-    setHasEvaluated(false)
     setAlignment({
       pose_match: 'partially_aligned',
       confidence: 'low',
       primary_focus_area: 'none',
       deviations: [],
-      correction_message: 'Hold the pose. We will evaluate once.'
+      correction_message: 'Hold the pose. We will evaluate once.',
+      score: null
     })
 
     if (countdownTimerRef.current) {
@@ -112,13 +133,13 @@ export default function App() {
   async function doEvaluate() {
     const landmarks = latestLandmarksRef.current
     if (!landmarks) {
-      setHasEvaluated(true)
       setAlignment({
         pose_match: 'misaligned',
         confidence: 'low',
         primary_focus_area: 'none',
         deviations: [],
-        correction_message: 'No pose detected yet. Press Start and hold the pose in view.'
+        correction_message: 'No pose detected yet. Press Start and hold the pose in view.',
+        score: null
       })
       setStatusText('No landmarks detected.')
       return
@@ -126,19 +147,21 @@ export default function App() {
 
     const visibilityMean = latestVisibilityRef.current
     if (visibilityMean < 0.5) {
-      setHasEvaluated(true)
       setAlignment({
         pose_match: 'misaligned',
         confidence: 'low',
         primary_focus_area: 'none',
         deviations: [],
-        correction_message: 'Ensure full body is visible.'
+        correction_message: 'Ensure full body is visible.',
+        score: null
       })
       setStatusText('Paused: low visibility.')
       return
     }
 
     try {
+      setEvaluating(true)
+      setStatusText('Analyzing posture…')
       const resp = await evaluateAlignment({
         baseUrl,
         clientId: clientIdRef.current,
@@ -146,108 +169,112 @@ export default function App() {
         userLevel,
         landmarks
       })
-      setHasEvaluated(true)
       setAlignment(resp)
       setStatusText('Feedback ready.')
+
+      const alignedNow = resp.pose_match === 'aligned' && resp.primary_focus_area === 'none'
+      if (alignedNow) {
+        if (alignedPulseTimerRef.current) window.clearTimeout(alignedPulseTimerRef.current)
+        setAlignedPulseActive(true)
+        setAlignedPulseKey((k) => k + 1)
+        alignedPulseTimerRef.current = window.setTimeout(() => {
+          setAlignedPulseActive(false)
+          alignedPulseTimerRef.current = null
+        }, 750)
+      }
     } catch (e) {
-      setHasEvaluated(true)
-      setAlignment((prev) => ({
-        ...prev,
+      setAlignment({
+        ...alignment,
         confidence: 'low',
-        correction_message: 'Backend unavailable.'
-      }))
+        correction_message: 'Backend unavailable.',
+        score: null
+      })
       setStatusText('Backend unavailable.')
+    } finally {
+      setEvaluating(false)
     }
   }
 
-  const analyzingIndicator = running
-    ? 'Hold pose (dots updating)'
-    : 'One-time check complete (press Start to re-check)'
-
-  const liveStatusText =
-    countdown > 0 && visibilityMean < 0.5 ? 'Hold steady… full body in frame.' : statusText
-
   return (
-    <div className="app">
-      <div className="main">
-        <ReferencePanel
-          expectedPose={expectedPose}
-          primaryFocusArea={alignment.primary_focus_area}
-          severity={severity}
-        />
-        <LivePanel
-          running={running}
-          countdown={countdown}
-          statusText={liveStatusText}
-          onLandmarks={(lms, visMean) => {
-            latestLandmarksRef.current = lms
-            latestVisibilityRef.current = visMean
+    <div className="h-screen overflow-hidden bg-gradient-to-b from-slate-950 via-slate-900 to-neutral-950 text-slate-50">
+      <div className="mx-auto flex h-full max-w-6xl flex-col px-3 py-3">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <div className="text-xl font-medium tracking-tight">OorjaKull AI Yoga</div>
+            <div className="mt-1 text-sm text-slate-300"></div>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <LayoutToggle mode={layoutMode} onChange={setLayoutMode} />
 
-            // Throttle UI updates to avoid re-rendering on every video frame.
-            const now = performance.now()
-            if (now - lastVisUiUpdateRef.current > 200) {
-              lastVisUiUpdateRef.current = now
-              setVisibilityMean(visMean)
-            }
-          }}
-        />
-      </div>
-
-      <div className="bottomBar">
-        <div className="correction">
-          <div style={{ fontWeight: 650, whiteSpace: 'pre-wrap' }}>{alignment.correction_message}</div>
-
-          {hasEvaluated && alignment.deviations.length ? (
-            <div className="small" style={{ display: 'grid', gap: 2 }}>
-              {alignment.deviations.slice(0, 4).map((d, idx) => (
-                <div key={idx}>
-                  • {d.joint_or_area}: {d.issue} ({d.severity})
-                </div>
+            <select
+              aria-label="Expected pose"
+              value={expectedPose}
+              onChange={(e) => {
+                setExpectedPose(e.target.value as ExpectedPose)
+                stopSession()
+                setAlignment({
+                  pose_match: 'partially_aligned',
+                  confidence: 'low',
+                  primary_focus_area: 'none',
+                  deviations: [],
+                  correction_message: 'Press Start to evaluate once.',
+                  score: null
+                })
+                setStatusText('Press Start to evaluate once.')
+              }}
+              className="h-10 rounded-2xl border border-white/10 bg-white/5 px-3 text-sm text-slate-100 backdrop-blur focus:outline-none focus-visible:ring-2 focus-visible:ring-white/25"
+            >
+              {POSE_REFERENCES.map((p) => (
+                <option key={p.pose} value={p.pose} className="text-slate-900">
+                  {p.pose}
+                </option>
               ))}
-            </div>
-          ) : null}
-          <div className="small">
-            {hasEvaluated ? (
-              <>
-                Confidence: {alignment.confidence} · Match: {alignment.pose_match} · {analyzingIndicator}
-              </>
-            ) : (
-              <>Waiting for evaluation · {analyzingIndicator}</>
-            )}
+            </select>
+
+            <button
+              type="button"
+              onClick={() => (running ? stopSession() : startSession())}
+              className="h-10 rounded-2xl border border-white/10 bg-white/10 px-4 text-sm text-white transition-colors duration-300 ease-in-out hover:bg-white/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/25"
+            >
+              {running ? 'Pause' : 'Start'}
+            </button>
+
+            <label className="flex items-center gap-2 text-sm text-slate-200">
+              <input
+                type="checkbox"
+                checked={voiceOn}
+                onChange={(e) => setVoiceOn(e.target.checked)}
+                className="h-4 w-4 rounded border-white/20 bg-white/10"
+              />
+              Voice
+            </label>
           </div>
         </div>
-        <div className="controls">
-          <select
-            value={expectedPose}
-            onChange={(e) => {
-              setExpectedPose(e.target.value as ExpectedPose)
-              setHasEvaluated(false)
-              stopSession()
-              setAlignment({
-                pose_match: 'partially_aligned',
-                confidence: 'low',
-                primary_focus_area: 'none',
-                deviations: [],
-                correction_message: 'Press Start to evaluate once.'
-              })
-              setStatusText('Press Start to evaluate once.')
-            }}
-          >
-            {POSE_REFERENCES.map((p) => (
-              <option key={p.pose} value={p.pose}>
-                {p.pose}
-              </option>
-            ))}
-          </select>
 
-          <button onClick={() => (running ? stopSession() : startSession())}>
-            {running ? 'Pause' : 'Start'}
-          </button>
-
-          <label className="small" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <input type="checkbox" checked={voiceOn} onChange={(e) => setVoiceOn(e.target.checked)} />
-            Voice
-          </label>
+        <div className={`${deviceFrame} flex-1 min-h-0`}>
+          <div className={`${pageLayoutClass} min-h-0 flex-1`}>
+            <InstructorPanel
+              baseUrl={baseUrl}
+              expectedPose={expectedPose}
+              primaryFocusArea={alignment.primary_focus_area}
+              severity={severity}
+              alignedPulseActive={alignedPulseActive}
+              alignedPulseKey={alignedPulseKey}
+            />
+            <UserCameraPanel
+              running={running}
+              countdown={countdown}
+              statusText={statusText}
+              confidence={alignment.confidence}
+              score={alignment.score}
+              isAnalyzing={isAnalyzing}
+              feedbackMessage={alignment.correction_message}
+              onLandmarks={(lms, visMean) => {
+                latestLandmarksRef.current = lms
+                latestVisibilityRef.current = visMean
+              }}
+            />
+          </div>
         </div>
       </div>
     </div>

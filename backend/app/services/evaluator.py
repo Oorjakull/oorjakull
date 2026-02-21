@@ -8,7 +8,7 @@ from typing import Any
 from app.ai.groq_client import GroqClient
 from app.core.config import settings
 from app.models.contracts import GeminiAlignmentResponse
-from app.pose.biomechanics import Metrics, compute_metrics, metrics_distance, round_for_summary
+from app.pose.biomechanics import Metrics, compute_metrics, compute_pose_score, metrics_distance, round_for_summary
 from app.pose.templates import POSE_TEMPLATES
 from app.utils.hash import stable_hash
 
@@ -72,6 +72,7 @@ class AlignmentEvaluator:
                 "primary_focus_area": "none",
                 "deviations": [],
                 "correction_message": "Ensure full body is visible.",
+                "score": None,
             }
             state.last_metrics = metrics
             state.last_metrics_ts = now
@@ -83,7 +84,12 @@ class AlignmentEvaluator:
         # we still want the LLM to provide concrete, instructor-style cues to get them into the pose.
 
         template = POSE_TEMPLATES.get(expected_pose)
-        ideal_ranges = template.ideal_ranges if template else {}
+        if template is not None:
+            ideal_ranges = template.ideal_ranges
+        else:
+            fallback = POSE_TEMPLATES.get("Tadasana")
+            ideal_ranges = fallback.ideal_ranges if fallback is not None else {}
+        score = compute_pose_score(metrics, ideal_ranges)
 
         biomech_summary = {
             "expected_pose": expected_pose,
@@ -99,6 +105,7 @@ class AlignmentEvaluator:
             state.last_metrics = metrics
             state.last_metrics_ts = now
             self._state[client_id] = state
+            state.last_response["score"] = score
             return state.last_response
 
         # Don't re-call Gemini if unchanged within 3 seconds
@@ -110,6 +117,7 @@ class AlignmentEvaluator:
             state.last_metrics = metrics
             state.last_metrics_ts = now
             self._state[client_id] = state
+            state.last_response["score"] = score
             return state.last_response
 
         # Stability / significant change gating
@@ -124,6 +132,7 @@ class AlignmentEvaluator:
             state.last_metrics = metrics
             state.last_metrics_ts = now
             self._state[client_id] = state
+            state.last_response["score"] = score
             return state.last_response
 
         # Call LLM (Groq)
@@ -148,9 +157,11 @@ class AlignmentEvaluator:
                 "primary_focus_area": "none",
                 "deviations": [],
                 "correction_message": correction,
+                "score": score,
             }
 
         parsed = _sanitize_alignment_response(parsed)
+        parsed["score"] = score
 
         state.last_metrics = metrics
         state.last_metrics_ts = now

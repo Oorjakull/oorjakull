@@ -1,0 +1,49 @@
+import { memo } from 'react'
+
+export type LayoutMode = 'laptop' | 'mobile'
+
+function SegButton(props: {
+  active: boolean
+  label: string
+  onClick: () => void
+}) {
+  return (
+    <button
+      type="button"
+      aria-pressed={props.active}
+      onClick={props.onClick}
+      className={
+        'px-3 py-2 text-sm rounded-2xl transition-colors duration-300 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white/25 ' +
+        (props.active
+          ? 'bg-white/12 text-white'
+          : 'bg-transparent text-slate-300 hover:bg-white/8 hover:text-white')
+      }
+    >
+      {props.label}
+    </button>
+  )
+}
+
+export default memo(function LayoutToggle(props: {
+  mode: LayoutMode
+  onChange: (mode: LayoutMode) => void
+}) {
+  return (
+    <div
+      role="group"
+      aria-label="Layout mode"
+      className="inline-flex items-center gap-1 rounded-2xl border border-white/10 bg-white/5 p-1 backdrop-blur"
+    >
+      <SegButton
+        label="Laptop View"
+        active={props.mode === 'laptop'}
+        onClick={() => props.onChange('laptop')}
+      />
+      <SegButton
+        label="Mobile View"
+        active={props.mode === 'mobile'}
+        onClick={() => props.onChange('mobile')}
+      />
+    </div>
+  )
+})

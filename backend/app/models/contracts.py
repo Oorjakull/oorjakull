@@ -43,3 +43,4 @@ class GeminiAlignmentResponse(BaseModel):
     primary_focus_area: FocusArea
     deviations: list[Deviation]
     correction_message: str
+    score: int | None = Field(default=None, ge=0, le=100)

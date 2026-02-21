@@ -21,6 +21,7 @@ function focusToIds(focus: FocusArea): string[] {
 }
 
 export default function ReferencePanel(props: {
+  baseUrl?: string
   expectedPose: ExpectedPose
   primaryFocusArea: FocusArea
   severity: Severity | null
@@ -28,6 +29,9 @@ export default function ReferencePanel(props: {
   const ref = POSE_REFERENCES.find((p) => p.pose === props.expectedPose)
   const ids = focusToIds(props.primaryFocusArea)
   const color = props.severity ? severityColor(props.severity) : '#000'
+
+  const baseUrl = props.baseUrl ?? 'http://localhost:8000'
+  const mediaSrc = ref ? (ref.kind === 'video' ? `${baseUrl}${ref.src}` : ref.src) : ''
 
   return (
     <div className="panel">
@@ -40,7 +44,11 @@ export default function ReferencePanel(props: {
       </div>
       <div className="panelBody">
         <div className="referenceStage">
-          <img src={ref?.imageSrc} alt={`${props.expectedPose} reference`} />
+          {ref?.kind === 'video' ? (
+            <video src={mediaSrc} autoPlay loop muted playsInline preload="metadata" />
+          ) : (
+            <img src={mediaSrc} alt={`${props.expectedPose} reference`} />
+          )}
           <svg className="overlaySvg" viewBox="0 0 100 100" preserveAspectRatio="none">
             <path
               id="full_body"
