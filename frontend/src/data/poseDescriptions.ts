@@ -33,13 +33,6 @@ export const POSE_DESCRIPTIONS: Record<string, PoseDescription> = {
     introScript:
       "Welcome to Plank Pose — Phalakasana. This is one of the most effective poses for building a strong core and stable shoulders. The essential principle is to maintain a perfectly straight line from the crown of your head to your heels, like a firm plank of wood. Step into the frame, find your hands and toes, engage your belly, and discover your steady, powerful plank.",
   },
-  'Tree Pose': {
-    sanskritName: 'Vrksasana',
-    benefits:
-      'Tree Pose improves balance, focus, and concentration while strengthening the standing leg and opening the hip of the raised leg. It cultivates calm and mental clarity.',
-    introScript:
-      "Welcome to Tree Pose — Vrksasana. This graceful balancing pose teaches you to find stillness and strength on one leg while opening your hip on the other side. Root down through your standing foot and grow tall through the crown of your head, just like a tree reaching toward the sunlight. Find a soft gaze point to help you balance, then step into the frame and grow.",
-  },
   'Warrior II': {
     sanskritName: 'Virabhadrasana II',
     benefits:

@@ -42,7 +42,9 @@ def _canonical_pose_name(raw: str) -> str:
         "down dog": "Down Dog",
         "godess": "Goddess",
         "goddess": "Goddess",
+        "warrior": "Warrior II",
         "warrior pose": "Warrior II",
+        "warrior ii": "Warrior II",
         "tree pose": "Tree Pose",
     }
     if key in aliases:

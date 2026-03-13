@@ -7,7 +7,6 @@ const POSE_ICONS: Record<string, string> = {
   'Down Dog': '🐕',
   'Goddess': '👑',
   'Plank': '💪',
-  'Tree Pose': '🌳',
   'Warrior II': '⚔️',
   'Ashwa Sanchalanasana': '🐴',
   'Hasta Uttanasana': '🙌',
