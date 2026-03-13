@@ -1,19 +1,6 @@
 import { motion } from 'framer-motion'
 import { POSE_DESCRIPTIONS } from '../data/poseDescriptions'
 
-/** Yoga-themed emoji for visual flair — keyed by pose name */
-const POSE_ICONS: Record<string, string> = {
-  'Tadasana': '🏔️',
-  'Down Dog': '🐕',
-  'Goddess': '👑',
-  'Plank': '💪',
-  'Warrior II': '⚔️',
-  'Ashwa Sanchalanasana': '🐴',
-  'Hasta Uttanasana': '🙌',
-  'Padahastasana': '🙏',
-  'Pranamasana': '🧘',
-}
-
 /** Subtle gradient accent colours per card index (cycles) */
 const ACCENT_GRADIENTS = [
   'from-emerald-500/60 to-teal-400/60',
@@ -34,7 +21,6 @@ export default function PoseCard(props: {
 }) {
   const { poseName, index = 0, onClick } = props
   const desc = POSE_DESCRIPTIONS[poseName]
-  const icon = POSE_ICONS[poseName] ?? '🧘'
   const accent = ACCENT_GRADIENTS[index % ACCENT_GRADIENTS.length]
 
   return (
@@ -52,11 +38,10 @@ export default function PoseCard(props: {
 
       {/* ── Card body ───────────────────────────────────────────────────── */}
       <div className="flex flex-1 flex-col items-start justify-between overflow-hidden p-4">
-        {/* Icon + name row */}
+        {/* English name (white) + Sanskrit name (green) */}
         <div className="w-full">
-          <span className="text-2xl leading-none">{icon}</span>
-          <h3 className="mt-2 truncate text-base font-bold leading-snug text-white">
-            {poseName}
+          <h3 className="truncate text-base font-bold leading-snug text-white">
+            {desc?.englishName ?? poseName}
           </h3>
           {desc && (
             <p className="mt-0.5 truncate text-xs font-medium italic text-emerald-400/90">
