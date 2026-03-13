@@ -55,6 +55,20 @@ function getPreferredVoice(): SpeechSynthesisVoice | null {
   )
 }
 
+export interface VoiceSettings {
+  rate: number    // 0.5 – 2
+  pitch: number   // 0 – 2
+  volume: number  // 0 – 1
+  voiceName: string | null // null = auto-select
+}
+
+export const DEFAULT_VOICE_SETTINGS: VoiceSettings = {
+  rate: 0.82,
+  pitch: 1.05,
+  volume: 0.92,
+  voiceName: null,
+}
+
 export interface VoiceGuide {
   /** Speak text. onEnd fires when utterance completes (or after 5 s if voice disabled). */
   speak: (text: string, onEnd?: () => void) => void
@@ -67,7 +81,7 @@ export interface VoiceGuide {
   cancel: () => void
 }
 
-export function useVoiceGuide(voiceEnabled: boolean): VoiceGuide {
+export function useVoiceGuide(voiceEnabled: boolean, settings: VoiceSettings = DEFAULT_VOICE_SETTINGS): VoiceGuide {
   const lastSpokenRef = useRef<string>('')
   const lastSpeakTsRef = useRef<number>(0)
   const silentTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -93,10 +107,12 @@ export function useVoiceGuide(voiceEnabled: boolean): VoiceGuide {
 
       const doSpeak = () => {
         const u = new SpeechSynthesisUtterance(text)
-        u.rate = 0.82     // slower — calm, instructor-like pacing
-        u.pitch = 1.05    // slightly higher — softer, feminine tone
-        u.volume = 0.92   // slightly under max — gentler on the ear
-        const voice = getPreferredVoice()
+        u.rate = settings.rate
+        u.pitch = settings.pitch
+        u.volume = settings.volume
+        const voice = settings.voiceName
+          ? window.speechSynthesis.getVoices().find((v) => v.name === settings.voiceName) ?? getPreferredVoice()
+          : getPreferredVoice()
         if (voice) u.voice = voice
         if (onEnd) u.onend = () => onEnd()
         window.speechSynthesis.speak(u)
@@ -111,7 +127,7 @@ export function useVoiceGuide(voiceEnabled: boolean): VoiceGuide {
         }, 300)
       }
     },
-    [voiceEnabled],
+    [voiceEnabled, settings],
   )
 
   const speakFeedback = useCallback(
@@ -135,15 +151,17 @@ export function useVoiceGuide(voiceEnabled: boolean): VoiceGuide {
 
       window.speechSynthesis.cancel()
       const u = new SpeechSynthesisUtterance(text)
-      u.rate = 0.82     // calm, instructor-like pacing
-      u.pitch = 1.05    // softer, feminine tone
-      u.volume = 0.92   // gentle volume
-      const voice = getPreferredVoice()
+      u.rate = settings.rate
+      u.pitch = settings.pitch
+      u.volume = settings.volume
+      const voice = settings.voiceName
+        ? window.speechSynthesis.getVoices().find((v) => v.name === settings.voiceName) ?? getPreferredVoice()
+        : getPreferredVoice()
       if (voice) u.voice = voice
       if (onEnd) u.onend = () => onEnd()
       window.speechSynthesis.speak(u)
     },
-    [voiceEnabled],
+    [voiceEnabled, settings],
   )
 
   const cancel = useCallback(() => {

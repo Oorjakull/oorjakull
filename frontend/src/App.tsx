@@ -7,8 +7,11 @@ import LandingPage from './components/LandingPage'
 import LayoutToggle, { type LayoutMode } from './components/LayoutToggle'
 import PoseIntroOverlay from './components/PoseIntroOverlay'
 import UserCameraPanel from './components/UserCameraPanel'
+import VoiceSettings from './components/VoiceSettings'
 import { POSE_DESCRIPTIONS } from './data/poseDescriptions'
 import { useVoiceGuide } from './hooks/useVoiceGuide'
+import { DEFAULT_VOICE_SETTINGS } from './hooks/useVoiceGuide'
+import type { VoiceSettings as VoiceSettingsType } from './hooks/useVoiceGuide'
 import { useThrottledState } from './hooks/useThrottledState'
 import { POSE_REFERENCES, worstSeverity } from './poses/reference'
 
@@ -93,7 +96,8 @@ export default function App() {
   const [userLevel] = useState<UserLevel>('beginner')
   const [running, setRunning] = useState(false)
   const [countdown, setCountdown] = useState(0)
-  const [voiceOn, setVoiceOn] = useState(false)
+  const [voiceOn, setVoiceOn] = useState(true)
+  const [voiceSettings, setVoiceSettings] = useState<VoiceSettingsType>(DEFAULT_VOICE_SETTINGS)
   const [layoutMode, setLayoutMode] = useState<LayoutMode>('laptop')
   const [evaluating, setEvaluating] = useState(false)
 
@@ -123,7 +127,7 @@ export default function App() {
 
   const clientIdRef = useRef<string>(newClientId())
 
-  const { speak, speakFeedback, cancel: cancelVoice } = useVoiceGuide(voiceOn)
+  const { speak, speakFeedback, cancel: cancelVoice } = useVoiceGuide(voiceOn, voiceSettings)
 
   const baseUrl = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, '') ?? 'http://localhost:8000'
 
@@ -462,17 +466,14 @@ export default function App() {
       <AnimatePresence>
         {experiencePhase === 'landing' && (
           <div className="absolute inset-0 z-50 overflow-y-auto">
-            {/* Voice toggle always accessible */}
+            {/* Voice settings panel */}
             <div className="absolute right-4 top-4 z-10">
-              <label className="flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-200 backdrop-blur">
-                <input
-                  type="checkbox"
-                  checked={voiceOn}
-                  onChange={(e) => setVoiceOn(e.target.checked)}
-                  className="h-4 w-4 rounded border-white/20 bg-white/10"
-                />
-                🔊 Voice
-              </label>
+              <VoiceSettings
+                voiceOn={voiceOn}
+                onToggleVoice={setVoiceOn}
+                settings={voiceSettings}
+                onChangeSettings={setVoiceSettings}
+              />
             </div>
             <LandingPage
               poses={poseOptions}

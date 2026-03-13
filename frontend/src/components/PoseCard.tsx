@@ -28,8 +28,7 @@ export default function PoseCard(props: {
       type="button"
       onClick={onClick}
       className="group relative flex w-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-slate-800/80 shadow-xl shadow-black/30 backdrop-blur focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
-      style={{ aspectRatio: '4 / 3' }}
-      whileHover={{ scale: 1.04, y: -4 }}
+      whileHover={{ scale: 1.03, y: -3 }}
       whileTap={{ scale: 0.97 }}
       transition={{ type: 'spring', stiffness: 300, damping: 22 }}
     >
@@ -37,28 +36,28 @@ export default function PoseCard(props: {
       <div className={`h-1 w-full bg-gradient-to-r ${accent}`} />
 
       {/* ── Card body ───────────────────────────────────────────────────── */}
-      <div className="flex flex-1 flex-col items-start justify-between overflow-hidden p-4">
+      <div className="flex flex-col items-start p-4">
         {/* English name (white) + Sanskrit name (green) */}
         <div className="w-full">
-          <h3 className="truncate text-base font-bold leading-snug text-white">
+          <h3 className="text-base font-bold leading-snug text-white">
             {desc?.englishName ?? poseName}
           </h3>
           {desc && (
-            <p className="mt-0.5 truncate text-xs font-medium italic text-emerald-400/90">
+            <p className="mt-0.5 text-xs font-medium italic text-emerald-400/90">
               {desc.sanskritName}
             </p>
           )}
         </div>
 
-        {/* Benefits – clamp to 3 lines to prevent overflow */}
+        {/* Benefits — clamped by default, full text on hover */}
         {desc && (
-          <p className="mt-2 line-clamp-3 text-left text-xs leading-relaxed text-slate-400 group-hover:text-slate-300">
+          <p className="mt-2 text-left text-xs leading-relaxed text-slate-400 transition-all duration-300 line-clamp-3 group-hover:line-clamp-none group-hover:text-slate-300">
             {desc.benefits}
           </p>
         )}
 
         {/* "Start" hint — appears on hover */}
-        <div className="mt-auto flex w-full items-center justify-end pt-2">
+        <div className="mt-3 flex w-full items-center justify-end">
           <span className="text-[10px] font-semibold uppercase tracking-widest text-emerald-500/70 transition-colors group-hover:text-emerald-400">
             Start →
           </span>
