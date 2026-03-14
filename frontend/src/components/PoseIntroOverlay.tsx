@@ -71,13 +71,13 @@ export default function PoseIntroOverlay({
     }
   }, [phase])
 
-  // Start 5-second countdown once body is detected; cancel if body disappears
+  // Start 15-second countdown once body is detected; cancel if body disappears
   useEffect(() => {
     if (phase !== 'framing' || hasTriggeredRef.current) return
 
     if (isReady && framingCountdown === 0) {
       // Body detected → begin countdown
-      setFramingCountdown(5)
+      setFramingCountdown(15)
       if (countdownRef.current) clearInterval(countdownRef.current)
       countdownRef.current = setInterval(() => {
         setFramingCountdown((prev) => {

@@ -7,12 +7,18 @@ export type VoiceGender = 'male' | 'female'
  * These cover Windows (Edge/Chrome Neural), macOS, iOS, and Android.
  */
 const FEMALE_EN_IN = [
-  'Microsoft Neerja Online',   // Edge Neural — very natural
+  'Microsoft Neerja Online',     // Edge Neural — very natural
   'Microsoft Neerja',
   'Neerja',
-  'Google हिन्दी',            // Some Chrome builds expose this for en-IN
-  'Veena',                     // macOS / iOS en-IN female
-  'Lekha',                     // macOS en-IN female
+  'Microsoft Aarav Online',      // Edge Neural alternate female
+  'Google हिन्दी',              // Some Chrome builds expose this for en-IN
+  'Veena',                       // macOS / iOS en-IN female
+  'Lekha',                       // macOS en-IN female
+  'Aditi',                       // Amazon Polly en-IN female (Chrome/Android)
+  'Kajal',                       // Google TTS en-IN female
+  'Priya',                       // Various TTS engines
+  'Divya',                       // Some Android en-IN female
+  'Ankita',                      // Some Android / Samsung en-IN female
 ]
 
 const MALE_EN_IN = [
@@ -76,7 +82,7 @@ export interface VoiceSettings {
 }
 
 export const DEFAULT_VOICE_SETTINGS: VoiceSettings = {
-  rate: 0.82,
+  rate: 1.00,
   pitch: 1.05,
   volume: 0.92,
   voiceName: null,
