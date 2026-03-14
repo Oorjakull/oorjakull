@@ -2,12 +2,18 @@ import { useEffect, useState } from 'react'
 import type { VoiceSettings as VoiceSettingsType, VoiceGender } from '../hooks/useVoiceGuide'
 import { hasEnINVoice } from '../hooks/useVoiceGuide'
 
-/** Return only en-IN voices sorted by name */
+/** Return all English voices on this device, en-IN voices sorted first. */
 function getAvailableVoices(): SpeechSynthesisVoice[] {
   return window.speechSynthesis
     .getVoices()
-    .filter((v) => v.lang === 'en-IN')
-    .sort((a, b) => a.name.localeCompare(b.name))
+    .filter((v) => v.lang.startsWith('en') || v.lang.startsWith('hi'))
+    .sort((a, b) => {
+      // en-IN voices first
+      const aIN = a.lang.includes('IN') ? 0 : 1
+      const bIN = b.lang.includes('IN') ? 0 : 1
+      if (aIN !== bIN) return aIN - bIN
+      return a.name.localeCompare(b.name)
+    })
 }
 
 export default function VoiceSettings(props: {
