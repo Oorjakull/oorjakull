@@ -7,6 +7,8 @@ from pydantic import BaseModel, Field
 
 ExpectedPose = str
 UserLevel = Literal["beginner", "intermediate", "advanced"]
+BreathEffect = Literal["increase", "decrease", "steady"]
+BreathAnimation = Literal["expand", "hold", "contract", "pulse"]
 
 
 class Landmark(BaseModel):
@@ -29,6 +31,34 @@ class TTSRequest(BaseModel):
     gender: Literal["male", "female"] = "female"
     speed: float = Field(default=1.0, ge=0.25, le=4.0)
     pitch: float = Field(default=0.0, ge=-20.0, le=20.0)
+
+
+class BreathworkEffects(BaseModel):
+    hr: BreathEffect
+    hrv: BreathEffect
+    temperature: BreathEffect | None = None
+
+
+class BreathworkPhase(BaseModel):
+    label: str = Field(min_length=1, max_length=80)
+    duration_sec: int = Field(ge=0, le=3600)
+    instruction: str = ""
+    animation: BreathAnimation
+
+
+class BreathworkProtocol(BaseModel):
+    id: str = Field(min_length=2, max_length=80)
+    name: str = Field(min_length=2, max_length=120)
+    category: str = Field(min_length=2, max_length=120)
+    tagline: str = Field(min_length=2, max_length=160)
+    duration_mins: int = Field(ge=1, le=180)
+    description: str = Field(min_length=20, max_length=4000)
+    origin: str = Field(min_length=10, max_length=500)
+    benefits: list[str] = Field(min_length=1, max_length=8)
+    effects: BreathworkEffects
+    difficulty: Literal["beginner", "intermediate", "advanced"]
+    phases: list[BreathworkPhase] = Field(min_length=1, max_length=8)
+    cycles: int = Field(ge=1, le=500)
 
 
 PoseMatch = Literal["aligned", "partially_aligned", "misaligned"]

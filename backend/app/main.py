@@ -12,6 +12,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.core.config import settings
 from app.models.contracts import EvaluateRequest, GeminiAlignmentResponse, TTSRequest
+from app.routers.breathwork import router as breathwork_router
 from app.services.evaluator import AlignmentEvaluator
 
 app = FastAPI(title="Yoga GenAI POC", version="0.1.0")
@@ -107,6 +108,8 @@ app.add_middleware(
 )
 
 evaluator = AlignmentEvaluator()
+
+app.include_router(breathwork_router)
 
 # ── Google Cloud Text-to-Speech voices ──────────────────────────────────────
 # Neural2 voices for en-IN — consistent across all browsers.

@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
-import type { AlignmentResponse, ExpectedPose, Landmark, Severity, TrainMedia, UserLevel } from './api/client'
+import type { AlignmentResponse, BreathworkProtocol, ExpectedPose, Landmark, Severity, TrainMedia, UserLevel } from './api/client'
 import { evaluateAlignment, fetchTrainPoses } from './api/client'
 import InstructorPanel from './components/InstructorPanel'
 import LandingPage from './components/LandingPage'
+import AppSectionTabs from './components/AppSectionTabs'
 import LayoutToggle, { type LayoutMode } from './components/LayoutToggle'
 import PoseIntroOverlay from './components/PoseIntroOverlay'
 import UserCameraPanel from './components/UserCameraPanel'
@@ -22,9 +23,11 @@ import { useChatStore } from './hooks/useChatStore'
 import SequenceCompleteOverlay from './components/SequenceCompleteOverlay'
 import { SEQUENCES } from './data/sequences'
 import type { PoseSequence, SequenceStep } from './data/sequences'
+import BreathworkPage from './pages/BreathworkPage'
+import BreathworkSession from './pages/BreathworkSession'
 
 type FramingState = 'cameraLoading' | 'notFramed' | 'partiallyFramed' | 'handsNotRaised' | 'fullyFramed'
-type ExperiencePhase = 'welcome' | 'landing' | 'intro' | 'framing' | 'evaluating' | 'results' | 'sequence-complete'
+type ExperiencePhase = 'welcome' | 'landing' | 'intro' | 'framing' | 'evaluating' | 'results' | 'sequence-complete' | 'breathwork-session'
 
 const REQUIRED_LANDMARKS: Record<
   string,
@@ -100,6 +103,7 @@ function newClientId(): string {
 
 export default function App() {
   const [experiencePhase, setExperiencePhase] = useState<ExperiencePhase>('welcome')
+  const [activeSection, setActiveSection] = useState<'yoga' | 'breathwork'>('yoga')
   const [userName, setUserName] = useState('')
   const [signedInWithGoogle, setSignedInWithGoogle] = useState(false)
   const [expectedPose, setExpectedPose] = useState<ExpectedPose>('Warrior II')
@@ -124,6 +128,8 @@ export default function App() {
   const [sequencePoses, setSequencePoses] = useState<SequenceStep[]>([])
   const [sequenceIndex, setSequenceIndex] = useState(0)
   const [sequenceResults, setSequenceResults] = useState<Array<{ pose: string; score: number | null; sideNote?: string }>>([])
+  const [selectedBreathworkProtocol, setSelectedBreathworkProtocol] = useState<BreathworkProtocol | null>(null)
+  const [breathworkToast, setBreathworkToast] = useState<string | null>(null)
 
   const { isMobile, isPortraitMobile } = useOrientation()
 
@@ -259,6 +265,7 @@ export default function App() {
   // ── Handlers for experience phase transitions ─────────────────────────────
   function handleWelcomeEnter(name: string) {
     setUserName(name)
+    setActiveSection('yoga')
     setExperiencePhase('landing')
   }
 
@@ -282,7 +289,34 @@ export default function App() {
     stopSession()
     resetAlignmentState()
     setVisibleLandmarkCount(0)
+    setActiveSection('yoga')
     setExperiencePhase('welcome')
+  }
+
+  function handleSectionChange(section: 'yoga' | 'breathwork') {
+    cancelVoice()
+    stopSession()
+    setBreathworkToast(null)
+    setActiveSection(section)
+    if (experiencePhase !== 'landing') {
+      resetAlignmentState()
+      setVisibleLandmarkCount(0)
+      setExperiencePhase('landing')
+    }
+  }
+
+  function handleStartBreathwork(protocol: BreathworkProtocol) {
+    cancelVoice()
+    stopSession()
+    setSelectedBreathworkProtocol(protocol)
+    setExperiencePhase('breathwork-session')
+  }
+
+  function handleExitBreathworkSession(toastMessage?: string) {
+    setSelectedBreathworkProtocol(null)
+    setBreathworkToast(toastMessage ?? null)
+    setActiveSection('breathwork')
+    setExperiencePhase('landing')
   }
 
   function handleSelectPose(pose: string) {
@@ -657,6 +691,12 @@ export default function App() {
       <AnimatePresence>
         {experiencePhase === 'landing' && (
           <div className="absolute inset-0 z-50 overflow-y-auto">
+            <div className="pointer-events-none absolute left-1/2 top-4 z-10 -translate-x-1/2">
+              <div className="pointer-events-auto">
+                <AppSectionTabs value={activeSection} onChange={handleSectionChange} />
+              </div>
+            </div>
+
             {/* Voice settings + theme toggle */}
             <div className="absolute right-4 top-4 z-10 flex items-center gap-2">
               <button
@@ -667,20 +707,44 @@ export default function App() {
               >
                 {theme === 'dark' ? '☀️' : '🌙'}
               </button>
-              <VoiceSettings
-                voiceOn={voiceOn}
-                onToggleVoice={setVoiceOn}
-                settings={voiceSettings}
-                onChangeSettings={setVoiceSettings}
-                onPreview={() => speak('Namaste. Welcome to your practice.')}
-              />
+              {activeSection === 'yoga' && (
+                <VoiceSettings
+                  voiceOn={voiceOn}
+                  onToggleVoice={setVoiceOn}
+                  settings={voiceSettings}
+                  onChangeSettings={setVoiceSettings}
+                  onPreview={() => speak('Namaste. Welcome to your practice.')}
+                />
+              )}
             </div>
-            <LandingPage
-              poses={poseOptions}
-              onSelectPose={handleSelectPose}
-              onBackHome={handleBackToHome}
-              sequences={SEQUENCES}
-              onSelectSequence={handleSelectSequence}
+
+            {activeSection === 'yoga' ? (
+              <LandingPage
+                poses={poseOptions}
+                onSelectPose={handleSelectPose}
+                onBackHome={handleBackToHome}
+                sequences={SEQUENCES}
+                onSelectSequence={handleSelectSequence}
+              />
+            ) : (
+              <BreathworkPage
+                baseUrl={baseUrl}
+                onBackHome={handleBackToHome}
+                onStartSession={handleStartBreathwork}
+                toastMessage={breathworkToast}
+                onToastDone={() => setBreathworkToast(null)}
+              />
+            )}
+          </div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {experiencePhase === 'breathwork-session' && selectedBreathworkProtocol && (
+          <div className="absolute inset-0 z-[55]">
+            <BreathworkSession
+              protocol={selectedBreathworkProtocol}
+              onExit={handleExitBreathworkSession}
             />
           </div>
         )}
@@ -731,7 +795,7 @@ export default function App() {
       </AnimatePresence>
 
       {/* ── Practice area (framing + evaluating phases) ────────────────────── */}
-      {experiencePhase !== 'welcome' && experiencePhase !== 'landing' && experiencePhase !== 'intro' && experiencePhase !== 'sequence-complete' && (
+      {experiencePhase !== 'welcome' && experiencePhase !== 'landing' && experiencePhase !== 'intro' && experiencePhase !== 'sequence-complete' && experiencePhase !== 'breathwork-session' && (
         <div className="mx-auto flex h-full max-w-6xl flex-col overflow-hidden px-2 py-1.5 sm:px-3 sm:py-3">
           {/* Header — compact on mobile */}
           <div className="mb-1.5 flex items-center justify-between gap-2 sm:mb-3 sm:flex-wrap sm:gap-3">
@@ -1008,7 +1072,7 @@ export default function App() {
       )}
 
       {/* ── Chatbot ──────────────────────────────────────────────────────── */}
-      {experiencePhase !== 'welcome' && (
+      {experiencePhase !== 'welcome' && activeSection === 'yoga' && experiencePhase !== 'breathwork-session' && (
         <ChatBot
           messages={chatStore.messages}
           unreadCount={chatStore.unreadCount}

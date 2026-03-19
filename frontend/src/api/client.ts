@@ -44,12 +44,50 @@ export type TrainPose = {
   media: TrainMedia[]
 }
 
+export type BreathEffect = 'increase' | 'decrease' | 'steady'
+export type BreathAnimation = 'expand' | 'hold' | 'contract' | 'pulse'
+
+export type BreathworkPhase = {
+  label: string
+  duration_sec: number
+  instruction: string
+  animation: BreathAnimation
+}
+
+export type BreathworkProtocol = {
+  id: string
+  name: string
+  category: string
+  tagline: string
+  duration_mins: number
+  description: string
+  origin: string
+  benefits: string[]
+  effects: {
+    hr: BreathEffect
+    hrv: BreathEffect
+    temperature: BreathEffect | null
+  }
+  difficulty: 'beginner' | 'intermediate' | 'advanced'
+  phases: BreathworkPhase[]
+  cycles: number
+}
+
 export async function fetchTrainPoses(params: { baseUrl: string }): Promise<TrainPose[]> {
   const res = await fetch(`${params.baseUrl}/api/train/poses`)
   if (!res.ok) return []
 
   const data = (await res.json()) as { poses?: TrainPose[] }
   return Array.isArray(data.poses) ? data.poses : []
+}
+
+export async function fetchBreathworkProtocols(params: { baseUrl: string }): Promise<BreathworkProtocol[]> {
+  const res = await fetch(`${params.baseUrl}/api/breathwork/protocols`)
+  if (!res.ok) {
+    throw new Error(`Failed to load breathwork protocols: ${res.status}`)
+  }
+
+  return (await res.json()) as BreathworkProtocol[]
 }
 
 export async function evaluateAlignment(params: {
