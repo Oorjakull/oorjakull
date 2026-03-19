@@ -22,6 +22,9 @@ venv.bak/
 backend/.env
 frontend/.env
 
+## OAuth secrets (never commit)
+client_secret*.json
+
 ## Local assets
 /TEST/
 /TRAIN/**
