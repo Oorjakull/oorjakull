@@ -156,9 +156,7 @@ export default function WelcomePage({
                     />
                   </div>
                 </div>
-                <p className="text-xs text-slate-400 dark:text-slate-500">
-                  Secure Google sign-in, styled to match your practice space.
-                </p>
+                <p className="text-xs text-slate-400 dark:text-slate-500">Secure Google sign-in.</p>
               </div>
             </div>
           )}
