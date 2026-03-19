@@ -28,9 +28,11 @@ export default function WelcomePage({ onEnter }: WelcomePageProps) {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.1, duration: 0.5 }}
         >
-          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-emerald-500 to-teal-400 text-4xl shadow-xl shadow-emerald-500/25">
-            🧘
-          </div>
+          <img
+            src="/Logo.jpeg"
+            alt="OorjaKull"
+            className="mx-auto mb-6 h-20 w-20 rounded-2xl object-cover shadow-xl shadow-emerald-500/25 ring-1 ring-black/5 dark:ring-white/10"
+          />
           <h1 className="bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-4xl font-bold leading-relaxed text-transparent">
             OorjaKull AI Yoga
           </h1>
@@ -68,14 +70,25 @@ export default function WelcomePage({ onEnter }: WelcomePageProps) {
           </button>
         </motion.form>
 
-        <motion.p
-          className="mt-8 text-xs text-slate-400 dark:text-slate-500"
+        <motion.div
+          className="mt-8 space-y-2"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
         >
-          Guided practice · Real-time AI feedback · Voice instructions
-        </motion.p>
+          <p className="text-xs text-slate-400 dark:text-slate-500">
+            Guided practice · Real-time AI feedback · Voice instructions
+          </p>
+          <a
+            href="https://www.oorjakull.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 text-xs font-medium text-emerald-600/70 transition-colors hover:text-emerald-500 dark:text-emerald-400/60 dark:hover:text-emerald-300"
+          >
+            oorjakull.com
+            <span className="text-[10px]">↗</span>
+          </a>
+        </motion.div>
       </motion.div>
     </div>
   )
