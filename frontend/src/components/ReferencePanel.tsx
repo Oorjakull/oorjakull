@@ -30,7 +30,9 @@ export default function ReferencePanel(props: {
   const ids = focusToIds(props.primaryFocusArea)
   const color = props.severity ? severityColor(props.severity) : '#000'
 
-  const baseUrl = props.baseUrl ?? 'http://localhost:8000'
+  const baseUrl = props.baseUrl
+    ?? (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, '')
+    ?? 'http://localhost:8000'
   const mediaSrc = ref ? (ref.kind === 'video' ? `${baseUrl}${ref.src}` : ref.src) : ''
 
   return (

@@ -54,7 +54,15 @@ class Settings:
     # CORS
     cors_origins: list[str] = get_csv_env(
         "CORS_ORIGINS",
-        ["http://localhost:5173", "http://127.0.0.1:5173"],
+        [
+            "http://localhost:5173",
+            "http://127.0.0.1:5173",
+            "http://localhost:3000",
+            "capacitor://localhost",
+            "https://localhost",
+            "https://oorjakull-six.vercel.app",
+            "https://www.oorjakull.com",
+        ],
     )
 
 

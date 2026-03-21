@@ -134,6 +134,7 @@ export default function ChatBot({
 }: ChatBotProps) {
   const [input, setInput] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   // Auto-scroll to bottom when messages change or chat opens
   useEffect(() => {
@@ -177,6 +178,12 @@ export default function ChatBot({
       e.preventDefault()
       handleSend()
     }
+  }
+
+  const handleInputFocus = () => {
+    window.setTimeout(() => {
+      inputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }, 150)
   }
 
   return (
@@ -242,9 +249,11 @@ export default function ChatBot({
             <div className="border-t border-slate-200 bg-slate-50 px-3 py-2.5 dark:border-white/10 dark:bg-slate-800/50">
               <div className="flex items-center gap-2">
                 <input
+                  ref={inputRef}
                   type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
+                  onFocus={handleInputFocus}
                   onKeyDown={handleKeyDown}
                   placeholder="Ask about yoga…"
                   className="flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:border-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-400/30 dark:border-white/10 dark:bg-slate-700 dark:text-white dark:placeholder-slate-500"
