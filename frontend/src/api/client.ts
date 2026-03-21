@@ -144,15 +144,22 @@ export async function synthesizeSpeech(params: {
 
   return res.blob()
 }
+export type ProductSuggestion = {
+  type: 'breathwork' | 'pose'
+  id: string
+  label: string
+  reason: string
+}
+
 /**
  * Call the backend assistant endpoint and get a conversational response from Madhu.
- * Optionally include conversation history for context.
+ * Returns the reply text and an optional product suggestion card.
  */
 export async function callAssistant(params: {
   baseUrl: string
   message: string
   messages?: Array<{ role: 'user' | 'assistant'; content: string }>
-}): Promise<string> {
+}): Promise<{ reply: string; suggestion?: ProductSuggestion | null }> {
   const res = await fetch(`${params.baseUrl}/api/assistant`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -167,6 +174,5 @@ export async function callAssistant(params: {
     throw new Error(`Assistant error ${res.status}: ${detail}`)
   }
 
-  const data = (await res.json()) as { reply: string }
-  return data.reply
+  return (await res.json()) as { reply: string; suggestion?: ProductSuggestion | null }
 }

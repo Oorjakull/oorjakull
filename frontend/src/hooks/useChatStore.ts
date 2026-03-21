@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import type { ProductSuggestion } from '../api/client'
 
 /* ── Types ───────────────────────────────────────────────────────────────── */
+
+export type { ProductSuggestion }
 
 export interface PoseResultData {
   pose: string
@@ -18,7 +21,7 @@ export interface SessionResult {
   timestamp: number
 }
 
-export type ChatMessageType = 'text' | 'pose-result' | 'session-summary'
+export type ChatMessageType = 'text' | 'pose-result' | 'session-summary' | 'product-suggestion'
 
 export interface ChatMessage {
   id: string
@@ -26,6 +29,7 @@ export interface ChatMessage {
   type: ChatMessageType
   text?: string
   poseResult?: PoseResultData
+  suggestion?: ProductSuggestion
   sessionSummary?: {
     userName: string
     totalPoses: number
@@ -71,6 +75,12 @@ export function useChatStore(userName: string) {
 
   const addBotMessage = useCallback((text: string, incrementUnread = true) => {
     const msg: ChatMessage = { id: uid(), sender: 'bot', type: 'text', text, timestamp: Date.now() }
+    setMessages((prev) => [...prev, msg])
+    if (incrementUnread) setUnreadCount((prev) => prev + 1)
+  }, [])
+
+  const addSuggestionMessage = useCallback((suggestion: ProductSuggestion, incrementUnread = false) => {
+    const msg: ChatMessage = { id: uid(), sender: 'bot', type: 'product-suggestion', suggestion, timestamp: Date.now() }
     setMessages((prev) => [...prev, msg])
     if (incrementUnread) setUnreadCount((prev) => prev + 1)
   }, [])
@@ -163,6 +173,7 @@ export function useChatStore(userName: string) {
     addUserMessage,
     addPoseResult,
     addSessionSummary,
+    addSuggestionMessage,
     markRead,
   }
 }

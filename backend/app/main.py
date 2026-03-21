@@ -11,7 +11,7 @@ from fastapi.responses import Response
 from fastapi.staticfiles import StaticFiles
 
 from app.core.config import settings
-from app.models.contracts import EvaluateRequest, GeminiAlignmentResponse, TTSRequest, AssistantRequest, AssistantResponse
+from app.models.contracts import EvaluateRequest, GeminiAlignmentResponse, TTSRequest, AssistantRequest, AssistantResponse, ProductSuggestion
 from app.routers.breathwork import router as breathwork_router
 from app.services.evaluator import AlignmentEvaluator
 from app.services.assistant import AssistantService
@@ -149,10 +149,8 @@ def assistant_message(req: AssistantRequest) -> dict[str, str]:
     # Convert pydantic messages to dict format for the service
     history = [{"role": msg.role, "content": msg.content} for msg in req.messages]
 
-    # Generate response
-    reply = assistant_service.generate_response(user_message=req.message, conversation_history=history)
-
-    return {"reply": reply}
+    # Generate response (returns AssistantResponse with reply + optional suggestion)
+    return assistant_service.generate_response(user_message=req.message, conversation_history=history)
 
 
 @app.post("/api/tts")

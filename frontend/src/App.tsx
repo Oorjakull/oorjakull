@@ -1077,6 +1077,15 @@ export default function App() {
           onToggle={chatStore.toggleChat}
           onSendMessage={chatStore.addUserMessage}
           onBotReply={(text) => chatStore.addBotMessage(text, false)}
+          onBotSuggestion={(suggestion) => chatStore.addSuggestionMessage(suggestion)}
+          onNavigate={(type, id) => {
+            if (type === 'breathwork') {
+              handleSectionChange('breathwork')
+            } else if (type === 'pose') {
+              handleSelectPose(id)
+            }
+            chatStore.setChatOpen(false)
+          }}
           userName={userName}
           baseUrl={baseUrl}
         />

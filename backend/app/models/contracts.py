@@ -99,6 +99,15 @@ class AssistantRequest(BaseModel):
     messages: list[AssistantMessage] = Field(default_factory=list, max_length=20)
 
 
+class ProductSuggestion(BaseModel):
+    """An optional product cross-sell surfaced by Madhu alongside a reply."""
+    type: Literal["breathwork", "pose"]
+    id: str = Field(min_length=1, max_length=120)
+    label: str = Field(min_length=1, max_length=120)
+    reason: str = Field(min_length=1, max_length=300)
+
+
 class AssistantResponse(BaseModel):
     """Response body from the assistant endpoint."""
     reply: str
+    suggestion: ProductSuggestion | None = None

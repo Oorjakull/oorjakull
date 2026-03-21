@@ -119,6 +119,8 @@ interface ChatBotProps {
   onToggle: () => void
   onSendMessage: (text: string) => void
   onBotReply: (text: string) => void
+  onBotSuggestion?: (suggestion: ProductSuggestion) => void
+  onNavigate?: (type: 'breathwork' | 'pose', id: string) => void
   userName: string
   baseUrl: string
 }
@@ -130,6 +132,8 @@ export default function ChatBot({
   onToggle,
   onSendMessage,
   onBotReply,
+  onBotSuggestion,
+  onNavigate,
   baseUrl,
 }: ChatBotProps) {
   const [input, setInput] = useState('')
@@ -161,12 +165,15 @@ export default function ChatBot({
 
     try {
       // Call backend assistant endpoint
-      const reply = await callAssistant({
+      const result = await callAssistant({
         baseUrl,
         message: text,
         messages: history,
       })
-      onBotReply(reply)
+      onBotReply(result.reply)
+      if (result.suggestion && onBotSuggestion) {
+        onBotSuggestion(result.suggestion)
+      }
     } catch (error) {
       console.error('Assistant error:', error)
       onBotReply("I'm having a moment of stillness — please try again shortly.")
@@ -238,6 +245,9 @@ export default function ChatBot({
                     )}
                     {msg.type === 'session-summary' && msg.sessionSummary && (
                       <SessionSummaryCard summary={msg.sessionSummary} />
+                    )}
+                    {msg.type === 'product-suggestion' && msg.suggestion && (
+                      <ProductSuggestionCard suggestion={msg.suggestion} onNavigate={onNavigate} />
                     )}
                   </div>
                 </div>
