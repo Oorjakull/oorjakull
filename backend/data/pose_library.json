@@ -1,0 +1,2971 @@
+[
+  {
+    "pose_id": "pranamasana",
+    "name_en": "Prayer Pose",
+    "name_sa": "Pranamasana",
+    "difficulty": "beginner",
+    "category": "standing",
+    "summary": "Centering standing pose with feet together and palms together at heart to begin practice.",
+    "hold_seconds": 10,
+    "inhale_cue": "Lengthen spine",
+    "exhale_cue": "Soften roll shoulders and relax",
+    "alignment_cues": [
+      "Feet grounded",
+      "Palms at heart",
+      "Chin neutral",
+      "Core gently active"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Collapsed chest",
+        "correction": "Lift sternum"
+      },
+      {
+        "mistake": "Locked knees",
+        "correction": "Micro-bend knees"
+      }
+    ],
+    "modifications": [
+      "Hands at chest lower",
+      "Back to wall support"
+    ],
+    "contraindications": [
+      "Shoulder pain modify arm position",
+      "Balance issues use wall"
+    ],
+    "avoid_conditions": [
+      "Back injury",
+      "shoulder injury"
+    ],
+    "benefits": [
+      "Focus",
+      "Posture awareness",
+      "Calm start"
+    ],
+    "voice_script_short": "Grounding  both feet and breathe steadily.",
+    "transition_in_ids": [
+      "mountain_pose"
+    ],
+    "transition_out_ids": [
+      "hasta_uttanasana"
+    ],
+    "flow_name": "Standing Flow",
+    "power_yoga": false
+  },
+  {
+    "pose_id": "hasta_uttanasana",
+    "name_en": "Raised Arms Pose",
+    "name_sa": "Hasta Uttanasana",
+    "difficulty": "beginner",
+    "category": "standing",
+    "summary": "Gentle standing upper back extension with arms overhead.",
+    "hold_seconds": 10,
+    "inhale_cue": "Lift both arms overhead",
+    "exhale_cue": "Draw ribs softly in",
+    "alignment_cues": [
+      "Lift arms shoulder-width",
+      "Backbend from from upper back",
+      "elongate spine",
+      "Look up"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Overarching low back",
+        "correction": "Engage core"
+      },
+      {
+        "mistake": "Shrugged shoulders",
+        "correction": "Soften traps"
+      }
+    ],
+    "modifications": [
+      "Hands on hips backbend",
+      "Arms cactus instead overhead"
+    ],
+    "contraindications": [
+      "Low back pain keep neutral spine",
+      "Shoulder impingement lower arms"
+    ],
+    "avoid_conditions": [
+      "High BP",
+      "Back",
+      "hip",
+      "neck injury",
+      "pregnant women",
+      "vertigo"
+    ],
+    "benefits": [
+      "Chest opening",
+      "Improved backbend",
+      "Breath expansion"
+    ],
+    "voice_script_short": "while reaching up lengthen spine instead of collapsing backward.",
+    "transition_in_ids": [
+      "pranamasana"
+    ],
+    "transition_out_ids": [
+      "padasthastasana"
+    ],
+    "flow_name": "Standing Flow",
+    "power_yoga": true
+  },
+  {
+    "pose_id": "padahastasana",
+    "name_en": "Standing Forward Fold",
+    "name_sa": "Padahastasana",
+    "difficulty": "beginner",
+    "category": "standing",
+    "summary": "Forward fold to lengthen posterior chain and calm the nervous system.",
+    "hold_seconds": 10,
+    "inhale_cue": "Lengthen spine halfway first",
+    "exhale_cue": "Fold from hips and relax neck",
+    "alignment_cues": [
+      "Hinge at hips",
+      "Weight mid-foot",
+      "Bend knees if needed",
+      "Neck relaxed"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "move forward and down from lower back",
+        "correction": "Hinge from hips"
+      },
+      {
+        "mistake": "Locked knees",
+        "correction": "Micro-bend"
+      }
+    ],
+    "modifications": [
+      "Hands on blocks",
+      "Bend knees generously"
+    ],
+    "contraindications": [
+      "Hamstring strain bend knees",
+      "Vertigo come up slowly"
+    ],
+    "avoid_conditions": [
+      "High BP",
+      "Vertigo",
+      "Heart condition",
+      "pregnant women",
+      "Back injury"
+    ],
+    "benefits": [
+      "Hamstring mobility",
+      "Calming effect",
+      "Back body release"
+    ],
+    "voice_script_short": "Bend your knees as needed and let the head hang lightly.",
+    "transition_in_ids": [
+      "hasta_uttanasana"
+    ],
+    "transition_out_ids": [
+      "ashwa_sanchalanasana/padasthanasana"
+    ],
+    "flow_name": "Standing Flow",
+    "power_yoga": true
+  },
+  {
+    "pose_id": "malasana",
+    "name_en": "Garland pose",
+    "name_sa": "malasana",
+    "difficulty": "beginner",
+    "category": "hip openner",
+    "summary": "Deep squat (Indian squat), stretches groin and back, strengthens hips.",
+    "hold_seconds": 20,
+    "inhale_cue": "feet shoulder width apart",
+    "exhale_cue": "sit down in deep squat",
+    "alignment_cues": [
+      "Back straight",
+      "Weight on the feet",
+      "palms in namaskar mudra",
+      "push inner thighs out with elbows to open chest"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Shrinking chest",
+        "correction": "push inner thigh with elbow"
+      },
+      {
+        "mistake": "falling on hips",
+        "correction": "sit on block or cushion"
+      }
+    ],
+    "modifications": [
+      "Sit on blocks or cushion",
+      "Hands on the knees"
+    ],
+    "contraindications": [
+      "knee pain sitting on low chair",
+      "Hip injury come up slowly"
+    ],
+    "avoid_conditions": [
+      "hip",
+      "knee",
+      "back injury",
+      "ankle injury"
+    ],
+    "benefits": [
+      "strengthens the pelvic floor",
+      "streches lower back and hip and ankles"
+    ],
+    "voice_script_short": "go down and sit in deep squat and open chest by pushing inner thighs outward.",
+    "transition_in_ids": [
+      "padahastasana"
+    ],
+    "transition_out_ids": [
+      "Plank pose"
+    ],
+    "flow_name": "Hip Opening Flow",
+    "power_yoga": false
+  },
+  {
+    "pose_id": "ashwa_sanchalanasana",
+    "name_en": "Equestrian Lunge",
+    "name_sa": "Ashwa Sanchalanasana",
+    "difficulty": "beginner",
+    "category": "kneeling",
+    "summary": "Low lunge opening hip flexors while building balance.",
+    "hold_seconds": 10,
+    "inhale_cue": "Lift chest forward",
+    "exhale_cue": "Sink hips gently down",
+    "alignment_cues": [
+      "Front knee over ankle",
+      "Back leg long",
+      "Knee down",
+      "Palms beside front foot",
+      "Chest open",
+      "Gaze forward"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Front knee past toes",
+        "correction": "Stack over ankle"
+      },
+      {
+        "mistake": "Collapsed chest",
+        "correction": "Lift sternum"
+      }
+    ],
+    "modifications": [
+      "Back knee down with cushion",
+      "Hands on blocks"
+    ],
+    "contraindications": [
+      "Knee sensitivity pad under knee",
+      "Hip pain reduce depth"
+    ],
+    "avoid_conditions": [
+      "hip",
+      "knee",
+      "back injury",
+      "pregnant women"
+    ],
+    "benefits": [
+      "Hip flexor stretch",
+      "Leg strength",
+      "Spinal extension"
+    ],
+    "voice_script_short": "Keep front knee stacked over ankle and breathe into the hips.",
+    "transition_in_ids": [
+      "malasana"
+    ],
+    "transition_out_ids": [
+      "plank_pose"
+    ],
+    "flow_name": "Hip Opening Flow",
+    "power_yoga": false
+  },
+  {
+    "pose_id": "plank_pose",
+    "name_en": "Plank",
+    "name_sa": "Phalakasana",
+    "difficulty": "beginner",
+    "category": "prone",
+    "summary": "Foundational core and shoulder strength pose in a straight line.",
+    "hold_seconds": 10,
+    "inhale_cue": "Expand upper back",
+    "exhale_cue": "Press floor away",
+    "alignment_cues": [
+      "Shoulders over wrists",
+      "Heels back",
+      "Core braced",
+      "Neck neutral"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Sagging hips",
+        "correction": "Lift core"
+      },
+      {
+        "mistake": "Hips too high",
+        "correction": "Align body line"
+      }
+    ],
+    "modifications": [
+      "Knees-down plank",
+      "Hands elevated on bench"
+    ],
+    "contraindications": [
+      "Wrist pain use fists/blocks",
+      "Shoulder pain shorten hold"
+    ],
+    "avoid_conditions": [
+      "High BP",
+      "Pregnant wome",
+      "wrist",
+      "back injury",
+      "hernia"
+    ],
+    "benefits": [
+      "Core strength",
+      "Arm stability",
+      "Posture support"
+    ],
+    "voice_script_short": "Create one long line from head to heels.",
+    "transition_in_ids": [
+      "ashwa_sanchalanasana"
+    ],
+    "transition_out_ids": [
+      "down_dog"
+    ],
+    "flow_name": "Core strengthening Flow",
+    "power_yoga": true
+  },
+  {
+    "pose_id": "down_dog",
+    "name_en": "Downward Facing Dog",
+    "name_sa": "Adho Mukha Svanasana",
+    "difficulty": "beginner",
+    "category": "standing",
+    "summary": "Inverted V pose for full-body length and shoulder stability.",
+    "hold_seconds": 20,
+    "inhale_cue": "Lengthen spine forward",
+    "exhale_cue": "Press heels toward floor",
+    "alignment_cues": [
+      "Hands shoulder-width",
+      "Hips high",
+      "Spine long",
+      "Knees bend if tight"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Rounded back",
+        "correction": "Bend knees and lengthen"
+      },
+      {
+        "mistake": "Weight in wrists",
+        "correction": "Push hips back"
+      }
+    ],
+    "modifications": [
+      "Hands on wall/table dog",
+      "Knees bent deeply"
+    ],
+    "contraindications": [
+      "Wrist issues use wedges",
+      "High BP enter slowly"
+    ],
+    "avoid_conditions": [
+      "High BP",
+      "Vertigo",
+      "shoulder or Back or wrist Injuries"
+    ],
+    "benefits": [
+      "Posterior chain stretch",
+      "Shoulder strength",
+      "Circulation"
+    ],
+    "voice_script_short": "Bend your knees to keep the spine long.",
+    "transition_in_ids": [
+      "plank_pose"
+    ],
+    "transition_out_ids": [
+      "mountain_pose"
+    ],
+    "flow_name": "Forward ben Flow",
+    "power_yoga": false
+  },
+  {
+    "pose_id": "mountain_pose",
+    "name_en": "Mountain Pose",
+    "name_sa": "Tadasana",
+    "difficulty": "beginner",
+    "category": "standing",
+    "summary": "Neutral standing posture used as baseline for alignment and breath.",
+    "hold_seconds": 20,
+    "inhale_cue": "Grow tall through crown",
+    "exhale_cue": "Root through all four corners of feet",
+    "alignment_cues": [
+      "Feet hip-width or together",
+      "Pelvis neutral",
+      "Ribs stacked",
+      "Shoulders relaxed"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Locked knees",
+        "correction": "Micro-bend"
+      },
+      {
+        "mistake": "Forward head",
+        "correction": "Chin slightly back"
+      }
+    ],
+    "modifications": [
+      "Back against wall",
+      "Hands on hips for awareness"
+    ],
+    "contraindications": [
+      "Balance issues near wall"
+    ],
+    "avoid_conditions": [
+      "Low BP",
+      "Vertigo"
+    ],
+    "benefits": [
+      "Postural alignment",
+      "Grounding",
+      "Breath awareness"
+    ],
+    "voice_script_short": "Stand tall, steady, and effortless.",
+    "transition_in_ids": [
+      "down_dog"
+    ],
+    "transition_out_ids": [
+      "warrior_ii"
+    ],
+    "flow_name": "Standing Flow",
+    "power_yoga": false
+  },
+  {
+    "pose_id": "warrior_ii",
+    "name_en": "Warrior II",
+    "name_sa": "Virabhadrasana II",
+    "difficulty": "beginner",
+    "category": "standing",
+    "summary": "Strong lateral stance building leg endurance and focus.",
+    "hold_seconds": 10,
+    "inhale_cue": "Lift through spine",
+    "exhale_cue": "Bend front knee over ankle",
+    "alignment_cues": [
+      "Front thigh toward parallel",
+      "Back foot 90 degree of Front leg",
+      "Arms at shoulder level",
+      "Engage core",
+      "Gaze over front hand"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Front knee collapsing inward",
+        "correction": "Track over toes"
+      },
+      {
+        "mistake": "Leaning forward",
+        "correction": "Stack torso"
+      }
+    ],
+    "modifications": [
+      "Shorten stance",
+      "Forearm-on-thigh variation"
+    ],
+    "contraindications": [
+      "Knee pain reduce bend",
+      "Hip pain shorten stance"
+    ],
+    "avoid_conditions": [
+      "Knee injury",
+      "Hip injury",
+      "Back injury",
+      "High BP",
+      "Heart condition"
+    ],
+    "benefits": [
+      "Leg strength",
+      "Hip opening",
+      "Concentration"
+    ],
+    "voice_script_short": "Press both feet down and widen across the collarbones.",
+    "transition_in_ids": [
+      "mountain_pose"
+    ],
+    "transition_out_ids": [
+      "trikonasana"
+    ],
+    "flow_name": "Standing Flow",
+    "power_yoga": true
+  },
+  {
+    "pose_id": "bhujangasana",
+    "name_en": "Cobra Pose",
+    "name_sa": "Bhujangasana",
+    "difficulty": "beginner",
+    "category": "back bend",
+    "summary": "Gentle backbend strengthening upper back and opening chest.",
+    "hold_seconds": 10,
+    "inhale_cue": "Lengthen chest forward",
+    "exhale_cue": "Keep pelvis rooted",
+    "alignment_cues": [
+      "Elbows close",
+      "Shoulders rolled back and down",
+      "Pubic bone grounded",
+      "Neck long",
+      "feet together"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Overusing arms",
+        "correction": "Lift partly with back muscles"
+      },
+      {
+        "mistake": "Shoulders near ears",
+        "correction": "Draw down"
+      }
+    ],
+    "modifications": [
+      "Baby cobra low lift",
+      "Forehead on block between reps"
+    ],
+    "contraindications": [
+      "Acute low back pain keep very low",
+      "Pregnancy avoid strong prone backbends"
+    ],
+    "avoid_conditions": [
+      "Pregnant Women",
+      "Back injury"
+    ],
+    "benefits": [
+      "Spinal extension",
+      "Chest opening",
+      "Back strength"
+    ],
+    "voice_script_short": "Lift the heart forward, not just up.",
+    "transition_in_ids": [
+      "makarasana"
+    ],
+    "transition_out_ids": [
+      "down_dog"
+    ],
+    "flow_name": "Back bend flow",
+    "power_yoga": true
+  },
+  {
+    "pose_id": "utkatasana",
+    "name_en": "Chair Pose",
+    "name_sa": "Utkatasana",
+    "difficulty": "beginner",
+    "category": "standing",
+    "summary": "Raising arms above head and squat-like standing pose for legs and core.",
+    "hold_seconds": 20,
+    "inhale_cue": "Reach arms up",
+    "exhale_cue": "Sit hips back",
+    "alignment_cues": [
+      "Knees track toes",
+      "Weight in heels-midfoot",
+      "hip lower back and down",
+      "Spine long",
+      "Ribs contained"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Knees collapsing inward",
+        "correction": "Press outer hips"
+      },
+      {
+        "mistake": "Arched low back",
+        "correction": "Draw ribs in"
+      }
+    ],
+    "modifications": [
+      "Hands at heart",
+      "Sit to wall behind"
+    ],
+    "contraindications": [
+      "Knee pain reduce depth"
+    ],
+    "avoid_conditions": [
+      "Knee injury",
+      "pregnant women",
+      "Low BP",
+      "ankle injury"
+    ],
+    "benefits": [
+      "Leg endurance",
+      "Core activation",
+      "Strenghening upper back"
+    ],
+    "voice_script_short": "Sit back as if into a chair, chest lifted.",
+    "transition_in_ids": [
+      "mountain_pose"
+    ],
+    "transition_out_ids": [
+      "virabhadrasana_i"
+    ],
+    "flow_name": "Core strengthening Flow",
+    "power_yoga": true
+  },
+  {
+    "pose_id": "virabhadrasana_i",
+    "name_en": "Warrior I",
+    "name_sa": "Virabhadrasana I",
+    "difficulty": "beginner",
+    "category": "standing",
+    "summary": "Lunge with hands overhead reach to build strength and stability.",
+    "hold_seconds": 10,
+    "inhale_cue": "Lift arms and chest",
+    "exhale_cue": "Ground outer back feet",
+    "alignment_cues": [
+      "Front knee over ankle",
+      "Hips square-ish forward",
+      "Back leg strong",
+      "Arms active"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Overarched back",
+        "correction": "Engage core"
+      },
+      {
+        "mistake": "Front knee drifting inward",
+        "correction": "Track forward"
+      }
+    ],
+    "modifications": [
+      "Hands on hips",
+      "Shorter stance"
+    ],
+    "contraindications": [
+      "Hip/lower-back sensitivity shorten stance"
+    ],
+    "avoid_conditions": [
+      "Knee injury",
+      "Hip injury",
+      "Back injury",
+      "High BP"
+    ],
+    "benefits": [
+      "Leg strength",
+      "Hip flexor opening",
+      "Focus"
+    ],
+    "voice_script_short": "Anchor your back foot and rise through the fingertips.",
+    "transition_in_ids": [
+      "utkatasana"
+    ],
+    "transition_out_ids": [
+      "warrior_ii"
+    ],
+    "flow_name": "Standing Flow",
+    "power_yoga": true
+  },
+  {
+    "pose_id": "trikonasana",
+    "name_en": "Triangle Pose",
+    "name_sa": "Trikonasana",
+    "difficulty": "beginner",
+    "category": "standing",
+    "summary": "Lateral extension pose improving hamstring and side-body mobility.",
+    "hold_seconds": 10,
+    "inhale_cue": "Lengthen side part of body first",
+    "exhale_cue": "Rotate chest open",
+    "alignment_cues": [
+      "Front leg straight but soft",
+      "Bottom hand light",
+      "Top arm vertical",
+      "Neck neutral"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Collapsing on bottom hand",
+        "correction": "Use block"
+      },
+      {
+        "mistake": "Locked front knee",
+        "correction": "Micro-bend"
+      }
+    ],
+    "modifications": [
+      "Hand on shin/block/on mat",
+      "Shorter stance"
+    ],
+    "contraindications": [
+      "Hamstring strain micro-bend knee",
+      "Neck issues look down"
+    ],
+    "avoid_conditions": [
+      "Pregnant Women",
+      "knee injury"
+    ],
+    "benefits": [
+      "Lateral mobility",
+      "Hamstring stretch",
+      "Balance"
+    ],
+    "voice_script_short": "Reach long before lowering your hand.",
+    "transition_in_ids": [
+      "warrior_ii"
+    ],
+    "transition_out_ids": [
+      "utthita_parsvakonasana_beginner"
+    ],
+    "flow_name": "Standing Flow",
+    "power_yoga": true
+  },
+  {
+    "pose_id": "utthita_parsvakonasana_beginner",
+    "name_en": "Extended Side Angle (Beginner)",
+    "name_sa": "Utthita Parsvakonasana",
+    "difficulty": "beginner",
+    "category": "standing",
+    "summary": "Side-body opening from a lunge with forearm support.",
+    "hold_seconds": 10,
+    "inhale_cue": "Lengthen top arm overhead",
+    "exhale_cue": "Exhale and root feet",
+    "alignment_cues": [
+      "Front knee over ankle",
+      "Forearm on thigh",
+      "Back leg strong and straight",
+      "Top ribs rotate open"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Front knee collapsing inward",
+        "correction": "Track over toes"
+      },
+      {
+        "mistake": "Top shoulder rolling forward",
+        "correction": "Open chest"
+      }
+    ],
+    "modifications": [
+      "Forearm stays on thigh",
+      "Top hand over head"
+    ],
+    "contraindications": [
+      "Knee pain reduce depth",
+      "Shoulder pain keep hand on hip"
+    ],
+    "avoid_conditions": [
+      "Knee injury",
+      "hip injury",
+      "vertigo",
+      "abdominal surgery"
+    ],
+    "benefits": [
+      "Hip opening",
+      "Side-body stretch",
+      "Leg strength"
+    ],
+    "voice_script_short": "Press forearm gently into thigh and reach long through top side.",
+    "transition_in_ids": [
+      "warrior_ii"
+    ],
+    "transition_out_ids": [
+      "trikonasana"
+    ],
+    "flow_name": "Standing Flow",
+    "power_yoga": true
+  },
+  {
+    "pose_id": "prasarita_padottanasana",
+    "name_en": "Wide-Leg Forward Fold",
+    "name_sa": "Prasarita Padottanasana",
+    "difficulty": "beginner",
+    "category": "forward bend",
+    "summary": "Wide stance forward fold for hamstrings and inner thighs.",
+    "hold_seconds": 10,
+    "inhale_cue": "Lift halfway to lengthen",
+    "exhale_cue": "Fold and soften jaw",
+    "alignment_cues": [
+      "Feet parallel more than should width apart",
+      "Weight balanced",
+      "Spine long",
+      "Crown toward floor",
+      "palms holding toe or on mat"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Weight too far heels",
+        "correction": "Shift to midfoot"
+      },
+      {
+        "mistake": "Rounded spine",
+        "correction": "Use blocks"
+      }
+    ],
+    "modifications": [
+      "Hands on blocks",
+      "Halfway fold only"
+    ],
+    "contraindications": [
+      "Hamstring strain bend knees"
+    ],
+    "avoid_conditions": [
+      "Knee injury",
+      "Hip injury",
+      "Back injury",
+      "Ankle injury",
+      "pregnant women",
+      "during menstruation"
+    ],
+    "benefits": [
+      "Adductor stretch",
+      "Calming inversion",
+      "Spine decompression"
+    ],
+    "voice_script_short": "Keep weight even across both feet.",
+    "transition_in_ids": [
+      "utthita_parsvakonasana_beginner"
+    ],
+    "transition_out_ids": [
+      "ardha_uttanasana"
+    ],
+    "flow_name": "Forward bend Flow",
+    "power_yoga": false
+  },
+  {
+    "pose_id": "ardha_uttanasana",
+    "name_en": "Half Lift",
+    "name_sa": "Ardha Uttanasana",
+    "difficulty": "beginner",
+    "category": "forward bend",
+    "summary": "Halfway lift to reset spinal length between folds.",
+    "hold_seconds": 15,
+    "inhale_cue": "Draw chest forward",
+    "exhale_cue": "Lengthen tailbone back",
+    "alignment_cues": [
+      "Flat back",
+      "Hands on shins/thighs/on mat",
+      "Neck in line",
+      "Knees soft"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Rounded upper back",
+        "correction": "Lift sternum"
+      },
+      {
+        "mistake": "Hyperextended knees",
+        "correction": "Soften"
+      }
+    ],
+    "modifications": [
+      "Hands on blocks",
+      "Hands higher on thighs"
+    ],
+    "contraindications": [
+      "Low back pain keep hands high"
+    ],
+    "avoid_conditions": [
+      "pregnant women"
+    ],
+    "benefits": [
+      "Spine awareness",
+      "Hamstring prep",
+      "Transition control"
+    ],
+    "voice_script_short": "Find a tabletop spine and breathe into your back body.",
+    "transition_in_ids": [
+      "uttanasana"
+    ],
+    "transition_out_ids": [
+      "utkatasana"
+    ],
+    "flow_name": "Forward bend Flow",
+    "power_yoga": false
+  },
+  {
+    "pose_id": "uttanasana",
+    "name_en": "Forward Fold",
+    "name_sa": "Uttanasana",
+    "difficulty": "beginner",
+    "category": "forward bend",
+    "summary": "Classic standing fold for posterior release and quiet focus.",
+    "hold_seconds": 10,
+    "inhale_cue": "Lengthen first",
+    "exhale_cue": "Fold and release crown",
+    "alignment_cues": [
+      "Hinge at hips",
+      "Knees can bend",
+      "Weight centered",
+      "Shoulders soft"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Pulling into pain",
+        "correction": "Bend knees"
+      },
+      {
+        "mistake": "Weight in heels only",
+        "correction": "Shift center"
+      }
+    ],
+    "modifications": [
+      "Hands on blocks",
+      "Ragdoll hold"
+    ],
+    "contraindications": [
+      "Disc issues move gently and avoid forcing"
+    ],
+    "avoid_conditions": [
+      "Back injury",
+      "pregnant women",
+      "high BP",
+      "vertigo"
+    ],
+    "benefits": [
+      "Hamstring release",
+      "Nervous system downshift",
+      "Back relief"
+    ],
+    "voice_script_short": "Let the fold be soft and spacious, not forced.",
+    "transition_in_ids": [
+      "ardha_uttanasana"
+    ],
+    "transition_out_ids": [
+      "parsvottanasana_short_stance"
+    ],
+    "flow_name": "Forward bend Flow",
+    "power_yoga": true
+  },
+  {
+    "pose_id": "parsvottanasana_short_stance",
+    "name_en": "Pyramid Pose (Short Stance)",
+    "name_sa": "Parsvottanasana",
+    "difficulty": "beginner",
+    "category": "standing",
+    "summary": "Hamstring-focused fold with controlled shorter stance.",
+    "hold_seconds": 10,
+    "inhale_cue": "Lift spine long",
+    "exhale_cue": "Fold over front leg",
+    "alignment_cues": [
+      "Hips square forward",
+      "Front leg soft and straight",
+      "Back heel grounded",
+      "Spine long"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Twisted hips",
+        "correction": "Narrow stance slightly"
+      },
+      {
+        "mistake": "Rounded back",
+        "correction": "Use blocks"
+      }
+    ],
+    "modifications": [
+      "Hands on blocks",
+      "Very short stance"
+    ],
+    "contraindications": [
+      "Hamstring strain micro-bend knee"
+    ],
+    "avoid_conditions": [
+      "Back injury",
+      "pregnant women",
+      "high BP",
+      "vertigo"
+    ],
+    "benefits": [
+      "Hamstring mobility",
+      "Balance",
+      "Hip stability"
+    ],
+    "voice_script_short": "Square your hips and fold with length.",
+    "transition_in_ids": [
+      "uttanasana"
+    ],
+    "transition_out_ids": [
+      "vrksasana_low_foot"
+    ],
+    "flow_name": "Standing Flow",
+    "power_yoga": false
+  },
+  {
+    "pose_id": "vrksasana_low_foot",
+    "name_en": "Tree Pose (Low Foot)",
+    "name_sa": "Vrksasana",
+    "difficulty": "beginner",
+    "category": "balance",
+    "summary": "Single-leg balance with foot at ankle/calf (not knee).",
+    "hold_seconds": 15,
+    "inhale_cue": "Grow tall through crown",
+    "exhale_cue": "Root standing foot down",
+    "alignment_cues": [
+      "Foot to ankle/calf",
+      "Hips level",
+      "Hands at heart",
+      "Soft gaze point"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Foot pressing knee joint",
+        "correction": "Move to calf/ankle"
+      },
+      {
+        "mistake": "Locked standing knee",
+        "correction": "Soften"
+      }
+    ],
+    "modifications": [
+      "Toes on floor kickstand",
+      "Wall support"
+    ],
+    "contraindications": [
+      "Balance issues stay near wall"
+    ],
+    "avoid_conditions": [
+      "knee injury",
+      "hip injury",
+      "ankle injury",
+      "high BP"
+    ],
+    "benefits": [
+      "Balance",
+      "Focus",
+      "Ankle stability"
+    ],
+    "voice_script_short": "Steady your gaze and breathe slow to find balance.",
+    "transition_in_ids": [
+      "mountain_pose"
+    ],
+    "transition_out_ids": [
+      "garudasana_arms"
+    ],
+    "flow_name": "Balancing flow",
+    "power_yoga": false
+  },
+  {
+    "pose_id": "garudasana_arms",
+    "name_en": "Eagle Arms",
+    "name_sa": "Garudasana Arms",
+    "difficulty": "beginner",
+    "category": "seated",
+    "summary": "Shoulder and upper-back opening arm bind done seated or standing.",
+    "hold_seconds": 20,
+    "inhale_cue": "Lift elbows slightly",
+    "exhale_cue": "Soften shoulders away from ears",
+    "alignment_cues": [
+      "crossing elbows",
+      "wrapping forearms vertically",
+      "Shoulders relaxed",
+      "Neck neutral"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Elbows too low",
+        "correction": "Lift to shoulder height"
+      },
+      {
+        "mistake": "Shoulders tense",
+        "correction": "Relax"
+      }
+    ],
+    "modifications": [
+      "Hug shoulders instead of full bind",
+      "Use strap between hands"
+    ],
+    "contraindications": [
+      "Shoulder injury keep simple self-hug"
+    ],
+    "avoid_conditions": [
+      "back injury"
+    ],
+    "benefits": [
+      "Upper-back stretch",
+      "Shoulder mobility",
+      "Posture"
+    ],
+    "voice_script_short": "Wrap and lift the elbows, then soften your breath.",
+    "transition_in_ids": [
+      "sukhasana"
+    ],
+    "transition_out_ids": [
+      "bharadvajasana_twist"
+    ],
+    "flow_name": "seated flow",
+    "power_yoga": false
+  },
+  {
+    "pose_id": "sukhasana",
+    "name_en": "Easy Seat",
+    "name_sa": "Sukhasana",
+    "difficulty": "beginner",
+    "category": "seated",
+    "summary": "Comfortable cross-legged seat for breath and grounding.",
+    "hold_seconds": 10,
+    "inhale_cue": "Lengthen through crown",
+    "exhale_cue": "Relax jaw and shoulders",
+    "alignment_cues": [
+      "Sit on height",
+      "Knees supported",
+      "Neutral pelvis",
+      "Hands relaxed"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Rounded low back",
+        "correction": "Sit on blanket"
+      },
+      {
+        "mistake": "Knees floating high",
+        "correction": "Support with blocks"
+      }
+    ],
+    "modifications": [
+      "Sit on chair",
+      "Back to wall"
+    ],
+    "contraindications": [
+      "Knee/hip discomfort elevate seat"
+    ],
+    "avoid_conditions": [
+      "hip injury",
+      "knee injury"
+    ],
+    "benefits": [
+      "Calm focus",
+      "Meditation prep",
+      "Hip ease"
+    ],
+    "voice_script_short": "Find a comfortable seat where breath feels effortless.",
+    "transition_in_ids": [
+      "garudasana_arms"
+    ],
+    "transition_out_ids": [
+      "baddha_konasana"
+    ],
+    "flow_name": "seated flow",
+    "power_yoga": false
+  },
+  {
+    "pose_id": "baddha_konasana",
+    "name_en": "Butterfly Pose",
+    "name_sa": "Baddha Konasana",
+    "difficulty": "beginner",
+    "category": "seated",
+    "summary": "Seated hip opener with soles of feet together.",
+    "hold_seconds": 10,
+    "inhale_cue": "Lift chest up",
+    "exhale_cue": "Soften knees toward floor",
+    "alignment_cues": [
+      "Spine tall",
+      "Feet together",
+      "Knees supported if needed",
+      "Shoulders soft"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Rounded back",
+        "correction": "Sit on blanket"
+      },
+      {
+        "mistake": "Forcing knees down",
+        "correction": "Relax effort"
+      }
+    ],
+    "modifications": [
+      "Blocks under knees",
+      "Feet farther from pelvis"
+    ],
+    "contraindications": [
+      "Groin/knee pain reduce range"
+    ],
+    "avoid_conditions": [
+      "hip injury",
+      "knee injury",
+      "ankle injury"
+    ],
+    "benefits": [
+      "Inner thigh opening",
+      "Pelvic mobility",
+      "Calming"
+    ],
+    "voice_script_short": "Sit tall and let the hips open gradually.",
+    "transition_in_ids": [
+      "sukhasana"
+    ],
+    "transition_out_ids": [
+      "janu_sirsasana_left"
+    ],
+    "flow_name": "seated flow",
+    "power_yoga": false
+  },
+  {
+    "pose_id": "janu_sirsasana_left",
+    "name_en": "Head-to-Knee Pose (Left)",
+    "name_sa": "Janu Sirsasana",
+    "difficulty": "beginner",
+    "category": "seated",
+    "summary": "Asymmetrical seated fold over left leg.",
+    "hold_seconds": 10,
+    "inhale_cue": "Inhale lengthen spine",
+    "exhale_cue": "Exhale fold from hips",
+    "alignment_cues": [
+      "Left leg long",
+      "Right sole to inner thigh",
+      "Spine long",
+      "Shoulders level",
+      "back straight"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Rounding to reach foot",
+        "correction": "Use strap"
+      },
+      {
+        "mistake": "Bent extended knee lock",
+        "correction": "Micro-bend"
+      }
+    ],
+    "modifications": [
+      "Strap on left foot",
+      "Sit on blanket"
+    ],
+    "contraindications": [
+      "Hamstring issues keep bend in extended knee"
+    ],
+    "avoid_conditions": [
+      "hip injury",
+      "knee injury",
+      "pregnant women",
+      "asthma"
+    ],
+    "benefits": [
+      "Hamstring stretch",
+      "Back line release",
+      "Focus"
+    ],
+    "voice_script_short": "Lengthen first, then fold only as far as breath stays smooth.",
+    "transition_in_ids": [
+      "baddha_konasana"
+    ],
+    "transition_out_ids": [
+      "janu_sirsasana_right"
+    ],
+    "flow_name": "seated flow",
+    "power_yoga": false
+  },
+  {
+    "pose_id": "janu_sirsasana_right",
+    "name_en": "Head-to-Knee Pose (Right)",
+    "name_sa": "Janu Sirsasana",
+    "difficulty": "beginner",
+    "category": "seated",
+    "summary": "Asymmetrical seated fold over right leg.",
+    "hold_seconds": 10,
+    "inhale_cue": "Inhale lengthen spine",
+    "exhale_cue": "Exhale fold from hips",
+    "alignment_cues": [
+      "Right leg long",
+      "Left sole to inner thigh",
+      "Spine long",
+      "Shoulders level",
+      "back straight"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Collapsing chest",
+        "correction": "Lift sternum"
+      },
+      {
+        "mistake": "Twisted torso",
+        "correction": "Square to leg"
+      }
+    ],
+    "modifications": [
+      "Strap on right foot",
+      "Sit on blanket"
+    ],
+    "contraindications": [
+      "Hamstring issues soften knee"
+    ],
+    "avoid_conditions": [
+      "hip injury",
+      "knee injury",
+      "pregnant women",
+      "asthma"
+    ],
+    "benefits": [
+      "Hamstring stretch",
+      "Back release",
+      "Calm attention"
+    ],
+    "voice_script_short": "Keep the fold patient and even on both sides.",
+    "transition_in_ids": [
+      "janu_sirsasana_left"
+    ],
+    "transition_out_ids": [
+      "paschimottanasana"
+    ],
+    "flow_name": "seated flow",
+    "power_yoga": false
+  },
+  {
+    "pose_id": "paschimottanasana",
+    "name_en": "Seated Forward Fold",
+    "name_sa": "Paschimottanasana",
+    "difficulty": "beginner",
+    "category": "seated",
+    "summary": "Gentle seated fold prioritizing spinal length over depth without bending knees",
+    "hold_seconds": 10,
+    "inhale_cue": "Lift and lengthen spine",
+    "exhale_cue": "Fold softly over thighs",
+    "alignment_cues": [
+      "Knees straight",
+      "Spine long",
+      "Hands to shins/strap",
+      "Neck soft"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Forcing touch toes by rounding back",
+        "correction": "Keep straight back touching shin"
+      },
+      {
+        "mistake": "Rounding aggressively",
+        "correction": "Use props"
+      }
+    ],
+    "modifications": [
+      "Bolster on thighs",
+      "Strap around feet"
+    ],
+    "contraindications": [
+      "Sciatica/disc sensitivity keep mild"
+    ],
+    "avoid_conditions": [
+      "back injury",
+      "pregnant women",
+      "sciatica"
+    ],
+    "benefits": [
+      "Posterior chain release",
+      "Nervous system calm",
+      "Hamstring mobility"
+    ],
+    "voice_script_short": "straighten knees and keep your heart reaching forward.",
+    "transition_in_ids": [
+      "janu_sirsasana_right"
+    ],
+    "transition_out_ids": [
+      "upavistha_konasana_upright"
+    ],
+    "flow_name": "Forward bend Flow",
+    "power_yoga": true
+  },
+  {
+    "pose_id": "upavistha_konasana_upright",
+    "name_en": "Wide-Angle Seat (Upright)",
+    "name_sa": "Upavistha Konasana",
+    "difficulty": "beginner",
+    "category": "seated",
+    "summary": "Wide seated straddle with upright torso for safe hip opening.",
+    "hold_seconds": 10,
+    "inhale_cue": "Lift through spine",
+    "exhale_cue": "Ground thighs and soften groins",
+    "alignment_cues": [
+      "Sit tall",
+      "Feet flexed in V shape",
+      "Hands behind for support",
+      "Neutral pelvis"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Rounding low back",
+        "correction": "Sit on folded blanket"
+      },
+      {
+        "mistake": "Overstretching hamstrings",
+        "correction": "Reduce width"
+      }
+    ],
+    "modifications": [
+      "Narrower leg angle",
+      "Back against wall"
+    ],
+    "contraindications": [
+      "Hamstring/groin strain reduce range"
+    ],
+    "avoid_conditions": [
+      "Knee injury",
+      "Hip injury",
+      "Back injury",
+      "Ankle injury",
+      "pregnant women",
+      "hernia"
+    ],
+    "benefits": [
+      "Adductor mobility",
+      "Posture",
+      "Pelvic awareness"
+    ],
+    "voice_script_short": "Choose width that lets your spine stay tall.",
+    "transition_in_ids": [
+      "paschimottanasana"
+    ],
+    "transition_out_ids": [
+      "gomukhasana_arms"
+    ],
+    "flow_name": "Forward bend Flow",
+    "power_yoga": false
+  },
+  {
+    "pose_id": "gomukhasana_arms",
+    "name_en": "Cow Face Arms",
+    "name_sa": "Gomukhasana Arms",
+    "difficulty": "beginner",
+    "category": "seated",
+    "summary": "Shoulder mobility drill with one arm overhead and one behind.",
+    "hold_seconds": 20,
+    "inhale_cue": "Lift top elbow",
+    "exhale_cue": "Soften ribs and breathe",
+    "alignment_cues": [
+      "legs top of another",
+      "Top elbow points up",
+      "Bottom elbow down",
+      "Neck neutral",
+      "Ribs stacked"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Flaring ribs",
+        "correction": "Draw front ribs in"
+      },
+      {
+        "mistake": "Neck strain",
+        "correction": "Look forward"
+      }
+    ],
+    "modifications": [
+      "Use strap between hands",
+      "Practice one arm at a time"
+    ],
+    "contraindications": [
+      "Shoulder injury keep range pain-free"
+    ],
+    "avoid_conditions": [
+      "Knee injury",
+      "shoulder injury"
+    ],
+    "benefits": [
+      "Shoulder mobility",
+      "Upper-back opening",
+      "Posture"
+    ],
+    "voice_script_short": "Use a strap and focus on smooth breath over depth.",
+    "transition_in_ids": [
+      "upavistha_konasana_upright"
+    ],
+    "transition_out_ids": [
+      "bharadvajasana_twist"
+    ],
+    "flow_name": "seated flow",
+    "power_yoga": false
+  },
+  {
+    "pose_id": "dandasana",
+    "name_en": "Staff Pose",
+    "name_sa": "Dandasana",
+    "difficulty": "beginner",
+    "category": "seated",
+    "summary": "Foundational seated alignment pose.",
+    "hold_seconds": 20,
+    "inhale_cue": "Lift chest and crown",
+    "exhale_cue": "Press thighs down gently",
+    "alignment_cues": [
+      "Legs straighten and active",
+      "Feet flexed",
+      "Hands by hips or on mat",
+      "Pelvis neutral",
+      "shoulder rolled back and down"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Rounded back",
+        "correction": "Sit on blanket"
+      },
+      {
+        "mistake": "Locked knees",
+        "correction": "Soften quads"
+      }
+    ],
+    "modifications": [
+      "Knees slightly bent",
+      "Back to wall"
+    ],
+    "contraindications": [
+      "Hamstring tightness elevate hips"
+    ],
+    "avoid_conditions": [
+      "Back injury",
+      "sciatica"
+    ],
+    "benefits": [
+      "Postural strength",
+      "Core engagement",
+      "Seated alignment"
+    ],
+    "voice_script_short": "Sit tall and active, as if in mountain pose seated.",
+    "transition_in_ids": [
+      "upavistha_konasana_upright"
+    ],
+    "transition_out_ids": [
+      "vajrasana"
+    ],
+    "flow_name": "seated flow",
+    "power_yoga": false
+  },
+  {
+    "pose_id": "vajrasana",
+    "name_en": "Thunderbolt Pose",
+    "name_sa": "Vajrasana",
+    "difficulty": "beginner",
+    "category": "kneeling",
+    "summary": "Kneeling seat for breathing and digestion support.",
+    "hold_seconds": 30,
+    "inhale_cue": "Lengthen spine",
+    "exhale_cue": "Relax shoulders and jaw",
+    "alignment_cues": [
+      "Knees together or hip-width",
+      "Sit on heels or block",
+      "Pelvis neutral",
+      "Hands relaxed"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Ankle discomfort",
+        "correction": "Use blanket under ankles"
+      },
+      {
+        "mistake": "Collapsed spine",
+        "correction": "Sit higher"
+      }
+    ],
+    "modifications": [
+      "Block between heels",
+      "Rolled towel behind knees"
+    ],
+    "contraindications": [
+      "Knee injury use chair instead"
+    ],
+    "avoid_conditions": [
+      "knee injury",
+      "ankle injury",
+      "pregnant women",
+      "hernia"
+    ],
+    "benefits": [
+      "Meditative focus",
+      "Posture",
+      "Breath control"
+    ],
+    "voice_script_short": "Choose enough support so the knees feel easy.",
+    "transition_in_ids": [
+      "dandasana"
+    ],
+    "transition_out_ids": [
+      "marjaryasana_cat"
+    ],
+    "flow_name": "kneeling flow",
+    "power_yoga": false
+  },
+  {
+    "pose_id": "marjaryasana_cat",
+    "name_en": "Cat Pose",
+    "name_sa": "Marjaryasana",
+    "difficulty": "beginner",
+    "category": "kneeling",
+    "summary": "Spinal flexion movement to mobilize back and warm up.",
+    "hold_seconds": 10,
+    "inhale_cue": "Inhale to nutral",
+    "exhale_cue": "Exhale round spine",
+    "alignment_cues": [
+      "Wrists under shoulders",
+      "Knees under hips",
+      "Press floor away",
+      "Head follows spine"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Dumping into wrists",
+        "correction": "Spread fingers and press"
+      },
+      {
+        "mistake": "Neck over-flexed",
+        "correction": "Keep gentle curve"
+      }
+    ],
+    "modifications": [
+      "Forearms on blocks",
+      "Hands elevated"
+    ],
+    "contraindications": [
+      "Wrist sensitivity use fists/forearms"
+    ],
+    "avoid_conditions": [
+      "knee",
+      "back",
+      "wrist",
+      "neck injury"
+    ],
+    "benefits": [
+      "Spinal mobility",
+      "Core awareness",
+      "Warm-up"
+    ],
+    "voice_script_short": "On your exhale, dome the upper back evenly.",
+    "transition_in_ids": [
+      "vajrasana"
+    ],
+    "transition_out_ids": [
+      "bitilasana_cow"
+    ],
+    "flow_name": "kneeling flow",
+    "power_yoga": true
+  },
+  {
+    "pose_id": "bitilasana_cow",
+    "name_en": "Cow Pose",
+    "name_sa": "Bitilasana",
+    "difficulty": "beginner",
+    "category": "kneeling",
+    "summary": "Spinal extension counterpart to Cat pose.",
+    "hold_seconds": 10,
+    "inhale_cue": "Broaden collarbones",
+    "exhale_cue": "Lift chest and tail gently",
+    "alignment_cues": [
+      "Wrists under shoulders",
+      "Knees under hips",
+      "Chest forward",
+      "Neck long"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Collapsing low back",
+        "correction": "Keep core support"
+      },
+      {
+        "mistake": "Throwing head back",
+        "correction": "Gaze slightly forward"
+      }
+    ],
+    "modifications": [
+      "Forearms on blocks",
+      "Small range"
+    ],
+    "contraindications": [
+      "Neck pain keep gaze down"
+    ],
+    "avoid_conditions": [
+      "knee",
+      "back",
+      "wrist",
+      "neck injury"
+    ],
+    "benefits": [
+      "Spinal mobility",
+      "Chest opening",
+      "Breath coordination"
+    ],
+    "voice_script_short": "Move with breath, keeping the low back supported.",
+    "transition_in_ids": [
+      "marjaryasana_cat"
+    ],
+    "transition_out_ids": [
+      "thread_the_needle_left"
+    ],
+    "flow_name": "kneeling flow",
+    "power_yoga": true
+  },
+  {
+    "pose_id": "thread_the_needle_left",
+    "name_en": "Thread the Needle (Left)",
+    "name_sa": "Parsva Balasana Variation",
+    "difficulty": "beginner",
+    "category": "kneeling",
+    "summary": "Shoulder and thoracic opener threading left arm under body.",
+    "hold_seconds": 20,
+    "inhale_cue": "Lengthen right arm forward",
+    "exhale_cue": "Exhale slide left arm through",
+    "alignment_cues": [
+      "Hips over knees",
+      "Left shoulder grounded",
+      "Neck relaxed",
+      "Right hand active"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Hips drifting back",
+        "correction": "Stack hips over knees"
+      },
+      {
+        "mistake": "Neck strain",
+        "correction": "Use block"
+      }
+    ],
+    "modifications": [
+      "Head on block",
+      "Keep support hand close"
+    ],
+    "contraindications": [
+      "Shoulder injury reduce range"
+    ],
+    "avoid_conditions": [
+      "knee",
+      "back",
+      "wrist",
+      "neck injury",
+      "high BP"
+    ],
+    "benefits": [
+      "Thoracic mobility",
+      "Shoulder release",
+      "Calm"
+    ],
+    "voice_script_short": "Let the twist come from your upper back, not your low back.",
+    "transition_in_ids": [
+      "bitilasana_cow"
+    ],
+    "transition_out_ids": [
+      "thread_the_needle_right"
+    ],
+    "flow_name": "Relaxing flow",
+    "power_yoga": false
+  },
+  {
+    "pose_id": "thread_the_needle_right",
+    "name_en": "Thread the Needle (Right)",
+    "name_sa": "Parsva Balasana Variation",
+    "difficulty": "beginner",
+    "category": "kneeling",
+    "summary": "Shoulder and thoracic opener threading right arm under body.",
+    "hold_seconds": 20,
+    "inhale_cue": "Lengthen left arm forward",
+    "exhale_cue": "Exhale slide right arm through",
+    "alignment_cues": [
+      "Hips over knees",
+      "Right shoulder grounded",
+      "Neck relaxed",
+      "Left hand active"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Hips shifting back",
+        "correction": "Re-stack knees"
+      },
+      {
+        "mistake": "Shoulder jammed",
+        "correction": "Use block"
+      }
+    ],
+    "modifications": [
+      "Head on block",
+      "Less depth"
+    ],
+    "contraindications": [
+      "Shoulder pain keep mild"
+    ],
+    "avoid_conditions": [
+      "knee",
+      "back",
+      "wrist",
+      "neck injury",
+      "high BP"
+    ],
+    "benefits": [
+      "Thoracic rotation",
+      "Shoulder opening",
+      "Nervous system downshift"
+    ],
+    "voice_script_short": "Breathe into the upper back and keep hips steady.",
+    "transition_in_ids": [
+      "thread_the_needle_left"
+    ],
+    "transition_out_ids": [
+      "anjaneyasana_left"
+    ],
+    "flow_name": "Relaxing flow",
+    "power_yoga": false
+  },
+  {
+    "pose_id": "anjaneyasana_left",
+    "name_en": "Low Lunge (Left)",
+    "name_sa": "Anjaneyasana",
+    "difficulty": "beginner",
+    "category": "back bend",
+    "summary": "Kneeling lunge opening right hip flexor with left leg forward.",
+    "hold_seconds": 20,
+    "inhale_cue": "Lift chest and arms",
+    "exhale_cue": "Sink hips only to comfort",
+    "alignment_cues": [
+      "Left knee over ankle",
+      "Back knee padded",
+      "Tailbone lengthens",
+      "Core engaged",
+      "hands up and open chest"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Front knee too far forward",
+        "correction": "Stack ankle"
+      },
+      {
+        "mistake": "Low back compression",
+        "correction": "Tuck tail slightly"
+      }
+    ],
+    "modifications": [
+      "Hands on blocks",
+      "Keep torso upright"
+    ],
+    "contraindications": [
+      "Knee sensitivity use extra padding"
+    ],
+    "avoid_conditions": [
+      "knee",
+      "back",
+      "hip injury",
+      "high BP"
+    ],
+    "benefits": [
+      "Hip flexor stretch",
+      "Leg stability",
+      "Balance"
+    ],
+    "voice_script_short": "Keep front heel rooted and chest broad.",
+    "transition_in_ids": [
+      "thread_the_needle_right"
+    ],
+    "transition_out_ids": [
+      "anjaneyasana_right"
+    ],
+    "flow_name": "Back bend flow",
+    "power_yoga": true
+  },
+  {
+    "pose_id": "anjaneyasana_right",
+    "name_en": "Low Lunge (Right)",
+    "name_sa": "Anjaneyasana",
+    "difficulty": "beginner",
+    "category": "kneeling",
+    "summary": "Kneeling lunge opening left hip flexor with right leg forward.",
+    "hold_seconds": 20,
+    "inhale_cue": "Lift through sternum",
+    "exhale_cue": "Relax shoulders and breathe",
+    "alignment_cues": [
+      "Right knee over ankle",
+      "Back knee padded",
+      "Pelvis neutral-ish",
+      "Neck long",
+      "hands up and open chest"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Leaning forward too much",
+        "correction": "Stack torso"
+      },
+      {
+        "mistake": "Knee collapse",
+        "correction": "Track center"
+      }
+    ],
+    "modifications": [
+      "Hands on blocks",
+      "Shorter stance"
+    ],
+    "contraindications": [
+      "Knee pain increase support"
+    ],
+    "avoid_conditions": [
+      "knee",
+      "back",
+      "hip injury",
+      "high BP"
+    ],
+    "benefits": [
+      "Hip opening",
+      "Leg strength",
+      "Posture"
+    ],
+    "voice_script_short": "Stay tall and steady as you ease into the hips.",
+    "transition_in_ids": [
+      "anjaneyasana_left"
+    ],
+    "transition_out_ids": [
+      "ardha_hanumanasana_left"
+    ],
+    "flow_name": "Back bend flow",
+    "power_yoga": true
+  },
+  {
+    "pose_id": "ardha_hanumanasana_left",
+    "name_en": "Half Split (Left)",
+    "name_sa": "Ardha Hanumanasana",
+    "difficulty": "beginner",
+    "category": "forward bend",
+    "summary": "Hamstring stretch with front left leg extended.",
+    "hold_seconds": 20,
+    "inhale_cue": "Inhale lengthen spine",
+    "exhale_cue": "Exhale hinge from hips",
+    "alignment_cues": [
+      "Left foot flexed",
+      "Hips square",
+      "Hands on blocks",
+      "Spine long"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Rounding to reach foot",
+        "correction": "Use blocks"
+      },
+      {
+        "mistake": "Hyperextending knee",
+        "correction": "Micro-bend"
+      }
+    ],
+    "modifications": [
+      "Keep front knee slightly bent",
+      "Higher blocks"
+    ],
+    "contraindications": [
+      "Hamstring injury keep mild"
+    ],
+    "avoid_conditions": [
+      "knee",
+      "hip injury",
+      "pregnant women"
+    ],
+    "benefits": [
+      "Hamstring mobility",
+      "Hip balance",
+      "Fold prep"
+    ],
+    "voice_script_short": "Flex the front foot and fold only with a long back.",
+    "transition_in_ids": [
+      "anjaneyasana_right"
+    ],
+    "transition_out_ids": [
+      "ardha_hanumanasana_right"
+    ],
+    "flow_name": "Forward bend Flow",
+    "power_yoga": false
+  },
+  {
+    "pose_id": "ardha_hanumanasana_right",
+    "name_en": "Half Split (Right)",
+    "name_sa": "Ardha Hanumanasana",
+    "difficulty": "beginner",
+    "category": "kneeling",
+    "summary": "Hamstring stretch with front right leg extended.",
+    "hold_seconds": 20,
+    "inhale_cue": "Inhale lengthen",
+    "exhale_cue": "Exhale fold gently",
+    "alignment_cues": [
+      "Right foot flexed",
+      "Hips square",
+      "Blocks support",
+      "Neck neutral"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Twisted hips",
+        "correction": "Square pelvis"
+      },
+      {
+        "mistake": "Overreaching",
+        "correction": "Shorten fold"
+      }
+    ],
+    "modifications": [
+      "Bend right knee slightly",
+      "Use higher support"
+    ],
+    "contraindications": [
+      "Hamstring strain reduce range"
+    ],
+    "avoid_conditions": [
+      "knee",
+      "hip injury",
+      "pregnant women"
+    ],
+    "benefits": [
+      "Hamstring release",
+      "Hip symmetry",
+      "Forward fold prep"
+    ],
+    "voice_script_short": "Move slowly and keep the breath smooth.",
+    "transition_in_ids": [
+      "ardha_hanumanasana_left"
+    ],
+    "transition_out_ids": [
+      "parsva_balasana_left"
+    ],
+    "flow_name": "Forward bend Flow",
+    "power_yoga": false
+  },
+  {
+    "pose_id": "parsva_balasana_left",
+    "name_en": "Side Child's Pose (Left)",
+    "name_sa": "Parsva Balasana",
+    "difficulty": "beginner",
+    "category": "restorative",
+    "summary": "Child’s pose variation reaching to left side for lateral stretch.",
+    "hold_seconds": 35,
+    "inhale_cue": "Expand right ribs",
+    "exhale_cue": "Melt chest and hips down",
+    "alignment_cues": [
+      "Hips toward heels",
+      "Arms long left",
+      "Forehead supported",
+      "Breath into side ribs"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Hips lifting high",
+        "correction": "Support torso"
+      },
+      {
+        "mistake": "Neck tension",
+        "correction": "Use block"
+      }
+    ],
+    "modifications": [
+      "Bolster under chest",
+      "Blanket under knees"
+    ],
+    "contraindications": [
+      "Knee pain widen knees/support"
+    ],
+    "avoid_conditions": [],
+    "benefits": [
+      "Lateral stretch",
+      "Calming",
+      "Back relief"
+    ],
+    "voice_script_short": "Send breath into the open side body.",
+    "transition_in_ids": [
+      "ardha_hanumanasana_right"
+    ],
+    "transition_out_ids": [
+      "parsva_balasana_right"
+    ],
+    "flow_name": "None",
+    "power_yoga": false
+  },
+  {
+    "pose_id": "parsva_balasana_right",
+    "name_en": "Side Child's Pose (Right)",
+    "name_sa": "Parsva Balasana",
+    "difficulty": "beginner",
+    "category": "restorative",
+    "summary": "Child’s pose variation reaching to right side for lateral stretch.",
+    "hold_seconds": 35,
+    "inhale_cue": "Expand left ribs",
+    "exhale_cue": "Soften body to floor",
+    "alignment_cues": [
+      "Hips toward heels",
+      "Arms long right",
+      "Forehead supported",
+      "Shoulders soft"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Shoulders tense",
+        "correction": "Relax elbows"
+      },
+      {
+        "mistake": "Hips uneven",
+        "correction": "Center hips"
+      }
+    ],
+    "modifications": [
+      "Bolster support",
+      "Hands stacked"
+    ],
+    "contraindications": [
+      "Knee sensitivity use props"
+    ],
+    "avoid_conditions": [],
+    "benefits": [
+      "Lateral mobility",
+      "Recovery",
+      "Nervous system down-regulation"
+    ],
+    "voice_script_short": "Rest deeply and breathe into your side waist.",
+    "transition_in_ids": [
+      "parsva_balasana_left"
+    ],
+    "transition_out_ids": [
+      "sphinx_pose"
+    ],
+    "flow_name": "None",
+    "power_yoga": false
+  },
+  {
+    "pose_id": "sphinx_pose",
+    "name_en": "Sphinx",
+    "name_sa": "Salamba Bhujangasana",
+    "difficulty": "beginner",
+    "category": "back bend",
+    "summary": "Forearm backbend opening chest with low lumbar load.",
+    "hold_seconds": 30,
+    "inhale_cue": "Draw chest forward",
+    "exhale_cue": "Press forearms down",
+    "alignment_cues": [
+      "Elbows under shoulders",
+      "Pubic bone grounded",
+      "Shoulders away ears",
+      "Neck neutral"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Elbows too far forward",
+        "correction": "Stack elbows"
+      },
+      {
+        "mistake": "Pinching low back",
+        "correction": "Lower intensity"
+      }
+    ],
+    "modifications": [
+      "Forearms wider",
+      "Folded blanket under ribs"
+    ],
+    "contraindications": [
+      "Acute low back pain keep minimal"
+    ],
+    "avoid_conditions": [
+      "back",
+      "spine injury",
+      "abdominal surgery",
+      "pregnant women",
+      "hernia"
+    ],
+    "benefits": [
+      "Gentle backbend",
+      "Chest opening",
+      "Posture support"
+    ],
+    "voice_script_short": "Broaden the collarbones and keep the neck long.",
+    "transition_in_ids": [
+      "thread_the_needle_right"
+    ],
+    "transition_out_ids": [
+      "salabhasana"
+    ],
+    "flow_name": "Back bend flow",
+    "power_yoga": false
+  },
+  {
+    "pose_id": "salabhasana",
+    "name_en": "Locust Pose",
+    "name_sa": "Salabhasana",
+    "difficulty": "beginner",
+    "category": "back bend",
+    "summary": "Back-body strengthening pose with lifted chest/legs.",
+    "hold_seconds": 15,
+    "inhale_cue": "Lengthen through crown",
+    "exhale_cue": "Lift chest and legs lightly",
+    "alignment_cues": [
+      "Arms by sides",
+      "Inner thighs active",
+      "Neck long",
+      "Lift from upper back body"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Overlifting neck",
+        "correction": "Gaze down"
+      },
+      {
+        "mistake": "Squeezing glutes hard",
+        "correction": "Lengthen tail"
+      }
+    ],
+    "modifications": [
+      "Lift chest only",
+      "Lift one leg at a time"
+    ],
+    "contraindications": [
+      "Low back pain reduce lift"
+    ],
+    "avoid_conditions": [
+      "back",
+      "spine injury",
+      "abdominal surgery",
+      "pregnant women",
+      "hernia",
+      "sciatica"
+    ],
+    "benefits": [
+      "Posterior-chain strength",
+      "Posture",
+      "Spinal support"
+    ],
+    "voice_script_short": "Lift small and long, not high and tense.",
+    "transition_in_ids": [
+      "sphinx_pose"
+    ],
+    "transition_out_ids": [
+      "makarasana"
+    ],
+    "flow_name": "Back bend flow",
+    "power_yoga": true
+  },
+  {
+    "pose_id": "makarasana",
+    "name_en": "Crocodile Pose",
+    "name_sa": "Makarasana",
+    "difficulty": "beginner",
+    "category": "prone",
+    "summary": "Resting prone pose for breath recovery and low-back relaxation.",
+    "hold_seconds": 30,
+    "inhale_cue": "Breathe into back ribs",
+    "exhale_cue": "Exhale and soften whole body",
+    "alignment_cues": [
+      "Forehead on hands",
+      "Legs relaxed",
+      "Shoulders soft",
+      "Jaw loose"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Holding tension",
+        "correction": "Widen elbows and release"
+      },
+      {
+        "mistake": "Neck strain",
+        "correction": "Adjust hand stack"
+      }
+    ],
+    "modifications": [
+      "Small pillow under chest",
+      "Turn head side to side gently"
+    ],
+    "contraindications": [
+      "Pregnancy avoid prolonged prone"
+    ],
+    "avoid_conditions": [
+      "pregnant women",
+      "abdominal surgery",
+      "Heart condition"
+    ],
+    "benefits": [
+      "Recovery",
+      "Breath awareness",
+      "Nervous system calm"
+    ],
+    "voice_script_short": "Let the belly and back body move with each breath.",
+    "transition_in_ids": [
+      "salabhasana"
+    ],
+    "transition_out_ids": [
+      "setu_bandhasana"
+    ],
+    "flow_name": "Relaxing flow",
+    "power_yoga": false
+  },
+  {
+    "pose_id": "setu_bandhasana",
+    "name_en": "Bridge Pose",
+    "name_sa": "Setu Bandhasana",
+    "difficulty": "beginner",
+    "category": "supine",
+    "summary": "Supine backbend strengthening glutes and opening front body.",
+    "hold_seconds": 20,
+    "inhale_cue": "Press feet and lift hips",
+    "exhale_cue": "Lengthen knees forward",
+    "alignment_cues": [
+      "Feet hip-width",
+      "Knees parallel",
+      "Shoulders grounded",
+      "Neck neutral"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Knees splaying out",
+        "correction": "Use block between thighs"
+      },
+      {
+        "mistake": "Weight on neck",
+        "correction": "Press shoulders down"
+      }
+    ],
+    "modifications": [
+      "Low bridge height",
+      "Block-supported bridge"
+    ],
+    "contraindications": [
+      "Neck injury avoid turning head"
+    ],
+    "avoid_conditions": [
+      "pregnant women",
+      "High BP",
+      "Knee injury",
+      "Migranes"
+    ],
+    "benefits": [
+      "Glute strength",
+      "Hip extension",
+      "Chest opening"
+    ],
+    "voice_script_short": "Press through your feet and lift with control.",
+    "transition_in_ids": [
+      "makarasana"
+    ],
+    "transition_out_ids": [
+      "apanasana"
+    ],
+    "flow_name": "Supine flow",
+    "power_yoga": true
+  },
+  {
+    "pose_id": "apanasana",
+    "name_en": "Knees-to-Chest",
+    "name_sa": "Apanasana",
+    "difficulty": "beginner",
+    "category": "supine",
+    "summary": "Gentle supine pose to release low back and settle breath.",
+    "hold_seconds": 20,
+    "inhale_cue": "Inhale soften belly",
+    "exhale_cue": "Exhale draw knees in",
+    "alignment_cues": [
+      "Head relaxed",
+      "Shoulders soft",
+      "Knees toward chest",
+      "Hug knees",
+      "Tailbone grounded",
+      "Breath smooth"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Pulling too hard",
+        "correction": "Hold shins lightly"
+      },
+      {
+        "mistake": "Neck tension",
+        "correction": "Support head"
+      }
+    ],
+    "modifications": [
+      "One knee at a time",
+      "Strap behind thighs"
+    ],
+    "contraindications": [
+      "Hip replacement range as tolerated"
+    ],
+    "avoid_conditions": [
+      "pregnant women",
+      "hip injury",
+      "knee injury",
+      "back injury",
+      "hernia"
+    ],
+    "benefits": [
+      "Low-back relief",
+      "Digestive comfort",
+      "Calming"
+    ],
+    "voice_script_short": "Hug the knees softly and let the breath slow down.",
+    "transition_in_ids": [
+      "setu_bandhasana"
+    ],
+    "transition_out_ids": [
+      "supta_matsyendrasana_left"
+    ],
+    "flow_name": "Restorative flow",
+    "power_yoga": false
+  },
+  {
+    "pose_id": "supta_matsyendrasana_left",
+    "name_en": "Supine Twist (Left)",
+    "name_sa": "Supta Matsyendrasana",
+    "difficulty": "beginner",
+    "category": "supine",
+    "summary": "Reclined spinal twist with knees to left, shoulders grounded.",
+    "hold_seconds": 20,
+    "inhale_cue": "Lengthen through crown",
+    "exhale_cue": "Drop knees left and breathe",
+    "alignment_cues": [
+      "Both shoulders heavy",
+      "Knees stacked",
+      "Core soft",
+      "Neck comfortable"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Top shoulder lifting",
+        "correction": "Support knees with bolster"
+      },
+      {
+        "mistake": "Forced range",
+        "correction": "Reduce depth"
+      }
+    ],
+    "modifications": [
+      "Blanket between knees",
+      "Arms cactus"
+    ],
+    "contraindications": [
+      "Disc pain keep gentle and supported"
+    ],
+    "avoid_conditions": [
+      "back",
+      "hip injury",
+      "sciatica",
+      "pregnant women",
+      "menstruation"
+    ],
+    "benefits": [
+      "Spinal rotation",
+      "Relaxation",
+      "Back release"
+    ],
+    "voice_script_short": "Keep both shoulders heavy as the knees move left.",
+    "transition_in_ids": [
+      "apanasana"
+    ],
+    "transition_out_ids": [
+      "savasana"
+    ],
+    "flow_name": "Restorative flow",
+    "power_yoga": false
+  },
+  {
+    "pose_id": "supta_matsyendrasana_right",
+    "name_en": "Supine Twist (Right)",
+    "name_sa": "Supta Matsyendrasana",
+    "difficulty": "beginner",
+    "category": "supine",
+    "summary": "Reclined spinal twist with knees to right, shoulders grounded.",
+    "hold_seconds": 40,
+    "inhale_cue": "Inhale lengthen spine",
+    "exhale_cue": "Exhale lower knees right",
+    "alignment_cues": [
+      "Both shoulders grounded",
+      "Knees stacked",
+      "Neck neutral",
+      "Breath steady"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Shoulder lifting",
+        "correction": "Add support under knees"
+      },
+      {
+        "mistake": "Twisting too deep",
+        "correction": "Back off"
+      }
+    ],
+    "modifications": [
+      "Blanket support",
+      "Single-knee twist"
+    ],
+    "contraindications": [
+      "Acute back pain keep very mild"
+    ],
+    "avoid_conditions": [
+      "back",
+      "hip injury",
+      "sciatica",
+      "pregnant women",
+      "menstruation"
+    ],
+    "benefits": [
+      "Spinal mobility",
+      "Nervous system calm",
+      "Lower-back ease"
+    ],
+    "voice_script_short": "Let the twist be soft and supported.",
+    "transition_in_ids": [
+      "supta_matsyendrasana_left"
+    ],
+    "transition_out_ids": [
+      "mountain_pose"
+    ],
+    "flow_name": "Restorative flow",
+    "power_yoga": false
+  },
+  {
+    "pose_id": "savasana",
+    "name_en": "Corpse Pose",
+    "name_sa": "Savasana",
+    "difficulty": "beginner",
+    "category": "restorative",
+    "summary": "Final relaxation pose integrating benefits of practice.",
+    "hold_seconds": 180,
+    "inhale_cue": "Inhale naturally",
+    "exhale_cue": "Exhale release all effort",
+    "alignment_cues": [
+      "Legs relaxed apart",
+      "Arms by sides palms up",
+      "Neck neutral",
+      "Eyes soft/closed"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Fidgeting",
+        "correction": "Use blanket support"
+      },
+      {
+        "mistake": "Low back discomfort",
+        "correction": "Bend knees/bolster"
+      }
+    ],
+    "modifications": [
+      "Bolster under knees",
+      "Eye pillow",
+      "Blanket"
+    ],
+    "contraindications": [
+      "Severe anxiety may prefer guided rest"
+    ],
+    "avoid_conditions": [
+      "pregnant women"
+    ],
+    "benefits": [
+      "Deep relaxation",
+      "Recovery",
+      "Integration"
+    ],
+    "voice_script_short": "Allow gravity to hold you completely.",
+    "transition_in_ids": [
+      "supta_matsyendrasana_right"
+    ],
+    "transition_out_ids": [
+      "mountain_pose"
+    ],
+    "flow_name": "Restorative flow",
+    "power_yoga": false
+  },
+  {
+    "pose_id": "heel_to_toe_balance",
+    "name_en": "Tandem Stance Balance",
+    "name_sa": "Tandem Balance",
+    "difficulty": "beginner",
+    "category": "balance",
+    "summary": "Simple heel-to-toe standing balance for proprioception.",
+    "hold_seconds": 20,
+    "inhale_cue": "Lift through crown",
+    "exhale_cue": "Soften breath and gaze",
+    "alignment_cues": [
+      "Heel touches toe",
+      "Hips square",
+      "Arms out if needed",
+      "Soft knees"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Looking around",
+        "correction": "Fix gaze point"
+      },
+      {
+        "mistake": "Rigid breath",
+        "correction": "Slow exhale"
+      }
+    ],
+    "modifications": [
+      "Stand near wall",
+      "Wider stance"
+    ],
+    "contraindications": [
+      "Balance disorders use support"
+    ],
+    "avoid_conditions": [
+      "none"
+    ],
+    "benefits": [
+      "Balance training",
+      "Ankle stability",
+      "Focus"
+    ],
+    "voice_script_short": "Find one point to gaze at and breathe steadily.",
+    "transition_in_ids": [
+      "mountain_pose"
+    ],
+    "transition_out_ids": [
+      "vrksasana_low_foot"
+    ],
+    "flow_name": "Standing Flow",
+    "power_yoga": false
+  },
+  {
+    "pose_id": "natarajasana_prep (right)",
+    "name_en": "Dancer Prep (right)",
+    "name_sa": "Natarajasana Prep",
+    "difficulty": "beginner",
+    "category": "balance",
+    "summary": "Beginner standing right leg quad stretch holding ankle back with opposite arm forward.",
+    "hold_seconds": 20,
+    "inhale_cue": "Lift chest",
+    "exhale_cue": "Press foot into hand gently",
+    "alignment_cues": [
+      "Knees close together",
+      "Pelvis level",
+      "Standing leg active",
+      "Gaze steady"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Knee flaring wide",
+        "correction": "Draw inward"
+      },
+      {
+        "mistake": "Lower back arching",
+        "correction": "Engage core"
+      }
+    ],
+    "modifications": [
+      "Use wall support",
+      "Hold ankle with strap"
+    ],
+    "contraindications": [
+      "Knee pain reduce pull"
+    ],
+    "avoid_conditions": [
+      "High BP",
+      "Heart condition",
+      "pregnant women",
+      "vertigo",
+      "knee",
+      "ankle injury"
+    ],
+    "benefits": [
+      "right leg Quad stretch",
+      "Balance",
+      "Posture"
+    ],
+    "voice_script_short": "Keep knees close and chest lifted.",
+    "transition_in_ids": [
+      "mountain_pose"
+    ],
+    "transition_out_ids": [
+      "Natrajasana_prep(left)"
+    ],
+    "flow_name": "Balancing flow",
+    "power_yoga": true
+  },
+  {
+    "pose_id": "natarajasana_prep (left)",
+    "name_en": "Dancer Prep (left)",
+    "name_sa": "Natarajasana Prep",
+    "difficulty": "beginner",
+    "category": "balance",
+    "summary": "Beginner standing left leg quad stretch holding ankle back with opposite arm forward.",
+    "hold_seconds": 20,
+    "inhale_cue": "Lift chest",
+    "exhale_cue": "Press foot into hand gently",
+    "alignment_cues": [
+      "Knees close together",
+      "Pelvis level",
+      "Standing leg active",
+      "Gaze steady"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Knee flaring wide",
+        "correction": "Draw inward"
+      },
+      {
+        "mistake": "Lower back arching",
+        "correction": "Engage core"
+      }
+    ],
+    "modifications": [
+      "Use wall support",
+      "Hold ankle with strap"
+    ],
+    "contraindications": [
+      "Knee pain reduce pull"
+    ],
+    "avoid_conditions": [
+      "High BP",
+      "Heart condition",
+      "pregnant women",
+      "vertigo",
+      "knee",
+      "ankle injury"
+    ],
+    "benefits": [
+      "Quad stretch",
+      "Balance",
+      "Posture"
+    ],
+    "voice_script_short": "Keep knees close and chest lifted.",
+    "transition_in_ids": [
+      "Natrajasana_prep(right)"
+    ],
+    "transition_out_ids": [
+      "standing_knee_to_chest"
+    ],
+    "flow_name": "Balancing flow",
+    "power_yoga": true
+  },
+  {
+    "pose_id": "virabhadrasana_iii_prep(right)",
+    "name_en": "Warrior III Prep(right)",
+    "name_sa": "Virabhadrasana III Prep",
+    "difficulty": "beginner",
+    "category": "balance",
+    "summary": "Hip-hinge balance prep with hands on hips extending right leg back",
+    "hold_seconds": 15,
+    "inhale_cue": "Lengthen forward",
+    "exhale_cue": "Press back heel away",
+    "alignment_cues": [
+      "Hips square",
+      "Standing knee soft",
+      "Spine long",
+      "Back right leg active"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Opening top hip",
+        "correction": "Square hips down"
+      },
+      {
+        "mistake": "Rounding back",
+        "correction": "Lengthen chest forward"
+      }
+    ],
+    "modifications": [
+      "Hands on chair",
+      "Toe tap option"
+    ],
+    "contraindications": [
+      "Balance issues use wall/chair"
+    ],
+    "avoid_conditions": [
+      "knee",
+      "hip injury",
+      "pregnant women",
+      "vertigo"
+    ],
+    "benefits": [
+      "Balance",
+      "Posterior chain strength",
+      "Core control"
+    ],
+    "voice_script_short": "Reach long from crown to heel.",
+    "transition_in_ids": [
+      "virabhadrasana_i"
+    ],
+    "transition_out_ids": [
+      "trikonasana"
+    ],
+    "flow_name": "Balancing flow",
+    "power_yoga": true
+  },
+  {
+    "pose_id": "virabhadrasana_iii_prep(left)",
+    "name_en": "Warrior III Prep(left)",
+    "name_sa": "Virabhadrasana III Prep",
+    "difficulty": "beginner",
+    "category": "balance",
+    "summary": "Hip-hinge balance prep with hands on hips extending left leg back",
+    "hold_seconds": 15,
+    "inhale_cue": "Lengthen forward",
+    "exhale_cue": "Press back heel away",
+    "alignment_cues": [
+      "Hips square",
+      "Standing knee soft",
+      "Spine long",
+      "Back left leg active"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Opening top hip",
+        "correction": "Square hips down"
+      },
+      {
+        "mistake": "Rounding back",
+        "correction": "Lengthen chest forward"
+      }
+    ],
+    "modifications": [
+      "Hands on chair",
+      "Toe tap option"
+    ],
+    "contraindications": [
+      "Balance issues use wall/chair"
+    ],
+    "avoid_conditions": [
+      "knee",
+      "hip injury",
+      "pregnant women",
+      "vertigo"
+    ],
+    "benefits": [
+      "Balance",
+      "Posterior chain strength",
+      "Core control"
+    ],
+    "voice_script_short": "Reach long from crown to heel.",
+    "transition_in_ids": [
+      "virabhadrasana_i"
+    ],
+    "transition_out_ids": [
+      "trikonasana"
+    ],
+    "flow_name": "Balancing flow",
+    "power_yoga": true
+  },
+  {
+    "pose_id": "parvatasana_tabletop",
+    "name_en": "Tabletop Inverted V Prep",
+    "name_sa": "Parvatasana Prep",
+    "difficulty": "beginner",
+    "category": "kneeling",
+    "summary": "Kneeling prep for Down Dog emphasizing shoulder flexion.",
+    "hold_seconds": 20,
+    "inhale_cue": "Reach arms long",
+    "exhale_cue": "Draw hips back toward heels",
+    "alignment_cues": [
+      "Hands active",
+      "Arms straight",
+      "Spine long",
+      "Neck neutral"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Collapsed shoulders",
+        "correction": "Press floor away"
+      },
+      {
+        "mistake": "Rounded back",
+        "correction": "Bend knees and lengthen"
+      }
+    ],
+    "modifications": [
+      "Hands on blocks",
+      "Wider knees"
+    ],
+    "contraindications": [
+      "Shoulder pain reduce range"
+    ],
+    "avoid_conditions": [],
+    "benefits": [
+      "Shoulder mobility",
+      "Spine length",
+      "Down Dog prep"
+    ],
+    "voice_script_short": "Press the floor and lengthen from hands to hips.",
+    "transition_in_ids": [
+      "bitilasana_cow"
+    ],
+    "transition_out_ids": [
+      "down_dog"
+    ],
+    "flow_name": "None",
+    "power_yoga": false
+  },
+  {
+    "pose_id": "ananda_balasana",
+    "name_en": "Happy Baby",
+    "name_sa": "Ananda Balasana",
+    "difficulty": "beginner",
+    "category": "supine",
+    "summary": "Supine hip opener holding feet/shins.",
+    "hold_seconds": 30,
+    "inhale_cue": "Widen knees on inhale",
+    "exhale_cue": "Soften tailbone down on exhale",
+    "alignment_cues": [
+      "Knees toward armpits",
+      "Ankles over knees",
+      "Low back long",
+      "Shoulders relaxed"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Pulling too hard",
+        "correction": "Hold shins instead"
+      },
+      {
+        "mistake": "Tail lifting",
+        "correction": "Reduce depth"
+      }
+    ],
+    "modifications": [
+      "Strap around feet",
+      "One leg at time"
+    ],
+    "contraindications": [
+      "Hip impingement reduce range"
+    ],
+    "avoid_conditions": [
+      "Hip",
+      "ankle injury",
+      "pregnant women",
+      "menstruation"
+    ],
+    "benefits": [
+      "Hip opening",
+      "Low-back release",
+      "Playful relaxation"
+    ],
+    "voice_script_short": "Hold gently and let the breath widen the hips.",
+    "transition_in_ids": [
+      "apanasana"
+    ],
+    "transition_out_ids": [
+      "supta_matsyendrasana_left"
+    ],
+    "flow_name": "Supine flow",
+    "power_yoga": false
+  },
+  {
+    "pose_id": "supta_baddha_konasana",
+    "name_en": "Reclined Butterfly",
+    "name_sa": "Supta Baddha Konasana",
+    "difficulty": "beginner",
+    "category": "restorative",
+    "summary": "Reclined restorative hip opener with soles together.",
+    "hold_seconds": 30,
+    "inhale_cue": "Inhale into chest and belly",
+    "exhale_cue": "Exhale soften thighs",
+    "alignment_cues": [
+      "Support under thighs",
+      "Spine neutral",
+      "Arms relaxed",
+      "Jaw soft"
+    ],
+    "common_mistakes": [
+      {
+        "mistake": "Knee discomfort",
+        "correction": "Add blocks"
+      },
+      {
+        "mistake": "Overarching back",
+        "correction": "Support spine"
+      }
+    ],
+    "modifications": [
+      "Bolster under spine",
+      "Blankets under knees"
+    ],
+    "contraindications": [
+      "Groin strain support legs well"
+    ],
+    "avoid_conditions": [
+      "hip",
+      "knee",
+      "back injury",
+      "pregnant women"
+    ],
+    "benefits": [
+      "Deep rest",
+      "Hip opening",
+      "Breath expansion"
+    ],
+    "voice_script_short": "Let gravity open the hips without forcing.",
+    "transition_in_ids": [
+      "savasana"
+    ],
+    "transition_out_ids": [
+      "mountain_pose"
+    ],
+    "flow_name": "Restorative flow",
+    "power_yoga": false
+  }
+]

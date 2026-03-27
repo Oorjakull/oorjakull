@@ -1,18 +1,25 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass(frozen=True)
 class PoseTemplate:
     name: str
-    # Ideal ranges for angles/metrics (human-friendly strings used by Gemini)
+    # Ideal ranges for angles/metrics (human-friendly strings used by LLM)
     ideal_ranges: dict[str, str]
+    # Map pose_id (snake_case from Excel) so evaluator can cross-reference
+    pose_id: str = ""
+    # "symmetric", "left_front", or "right_front"
+    stance_side: str = "symmetric"
 
 
 POSE_TEMPLATES: dict[str, PoseTemplate] = {
+    # ── Original 10 poses (kept with existing names for backward compat) ───
     "Tadasana": PoseTemplate(
         name="Tadasana",
+        pose_id="mountain_pose",
+        stance_side="symmetric",
         ideal_ranges={
             "front_knee": "170-180",
             "back_knee": "170-180",
@@ -26,8 +33,9 @@ POSE_TEMPLATES: dict[str, PoseTemplate] = {
     ),
     "Pranamasana": PoseTemplate(
         name="Pranamasana",
+        pose_id="pranamasana",
+        stance_side="symmetric",
         ideal_ranges={
-            # Prayer pose: similar to Tadasana (upright, stable)
             "front_knee": "170-180",
             "back_knee": "170-180",
             "left_arm": "150-180",
@@ -40,8 +48,9 @@ POSE_TEMPLATES: dict[str, PoseTemplate] = {
     ),
     "Hasta Uttanasana": PoseTemplate(
         name="Hasta Uttanasana",
+        pose_id="hasta_uttanasana",
+        stance_side="symmetric",
         ideal_ranges={
-            # Raised arms pose / slight backbend: mostly upright
             "front_knee": "170-180",
             "back_knee": "170-180",
             "left_arm": "160-180",
@@ -54,8 +63,9 @@ POSE_TEMPLATES: dict[str, PoseTemplate] = {
     ),
     "Padahastasana": PoseTemplate(
         name="Padahastasana",
+        pose_id="padahastasana",
+        stance_side="symmetric",
         ideal_ranges={
-            # Forward fold: torso may tilt more; keep symmetry + stability important
             "front_knee": "160-180",
             "back_knee": "160-180",
             "left_arm": "140-180",
@@ -68,8 +78,9 @@ POSE_TEMPLATES: dict[str, PoseTemplate] = {
     ),
     "Ashwa Sanchalanasana": PoseTemplate(
         name="Ashwa Sanchalanasana",
+        pose_id="ashwa_sanchalanasana",
+        stance_side="left_front",
         ideal_ranges={
-            # Low lunge: front knee bent, back leg more extended
             "front_knee": "80-125",
             "back_knee": "155-180",
             "left_arm": "140-180",
@@ -82,6 +93,8 @@ POSE_TEMPLATES: dict[str, PoseTemplate] = {
     ),
     "Warrior II": PoseTemplate(
         name="Warrior II",
+        pose_id="warrior_ii",
+        stance_side="left_front",
         ideal_ranges={
             "front_knee": "85-115",
             "back_knee": "165-180",
@@ -95,10 +108,10 @@ POSE_TEMPLATES: dict[str, PoseTemplate] = {
     ),
     "Tree Pose": PoseTemplate(
         name="Tree Pose",
+        pose_id="vrksasana_low_foot",
+        stance_side="left_front",
         ideal_ranges={
-            # standing knee (front_knee) should be mostly straight
             "front_knee": "165-180",
-            # lifted knee (back_knee) tends to be noticeably bent/outward
             "back_knee": "40-110",
             "left_arm": "120-180",
             "right_arm": "120-180",
@@ -110,12 +123,13 @@ POSE_TEMPLATES: dict[str, PoseTemplate] = {
     ),
     "Down Dog": PoseTemplate(
         name="Down Dog",
+        pose_id="down_dog",
+        stance_side="symmetric",
         ideal_ranges={
             "front_knee": "165-180",
             "back_knee": "165-180",
             "left_arm": "155-180",
             "right_arm": "155-180",
-            # Front-view POC: keep this permissive
             "torso_tilt": "0-60",
             "arm_level_difference": "0-0.06",
             "hip_level_difference": "0-0.06",
@@ -124,6 +138,8 @@ POSE_TEMPLATES: dict[str, PoseTemplate] = {
     ),
     "Goddess": PoseTemplate(
         name="Goddess",
+        pose_id="malasana",
+        stance_side="symmetric",
         ideal_ranges={
             "front_knee": "75-125",
             "back_knee": "75-125",
@@ -137,6 +153,8 @@ POSE_TEMPLATES: dict[str, PoseTemplate] = {
     ),
     "Plank": PoseTemplate(
         name="Plank",
+        pose_id="plank_pose",
+        stance_side="symmetric",
         ideal_ranges={
             "front_knee": "170-180",
             "back_knee": "170-180",
@@ -148,4 +166,392 @@ POSE_TEMPLATES: dict[str, PoseTemplate] = {
             "center_offset": "0-0.10",
         },
     ),
+    # ── NEW poses from yoga_poses.xlsx ─────────────────────────────────────
+    "Warrior I": PoseTemplate(
+        name="Warrior I",
+        pose_id="virabhadrasana_i",
+        stance_side="left_front",
+        ideal_ranges={
+            "front_knee": "85-115",
+            "back_knee": "160-180",
+            "left_arm": "160-180",
+            "right_arm": "160-180",
+            "torso_tilt": "0-15",
+            "arm_level_difference": "0-0.06",
+            "hip_level_difference": "0-0.06",
+            "center_offset": "0-0.10",
+        },
+    ),
+    "Triangle Pose": PoseTemplate(
+        name="Triangle Pose",
+        pose_id="trikonasana",
+        stance_side="left_front",
+        ideal_ranges={
+            "front_knee": "165-180",
+            "back_knee": "165-180",
+            "left_arm": "155-180",
+            "right_arm": "155-180",
+            "torso_tilt": "20-60",
+            "arm_level_difference": "0-0.10",
+            "hip_level_difference": "0-0.08",
+            "center_offset": "0-0.12",
+        },
+    ),
+    "Extended Side Angle": PoseTemplate(
+        name="Extended Side Angle",
+        pose_id="utthita_parsvakonasana_beginner",
+        stance_side="left_front",
+        ideal_ranges={
+            "front_knee": "85-115",
+            "back_knee": "165-180",
+            "left_arm": "140-180",
+            "right_arm": "155-180",
+            "torso_tilt": "15-50",
+            "arm_level_difference": "0-0.10",
+            "hip_level_difference": "0-0.08",
+            "center_offset": "0-0.12",
+        },
+    ),
+    "Chair Pose": PoseTemplate(
+        name="Chair Pose",
+        pose_id="utkatasana",
+        stance_side="symmetric",
+        ideal_ranges={
+            "front_knee": "100-140",
+            "back_knee": "100-140",
+            "left_arm": "155-180",
+            "right_arm": "155-180",
+            "torso_tilt": "0-25",
+            "arm_level_difference": "0-0.06",
+            "hip_level_difference": "0-0.04",
+            "center_offset": "0-0.08",
+        },
+    ),
+    "Cobra Pose": PoseTemplate(
+        name="Cobra Pose",
+        pose_id="bhujangasana",
+        stance_side="symmetric",
+        ideal_ranges={
+            "front_knee": "165-180",
+            "back_knee": "165-180",
+            "left_arm": "100-160",
+            "right_arm": "100-160",
+            "torso_tilt": "10-45",
+            "arm_level_difference": "0-0.06",
+            "hip_level_difference": "0-0.05",
+            "center_offset": "0-0.10",
+        },
+    ),
+    "Wide-Leg Forward Fold": PoseTemplate(
+        name="Wide-Leg Forward Fold",
+        pose_id="prasarita_padottanasana",
+        stance_side="symmetric",
+        ideal_ranges={
+            "front_knee": "165-180",
+            "back_knee": "165-180",
+            "left_arm": "140-180",
+            "right_arm": "140-180",
+            "torso_tilt": "20-70",
+            "arm_level_difference": "0-0.06",
+            "hip_level_difference": "0-0.05",
+            "center_offset": "0-0.10",
+        },
+    ),
+    "Half Lift": PoseTemplate(
+        name="Half Lift",
+        pose_id="ardha_uttanasana",
+        stance_side="symmetric",
+        ideal_ranges={
+            "front_knee": "165-180",
+            "back_knee": "165-180",
+            "left_arm": "140-180",
+            "right_arm": "140-180",
+            "torso_tilt": "30-60",
+            "arm_level_difference": "0-0.06",
+            "hip_level_difference": "0-0.05",
+            "center_offset": "0-0.10",
+        },
+    ),
+    "Forward Fold": PoseTemplate(
+        name="Forward Fold",
+        pose_id="uttanasana",
+        stance_side="symmetric",
+        ideal_ranges={
+            "front_knee": "160-180",
+            "back_knee": "160-180",
+            "left_arm": "120-180",
+            "right_arm": "120-180",
+            "torso_tilt": "10-60",
+            "arm_level_difference": "0-0.06",
+            "hip_level_difference": "0-0.06",
+            "center_offset": "0-0.10",
+        },
+    ),
+    "Pyramid Pose": PoseTemplate(
+        name="Pyramid Pose",
+        pose_id="parsvottanasana_short_stance",
+        stance_side="left_front",
+        ideal_ranges={
+            "front_knee": "165-180",
+            "back_knee": "165-180",
+            "left_arm": "120-180",
+            "right_arm": "120-180",
+            "torso_tilt": "15-55",
+            "arm_level_difference": "0-0.08",
+            "hip_level_difference": "0-0.06",
+            "center_offset": "0-0.10",
+        },
+    ),
+    "Garland Pose": PoseTemplate(
+        name="Garland Pose",
+        pose_id="malasana",
+        stance_side="symmetric",
+        ideal_ranges={
+            "front_knee": "40-80",
+            "back_knee": "40-80",
+            "left_arm": "100-180",
+            "right_arm": "100-180",
+            "torso_tilt": "0-30",
+            "arm_level_difference": "0-0.08",
+            "hip_level_difference": "0-0.06",
+            "center_offset": "0-0.12",
+        },
+    ),
+    "Easy Seat": PoseTemplate(
+        name="Easy Seat",
+        pose_id="sukhasana",
+        stance_side="symmetric",
+        ideal_ranges={
+            "front_knee": "40-90",
+            "back_knee": "40-90",
+            "left_arm": "100-180",
+            "right_arm": "100-180",
+            "torso_tilt": "0-12",
+            "arm_level_difference": "0-0.05",
+            "hip_level_difference": "0-0.05",
+            "center_offset": "0-0.08",
+        },
+    ),
+    "Butterfly Pose": PoseTemplate(
+        name="Butterfly Pose",
+        pose_id="baddha_konasana",
+        stance_side="symmetric",
+        ideal_ranges={
+            "front_knee": "40-100",
+            "back_knee": "40-100",
+            "left_arm": "100-180",
+            "right_arm": "100-180",
+            "torso_tilt": "0-20",
+            "arm_level_difference": "0-0.06",
+            "hip_level_difference": "0-0.06",
+            "center_offset": "0-0.10",
+        },
+    ),
+    "Staff Pose": PoseTemplate(
+        name="Staff Pose",
+        pose_id="dandasana",
+        stance_side="symmetric",
+        ideal_ranges={
+            "front_knee": "165-180",
+            "back_knee": "165-180",
+            "left_arm": "100-180",
+            "right_arm": "100-180",
+            "torso_tilt": "0-12",
+            "arm_level_difference": "0-0.05",
+            "hip_level_difference": "0-0.04",
+            "center_offset": "0-0.08",
+        },
+    ),
+    "Seated Forward Fold": PoseTemplate(
+        name="Seated Forward Fold",
+        pose_id="paschimottanasana",
+        stance_side="symmetric",
+        ideal_ranges={
+            "front_knee": "160-180",
+            "back_knee": "160-180",
+            "left_arm": "100-180",
+            "right_arm": "100-180",
+            "torso_tilt": "15-60",
+            "arm_level_difference": "0-0.06",
+            "hip_level_difference": "0-0.06",
+            "center_offset": "0-0.10",
+        },
+    ),
+    "Thunderbolt Pose": PoseTemplate(
+        name="Thunderbolt Pose",
+        pose_id="vajrasana",
+        stance_side="symmetric",
+        ideal_ranges={
+            "front_knee": "20-55",
+            "back_knee": "20-55",
+            "left_arm": "100-180",
+            "right_arm": "100-180",
+            "torso_tilt": "0-10",
+            "arm_level_difference": "0-0.05",
+            "hip_level_difference": "0-0.04",
+            "center_offset": "0-0.08",
+        },
+    ),
+    "Cat Pose": PoseTemplate(
+        name="Cat Pose",
+        pose_id="marjaryasana_cat",
+        stance_side="symmetric",
+        ideal_ranges={
+            "front_knee": "80-100",
+            "back_knee": "80-100",
+            "left_arm": "155-180",
+            "right_arm": "155-180",
+            "torso_tilt": "0-35",
+            "arm_level_difference": "0-0.06",
+            "hip_level_difference": "0-0.06",
+            "center_offset": "0-0.10",
+        },
+    ),
+    "Cow Pose": PoseTemplate(
+        name="Cow Pose",
+        pose_id="bitilasana_cow",
+        stance_side="symmetric",
+        ideal_ranges={
+            "front_knee": "80-100",
+            "back_knee": "80-100",
+            "left_arm": "155-180",
+            "right_arm": "155-180",
+            "torso_tilt": "0-30",
+            "arm_level_difference": "0-0.06",
+            "hip_level_difference": "0-0.06",
+            "center_offset": "0-0.10",
+        },
+    ),
+    "Bridge Pose": PoseTemplate(
+        name="Bridge Pose",
+        pose_id="setu_bandhasana",
+        stance_side="symmetric",
+        ideal_ranges={
+            "front_knee": "70-110",
+            "back_knee": "70-110",
+            "left_arm": "155-180",
+            "right_arm": "155-180",
+            "torso_tilt": "15-50",
+            "arm_level_difference": "0-0.06",
+            "hip_level_difference": "0-0.06",
+            "center_offset": "0-0.10",
+        },
+    ),
+    "Sphinx": PoseTemplate(
+        name="Sphinx",
+        pose_id="sphinx_pose",
+        stance_side="symmetric",
+        ideal_ranges={
+            "front_knee": "165-180",
+            "back_knee": "165-180",
+            "left_arm": "75-110",
+            "right_arm": "75-110",
+            "torso_tilt": "10-40",
+            "arm_level_difference": "0-0.06",
+            "hip_level_difference": "0-0.05",
+            "center_offset": "0-0.10",
+        },
+    ),
+    "Locust Pose": PoseTemplate(
+        name="Locust Pose",
+        pose_id="salabhasana",
+        stance_side="symmetric",
+        ideal_ranges={
+            "front_knee": "165-180",
+            "back_knee": "165-180",
+            "left_arm": "155-180",
+            "right_arm": "155-180",
+            "torso_tilt": "10-40",
+            "arm_level_difference": "0-0.06",
+            "hip_level_difference": "0-0.05",
+            "center_offset": "0-0.10",
+        },
+    ),
+    "Corpse Pose": PoseTemplate(
+        name="Corpse Pose",
+        pose_id="savasana",
+        stance_side="symmetric",
+        ideal_ranges={
+            "front_knee": "160-180",
+            "back_knee": "160-180",
+            "left_arm": "140-180",
+            "right_arm": "140-180",
+            "torso_tilt": "0-15",
+            "arm_level_difference": "0-0.08",
+            "hip_level_difference": "0-0.08",
+            "center_offset": "0-0.12",
+        },
+    ),
+    "Knees-to-Chest": PoseTemplate(
+        name="Knees-to-Chest",
+        pose_id="apanasana",
+        stance_side="symmetric",
+        ideal_ranges={
+            "front_knee": "30-80",
+            "back_knee": "30-80",
+            "left_arm": "100-180",
+            "right_arm": "100-180",
+            "torso_tilt": "0-20",
+            "arm_level_difference": "0-0.08",
+            "hip_level_difference": "0-0.08",
+            "center_offset": "0-0.10",
+        },
+    ),
+    "Happy Baby": PoseTemplate(
+        name="Happy Baby",
+        pose_id="ananda_balasana",
+        stance_side="symmetric",
+        ideal_ranges={
+            "front_knee": "60-120",
+            "back_knee": "60-120",
+            "left_arm": "100-170",
+            "right_arm": "100-170",
+            "torso_tilt": "0-20",
+            "arm_level_difference": "0-0.08",
+            "hip_level_difference": "0-0.08",
+            "center_offset": "0-0.10",
+        },
+    ),
+    "Reclined Butterfly": PoseTemplate(
+        name="Reclined Butterfly",
+        pose_id="supta_baddha_konasana",
+        stance_side="symmetric",
+        ideal_ranges={
+            "front_knee": "40-110",
+            "back_knee": "40-110",
+            "left_arm": "120-180",
+            "right_arm": "120-180",
+            "torso_tilt": "0-15",
+            "arm_level_difference": "0-0.08",
+            "hip_level_difference": "0-0.08",
+            "center_offset": "0-0.10",
+        },
+    ),
+    "Crocodile Pose": PoseTemplate(
+        name="Crocodile Pose",
+        pose_id="makarasana",
+        stance_side="symmetric",
+        ideal_ranges={
+            "front_knee": "160-180",
+            "back_knee": "160-180",
+            "left_arm": "100-180",
+            "right_arm": "100-180",
+            "torso_tilt": "0-15",
+            "arm_level_difference": "0-0.10",
+            "hip_level_difference": "0-0.08",
+            "center_offset": "0-0.12",
+        },
+    ),
 }
+
+# ── Reverse lookup: pose_id → display_name ──────────────────────────────────
+_POSE_ID_TO_NAME: dict[str, str] = {}
+for _name, _tmpl in POSE_TEMPLATES.items():
+    if _tmpl.pose_id:
+        _POSE_ID_TO_NAME[_tmpl.pose_id] = _name
+
+
+def get_template_by_pose_id(pose_id: str) -> PoseTemplate | None:
+    """Look up a PoseTemplate by its snake_case pose_id from the Excel."""
+    name = _POSE_ID_TO_NAME.get(pose_id)
+    return POSE_TEMPLATES.get(name) if name else None

@@ -2,19 +2,28 @@ from __future__ import annotations
 
 import base64
 import re
+import sys
 from pathlib import Path
+from typing import Any as _Any
 
 import httpx
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel as _BM
 
 from app.core.config import settings
 from app.models.contracts import EvaluateRequest, GeminiAlignmentResponse, TTSRequest, AssistantRequest, AssistantResponse, ProductSuggestion
 from app.routers.breathwork import router as breathwork_router
 from app.services.evaluator import AlignmentEvaluator
 from app.services.assistant import AssistantService
+from app.services.pose_library import get_library, get_pose, check_pose_contraindications
+
+# Add backend/ to path so `pose_rules` package is importable
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from pose_rules.angle_rules import get_rules as get_pose_rules        # noqa: E402
+from pose_rules.angle_calculator import calculate_pose_score as _det_score  # noqa: E402
 
 app = FastAPI(title="Yoga GenAI POC", version="0.1.0")
 
@@ -202,3 +211,71 @@ def evaluate(req: EvaluateRequest) -> dict:
         user_level=req.user_level,
         landmarks=landmarks,
     )
+
+
+# ── Fast deterministic pose scoring (no LLM, <20ms) ────────────────────────
+
+
+class PoseScoreRequest(_BM):
+    pose_id: str
+    landmarks: list[dict[str, float]]
+
+
+class PoseScoreViolation(_BM):
+    joint: str
+    severity: str
+    feedback: str
+
+
+class PoseScoreResponse(_BM):
+    score: int
+    violations: list[PoseScoreViolation]
+    is_stable: bool
+    feedback_priority: str | None = None
+
+
+@app.post("/api/pose/score", response_model=PoseScoreResponse)
+def pose_score(req: PoseScoreRequest) -> dict[str, _Any]:
+    """Pure deterministic pose scoring — no LLM. Called every frame."""
+    rules = get_pose_rules(req.pose_id)
+    if rules is None:
+        # Fallback: return neutral score
+        return {
+            "score": 50,
+            "violations": [],
+            "is_stable": True,
+            "feedback_priority": None,
+        }
+    return _det_score(req.landmarks, req.pose_id, rules)
+
+
+# ── Pose library endpoints ──────────────────────────────────────────────────
+
+@app.get("/api/pose/library")
+def pose_library_list() -> dict[str, _Any]:
+    """Return the full pose library (cached in memory)."""
+    return {"poses": get_library()}
+
+
+@app.get("/api/pose/library/{pose_id}")
+def pose_library_detail(pose_id: str) -> dict[str, _Any]:
+    """Return a single pose's data."""
+    pose = get_pose(pose_id)
+    if not pose:
+        raise HTTPException(status_code=404, detail=f"Pose '{pose_id}' not found")
+    return pose
+
+
+class ContraindicationRequest(_BM):
+    pose_id: str
+    user_conditions: list[str]
+
+
+@app.post("/api/pose/contraindications")
+def pose_contraindications(req: ContraindicationRequest) -> dict[str, _Any]:
+    """Check if a pose has contraindications for the user's conditions."""
+    pose = get_pose(req.pose_id)
+    if not pose:
+        raise HTTPException(status_code=404, detail=f"Pose '{req.pose_id}' not found")
+    warnings = check_pose_contraindications(pose, req.user_conditions)
+    return {"warnings": warnings, "safe": len(warnings) == 0}

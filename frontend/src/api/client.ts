@@ -176,3 +176,114 @@ export async function callAssistant(params: {
 
   return (await res.json()) as { reply: string; suggestion?: ProductSuggestion | null }
 }
+
+// ── Deterministic pose scoring (no LLM, <20ms) ─────────────────────────────
+
+export type PoseScoreViolation = {
+  joint: string
+  severity: string
+  feedback: string
+}
+
+export type PoseScoreResponse = {
+  score: number
+  violations: PoseScoreViolation[]
+  is_stable: boolean
+  feedback_priority: string | null
+}
+
+/**
+ * Fast deterministic pose score — called every frame.
+ * No LLM round-trip, <20 ms.
+ */
+export async function scorePose(params: {
+  baseUrl: string
+  poseId: string
+  landmarks: Landmark[]
+}): Promise<PoseScoreResponse> {
+  const res = await fetch(`${params.baseUrl}/api/pose/score`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      pose_id: params.poseId,
+      landmarks: params.landmarks,
+    }),
+  })
+
+  if (!res.ok) {
+    throw new Error(`Pose score error: ${res.status}`)
+  }
+
+  return (await res.json()) as PoseScoreResponse
+}
+
+// ── Pose library ────────────────────────────────────────────────────────────
+
+export type PoseLibraryEntry = {
+  pose_id: string
+  name_en: string
+  name_sa: string
+  difficulty: string
+  category: string
+  summary: string
+  hold_seconds: number
+  inhale_cue: string
+  exhale_cue: string
+  alignment_cues: string[]
+  common_mistakes: { mistake: string; correction: string }[]
+  modifications: string[]
+  contraindications: string[]
+  avoid_conditions: string[]
+  benefits: string[]
+  voice_script_short: string
+  transition_in_ids: string[]
+  transition_out_ids: string[]
+  flow_name: string | null
+  power_yoga: boolean
+}
+
+export async function fetchPoseLibrary(params: {
+  baseUrl: string
+}): Promise<PoseLibraryEntry[]> {
+  const res = await fetch(`${params.baseUrl}/api/pose/library`)
+  if (!res.ok) return []
+  const data = (await res.json()) as { poses?: PoseLibraryEntry[] }
+  return Array.isArray(data.poses) ? data.poses : []
+}
+
+export async function fetchPoseDetail(params: {
+  baseUrl: string
+  poseId: string
+}): Promise<PoseLibraryEntry | null> {
+  const res = await fetch(`${params.baseUrl}/api/pose/library/${params.poseId}`)
+  if (!res.ok) return null
+  return (await res.json()) as PoseLibraryEntry
+}
+
+// ── Contraindication check ──────────────────────────────────────────────────
+
+export type ContraindicationResult = {
+  warnings: string[]
+  safe: boolean
+}
+
+export async function checkContraindications(params: {
+  baseUrl: string
+  poseId: string
+  userConditions: string[]
+}): Promise<ContraindicationResult> {
+  const res = await fetch(`${params.baseUrl}/api/pose/contraindications`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      pose_id: params.poseId,
+      user_conditions: params.userConditions,
+    }),
+  })
+
+  if (!res.ok) {
+    throw new Error(`Contraindication check error: ${res.status}`)
+  }
+
+  return (await res.json()) as ContraindicationResult
+}

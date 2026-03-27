@@ -1,5 +1,6 @@
 SYSTEM_PROMPT = (
-    "You are a certified yoga instructor evaluating a student's posture in a live class.\n"
+    "You are Madhu, a warm and precise yoga instructor with 15 years of experience "
+    "in Hatha and alignment-based yoga. You are evaluating a student's posture in a live class.\n"
     "You receive biomechanical data from MediaPipe pose detection. This data is your ONLY source of truth.\n\n"
     "CRITICAL GROUNDING RULES:\n"
     "1. Every observation MUST be grounded in the provided biomechanical data. NEVER invent or assume.\n"
@@ -11,6 +12,8 @@ SYSTEM_PROMPT = (
     "7. Use plain, beginner-friendly English. Avoid anatomy jargon.\n"
     "8. Return structured JSON only. No markdown, comments, or extra keys.\n"
     "9. Do not provide medical advice.\n"
+    "10. Speak like a teacher who sees the student — warm, encouraging, specific.\n"
+    "11. Use pose-specific alignment cues and breath guidance when provided.\n"
 )
 
 USER_INSTRUCTIONS = (
@@ -69,3 +72,90 @@ USER_INSTRUCTIONS = (
     "- measured_value in deviations MUST be a number (schema requirement).\n"
     "- Write like a warm, encouraging yoga instructor coaching a beginner.\n"
 )
+
+
+def build_pose_context_block(pose_data: dict | None) -> str:
+    """Build a pose-specific context block to inject into the LLM user message.
+
+    Uses alignment_cues, common_mistakes, breath cues, and voice_script from
+    pose_library.json. Returns an empty string if no data is available.
+    """
+    if not pose_data:
+        return ""
+
+    parts: list[str] = []
+
+    name = pose_data.get("name_en", "")
+    sanskrit = pose_data.get("name_sa", "")
+    if name:
+        parts.append(f"\n== Pose: {name} ({sanskrit}) ==")
+
+    summary = pose_data.get("summary", "")
+    if summary:
+        parts.append(f"Summary: {summary}")
+
+    cues = pose_data.get("alignment_cues", [])
+    if cues:
+        cues_text = "\n".join(f"  - {c}" for c in cues)
+        parts.append(f"Key alignment cues:\n{cues_text}")
+
+    mistakes = pose_data.get("common_mistakes", [])
+    if mistakes:
+        m_text = "\n".join(f"  - {m['mistake']} → {m['correction']}" for m in mistakes)
+        parts.append(f"Common mistakes:\n{m_text}")
+
+    inhale = pose_data.get("inhale_cue", "")
+    exhale = pose_data.get("exhale_cue", "")
+    if inhale or exhale:
+        parts.append(f"Breath: Inhale — {inhale}. Exhale — {exhale}.")
+
+    voice = pose_data.get("voice_script_short", "")
+    if voice:
+        parts.append(f"Coach voice: \"{voice}\"")
+
+    return "\n".join(parts)
+
+
+def build_pose_feedback_prompt(
+    pose: dict,
+    score: int,
+    violations: list[dict],
+    user_conditions: list[str] | None = None,
+) -> str:
+    """Build a rich LLM prompt for a one-time coaching narrative after hold."""
+    cues_block = "\n".join(f"- {c}" for c in pose.get("alignment_cues", []))
+    mistake_block = "\n".join(
+        f"- {m['mistake']} → {m['correction']}" for m in pose.get("common_mistakes", [])
+    )
+    violation_block = "\n".join(
+        f"- {v['joint']}: {v['feedback']} (severity: {v['severity']})"
+        for v in violations
+    ) or "No major violations detected."
+
+    conditions = user_conditions or []
+
+    return (
+        f"You are Madhu, a warm and precise yoga instructor with 15 years of experience "
+        f"in Hatha and alignment-based yoga. You are speaking directly to a student who has just held "
+        f"{pose.get('name_en', 'this pose')} ({pose.get('name_sa', '')}) "
+        f"for {pose.get('hold_seconds', 10)} seconds.\n\n"
+        f"Their alignment score was {score}/100.\n\n"
+        f"== Pose Context ==\n"
+        f"Summary: {pose.get('summary', '')}\n"
+        f"Key alignment cues:\n{cues_block}\n\n"
+        f"Common mistakes:\n{mistake_block}\n\n"
+        f"== What the system detected ==\n{violation_block}\n\n"
+        f"== Breath guidance ==\n"
+        f"Inhale: {pose.get('inhale_cue', '')}\n"
+        f"Exhale: {pose.get('exhale_cue', '')}\n\n"
+        f"== Student conditions ==\n"
+        f"{', '.join(conditions) if conditions else 'None reported'}\n\n"
+        f"== Your task ==\n"
+        f"Give feedback in 3 short paragraphs:\n"
+        f"1. Acknowledge what they did well (be specific, not generic)\n"
+        f"2. The single most important thing to improve — use the violation data "
+        f"and your knowledge. Be precise about body parts and direction.\n"
+        f"3. One breath or mindfulness cue to help deepen naturally.\n\n"
+        f"Tone: warm, encouraging, knowledgeable. Like a teacher who sees you.\n"
+        f"Do NOT say 'Great job!' as opener. No bullet points. Second person. Max 120 words."
+    )

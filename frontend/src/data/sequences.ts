@@ -39,4 +39,158 @@ export const SEQUENCES: PoseSequence[] = [
       { pose: 'Pranamasana' },
     ],
   },
+
+  // ── Standing Flow ────────────────────────────────────────────────────────
+  {
+    id: 'standing-strength',
+    name: 'Standing Strength Flow',
+    sanskritName: 'Sthira Vinyāsa',
+    description:
+      'Build leg strength and balance through a grounding standing sequence. Great for building a strong foundation.',
+    difficulty: 'beginner',
+    durationMins: 12,
+    steps: [
+      { pose: 'Tadasana' },
+      { pose: 'Utkatasana' },
+      { pose: 'Virabhadrasana I', sideNote: 'Right foot forward.' },
+      { pose: 'Warrior II' },
+      { pose: 'Trikonasana', sideNote: 'Keep right leg forward for Triangle.' },
+      { pose: 'Tadasana', sideNote: 'Return to Mountain. Now switch sides.' },
+      { pose: 'Virabhadrasana I', sideNote: 'Left foot forward.' },
+      { pose: 'Warrior II' },
+      { pose: 'Trikonasana', sideNote: 'Left leg forward for Triangle.' },
+      { pose: 'Tadasana' },
+    ],
+  },
+
+  // ── Gentle Morning Flow ──────────────────────────────────────────────────
+  {
+    id: 'gentle-morning',
+    name: 'Gentle Morning Flow',
+    sanskritName: 'Prātaḥ Vinyāsa',
+    description:
+      'A soft wake-up sequence to ease stiffness and set a calm, focused tone for the day.',
+    difficulty: 'beginner',
+    durationMins: 10,
+    steps: [
+      { pose: 'Sukhasana' },
+      { pose: 'Marjaryasana', sideNote: 'Move into Cat Pose on all fours.' },
+      { pose: 'Bitilasana', sideNote: 'Inhale into Cow Pose.' },
+      { pose: 'Down Dog' },
+      { pose: 'Uttanasana', sideNote: 'Walk your feet to your hands.' },
+      { pose: 'Ardha Uttanasana' },
+      { pose: 'Tadasana' },
+      { pose: 'Hasta Uttanasana' },
+      { pose: 'Pranamasana' },
+    ],
+  },
+
+  // ── Hip Opening Flow ─────────────────────────────────────────────────────
+  {
+    id: 'hip-opening',
+    name: 'Hip Opening Flow',
+    sanskritName: 'Nitamba Vinyāsa',
+    description:
+      'Release tightness in hips and inner thighs with a blend of lunges, squats, and seated openers.',
+    difficulty: 'beginner',
+    durationMins: 15,
+    steps: [
+      { pose: 'Sukhasana' },
+      { pose: 'Baddha Konasana' },
+      { pose: 'malasana', sideNote: 'Rise into Garland Pose.' },
+      { pose: 'Anjaneyasana', sideNote: 'Step left foot forward into Low Lunge.' },
+      { pose: 'Anjaneyasana', sideNote: 'Switch — right foot forward.' },
+      { pose: 'Goddess' },
+      { pose: 'Prasarita Padottanasana' },
+      { pose: 'malasana' },
+      { pose: 'Sukhasana' },
+    ],
+  },
+
+  // ── Core & Balance ───────────────────────────────────────────────────────
+  {
+    id: 'core-balance',
+    name: 'Core & Balance',
+    sanskritName: 'Sthiti Śakti',
+    description:
+      'Strengthen the core and sharpen balance with standing balances and plank variations.',
+    difficulty: 'intermediate',
+    durationMins: 12,
+    steps: [
+      { pose: 'Tadasana' },
+      { pose: 'Vrksasana', sideNote: 'Right foot on left calf.' },
+      { pose: 'Vrksasana', sideNote: 'Switch — left foot on right calf.' },
+      { pose: 'Plank' },
+      { pose: 'Down Dog' },
+      { pose: 'Virabhadrasana I', sideNote: 'Right foot forward.' },
+      { pose: 'Warrior II' },
+      { pose: 'Tadasana' },
+      { pose: 'Utkatasana' },
+      { pose: 'Pranamasana' },
+    ],
+  },
+
+  // ── Relaxation & Recovery ────────────────────────────────────────────────
+  {
+    id: 'relaxation-recovery',
+    name: 'Relaxation & Recovery',
+    sanskritName: 'Viśrānti Krama',
+    description:
+      'A restorative cooldown that calms the nervous system. Perfect after an intense practice or a long day.',
+    difficulty: 'beginner',
+    durationMins: 12,
+    steps: [
+      { pose: 'Vajrasana' },
+      { pose: 'Marjaryasana' },
+      { pose: 'Bitilasana' },
+      { pose: 'Setu Bandhasana', sideNote: 'Roll onto your back for Bridge.' },
+      { pose: 'Apanasana' },
+      { pose: 'Supta Matsyendrasana', sideNote: 'Twist knees to the left.' },
+      { pose: 'Supta Matsyendrasana', sideNote: 'Twist knees to the right.' },
+      { pose: 'Ananda Balasana' },
+      { pose: 'Savasana' },
+    ],
+  },
+
+  // ── Seated Flexibility ───────────────────────────────────────────────────
+  {
+    id: 'seated-flexibility',
+    name: 'Seated Flexibility Flow',
+    sanskritName: 'Āsana Laghutā',
+    description:
+      'Improve hamstring and hip flexibility from a seated position — great for desk workers.',
+    difficulty: 'beginner',
+    durationMins: 10,
+    steps: [
+      { pose: 'Dandasana' },
+      { pose: 'Paschimottanasana' },
+      { pose: 'Janu Sirsasana', sideNote: 'Fold over the left leg.' },
+      { pose: 'Janu Sirsasana', sideNote: 'Switch to the right leg.' },
+      { pose: 'Upavistha Konasana' },
+      { pose: 'Baddha Konasana' },
+      { pose: 'Sukhasana' },
+    ],
+  },
+
+  // ── Back Strength ────────────────────────────────────────────────────────
+  {
+    id: 'back-strength',
+    name: 'Back Body Strength',
+    sanskritName: 'Pṛṣṭha Bala',
+    description:
+      'Strengthen the posterior chain and improve posture with prone backbend-focused practice.',
+    difficulty: 'beginner',
+    durationMins: 10,
+    steps: [
+      { pose: 'Vajrasana' },
+      { pose: 'Marjaryasana' },
+      { pose: 'Bitilasana' },
+      { pose: 'Salamba Bhujangasana', sideNote: 'Lower onto your belly for Sphinx.' },
+      { pose: 'Bhujangasana' },
+      { pose: 'Salabhasana' },
+      { pose: 'Makarasana', sideNote: 'Rest in Crocodile Pose.' },
+      { pose: 'Apanasana', sideNote: 'Roll onto your back.' },
+      { pose: 'Savasana' },
+    ],
+  },
 ]

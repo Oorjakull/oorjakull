@@ -50,25 +50,23 @@ def compute_metrics(landmarks: list[dict[str, float]], expected_pose: str) -> Me
 
     visibility_mean = float(np.mean(vis))
 
-    # Conventions:
-    # - For Warrior II template, assume LEFT is the front (bent) knee.
-    # - For Tadasana, both knees should be straight.
-    # - For Tree Pose, LEFT knee is standing (front_knee) and RIGHT knee is lifted (back_knee).
-    if expected_pose == "Warrior II":
-        front_knee_idx = L_KNEE
-        front_hip_idx = L_HIP
-        front_ankle_idx = L_ANKLE
-        back_knee_idx = R_KNEE
-        back_hip_idx = R_HIP
-        back_ankle_idx = R_ANKLE
-    elif expected_pose == "Tree Pose":
-        front_knee_idx = L_KNEE
-        front_hip_idx = L_HIP
-        front_ankle_idx = L_ANKLE
-        back_knee_idx = R_KNEE
-        back_hip_idx = R_HIP
-        back_ankle_idx = R_ANKLE
-    else:  # Tadasana
+    # ── Per-pose front/back leg mapping via PoseTemplate.stance_side ────────
+    from app.pose.templates import POSE_TEMPLATES
+
+    template = POSE_TEMPLATES.get(expected_pose)
+    stance = "symmetric"
+    if template is not None:
+        stance = getattr(template, "stance_side", "symmetric")
+
+    if stance == "right_front":
+        front_knee_idx = R_KNEE
+        front_hip_idx = R_HIP
+        front_ankle_idx = R_ANKLE
+        back_knee_idx = L_KNEE
+        back_hip_idx = L_HIP
+        back_ankle_idx = L_ANKLE
+    else:
+        # "left_front" and "symmetric" both default to LEFT as front
         front_knee_idx = L_KNEE
         front_hip_idx = L_HIP
         front_ankle_idx = L_ANKLE

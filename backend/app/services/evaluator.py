@@ -11,6 +11,8 @@ from app.core.config import settings
 from app.models.contracts import GeminiAlignmentResponse
 from app.pose.biomechanics import Metrics, compute_metrics, compute_pose_score, metrics_distance, round_for_summary
 from app.pose.templates import POSE_TEMPLATES
+from app.services.pose_library import get_pose
+from app.ai.prompt import build_pose_context_block
 from app.utils.hash import stable_hash
 
 
@@ -167,6 +169,13 @@ class AlignmentEvaluator:
             "ideal_ranges": ideal_ranges,
             "metric_status": _compute_metric_status(metrics, ideal_ranges),
         }
+
+        # Inject pose-specific context from pose_library.json if available
+        pose_id = template.pose_id if template and hasattr(template, "pose_id") else ""
+        pose_data = get_pose(pose_id) if pose_id else None
+        pose_context = build_pose_context_block(pose_data)
+        if pose_context:
+            biomech_summary["pose_context"] = pose_context
 
         summary_hash = stable_hash(biomech_summary)
 
