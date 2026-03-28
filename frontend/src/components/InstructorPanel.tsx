@@ -52,7 +52,7 @@ export default memo(function InstructorPanel(props: {
     ? src.startsWith('http')
       ? src
       : src.startsWith('/poses/')
-        ? src                           // served by frontend (public dir)
+        ? `${import.meta.env.BASE_URL}${src.replace(/^\//, '')}`  // prepend base for /ai/ deployment
         : `${props.baseUrl}${src}`      // API-returned path
     : ''
 
