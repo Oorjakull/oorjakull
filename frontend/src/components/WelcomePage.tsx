@@ -86,7 +86,7 @@ export default function WelcomePage({
           transition={{ delay: 0.1, duration: 0.5 }}
         >
           <img
-            src="/Logo.jpeg"
+            src={`${import.meta.env.BASE_URL}Logo.jpeg`}
             alt="OorjaKull"
             className="mx-auto mb-6 h-20 w-20 rounded-2xl object-cover shadow-xl shadow-emerald-500/25 ring-1 ring-black/5 dark:ring-white/10"
           />

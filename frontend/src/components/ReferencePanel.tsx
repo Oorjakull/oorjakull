@@ -33,7 +33,11 @@ export default function ReferencePanel(props: {
   const baseUrl = props.baseUrl
     ?? (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, '')
     ?? 'http://localhost:8000'
-  const mediaSrc = ref ? (ref.kind === 'video' ? `${baseUrl}${ref.src}` : ref.src) : ''
+  const mediaSrc = ref
+    ? ref.kind === 'video'
+      ? `${baseUrl}${ref.src}`
+      : `${import.meta.env.BASE_URL}${ref.src.replace(/^\//, '')}`
+    : ''
 
   return (
     <div className="panel">

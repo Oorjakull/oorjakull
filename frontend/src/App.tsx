@@ -736,7 +736,7 @@ export default function App() {
   const poseMediaSrc: string | null = (() => {
     // Prefer the static frontend image from POSE_REFERENCES (always available)
     const ref = POSE_REFERENCES.find((p) => p.pose === expectedPose)
-    if (ref?.src) return ref.src
+    if (ref?.src) return `${import.meta.env.BASE_URL}${ref.src.replace(/^\//, '')}`
     // Fallback to API-provided media
     const media = trainMediaByPose[expectedPose]?.[0]
     if (media) {
