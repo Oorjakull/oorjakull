@@ -917,7 +917,7 @@ export default function App() {
                 onBackHome={handleBackToHome}
                 sequences={SEQUENCES}
                 onSelectSequence={handleSelectSequence}
-                showCreditCost={safety.isAuthenticated && !isUnlimited}
+                showCreditCost={safety.isAuthenticated}
               />
             ) : (
               <BreathworkPage

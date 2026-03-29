@@ -8,15 +8,27 @@ type Props = {
 }
 
 /**
- * Small pill badge that shows remaining AI feedback credits.
- * Hidden for super_user / paid_user (unlimited) accounts.
+ * Credit badge shown in the toolbar and practice header.
  *
- * - variant="compact": "🔮 12 credits" (practice header)
- * - variant="summary": "🔮 12 / 20 credits used" (landing toolbar)
+ * - variant="compact": "🔮 12 credits" or "∞ Unlimited" (practice header)
+ * - variant="summary": "🔮 X / 20 used" or "✦ Unlimited" (landing toolbar)
  */
 export default function CreditIndicator({ creditsRemaining, isUnlimited, creditsUsed, variant = 'compact' }: Props) {
-  // Don't render for unlimited users
-  if (isUnlimited || creditsRemaining === null || creditsRemaining === undefined) {
+  // ── Unlimited user (super_user / paid_user) ──────────────────────────────
+  if (isUnlimited) {
+    return (
+      <div
+        className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700 shadow-sm dark:bg-emerald-900/40 dark:text-emerald-300"
+        title="Unlimited AI feedback — no credit limit"
+      >
+        <span>✦</span>
+        <span>Unlimited</span>
+      </div>
+    )
+  }
+
+  // Not authenticated yet — nothing to show
+  if (creditsRemaining === null || creditsRemaining === undefined) {
     return null
   }
 
