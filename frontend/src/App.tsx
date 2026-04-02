@@ -1393,7 +1393,7 @@ export default function App() {
 
           {/* Panels */}
           <div className="relative flex-1 min-h-0">
-            <div className={`${deviceFrame} h-full`}>
+            <div className="flex h-full flex-col h-full">
               <div className={`${pageLayoutClass} min-h-0 flex-1`}>
                 {/* In portrait-mobile: show only active panel. Otherwise show both. */}
                 {(!showFlipButton || activePanel === 'instructor') && (
