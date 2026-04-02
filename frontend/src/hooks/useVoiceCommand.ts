@@ -70,11 +70,20 @@ function matchAction(transcript: string): VoiceAction | null {
     /\bcontinue\b/.test(t) ||
     /\bfinish\b/.test(t) ||
     /\bready\b/.test(t) ||
+    /\bi\s*am\s*ready\b/.test(t) ||
+    /\bi\s*m\s*ready\b/.test(t) ||
+    /\bim\s*ready\b/.test(t) ||
+    /\bredy\b/.test(t) ||
+    /\bredi\b/.test(t) ||
+    /\bokay\b/.test(t) ||
+    /\bok\b/.test(t) ||
+    /\bdone\b/.test(t) ||
     /\bstart\b/.test(t) ||
     /\blet'?s\s*go\b/.test(t) ||
     /\bgo\s*ahead\b/.test(t) ||
     /\baage\b/.test(t) ||
-    /\bshuru\b/.test(t)
+    /\bshuru\b/.test(t) ||
+    /\btayyar\b/.test(t)
   ) {
     return 'next'
   }
