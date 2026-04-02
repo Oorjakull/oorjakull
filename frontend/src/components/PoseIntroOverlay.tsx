@@ -250,7 +250,7 @@ export default function PoseIntroOverlay({
               {voiceEnabled ? (
                 <>
                   <span className={`inline-block h-1.5 w-1.5 rounded-full ${voiceListening ? 'animate-pulse bg-emerald-400' : 'bg-slate-500'}`} />
-                  {voiceListening ? 'Listening… say begin, next, or exit' : 'Voice guide is playing…'}
+                  {voiceListening ? 'Listening… say ready, next, or exit' : 'Voice guide is playing…'}
                 </>
               ) : (
                 <>

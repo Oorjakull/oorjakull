@@ -70,11 +70,7 @@ function matchAction(transcript: string): VoiceAction | null {
     /\bcontinue\b/.test(t) ||
     /\bfinish\b/.test(t) ||
     /\bready\b/.test(t) ||
-    /\bbegin\b/.test(t) ||
-    /\bbegan\b/.test(t) ||
-    /\bbe\s*gain\b/.test(t) ||
     /\bstart\b/.test(t) ||
-    /\blet'?s\s*begin\b/.test(t) ||
     /\blet'?s\s*go\b/.test(t) ||
     /\bgo\s*ahead\b/.test(t) ||
     /\baage\b/.test(t) ||
