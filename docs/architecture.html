@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>System Architecture — OorjaKull Docs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <button class="hamburger" aria-label="Menu">☰</button>
+  <div class="layout">
+    <nav class="sidebar" id="sidebar"></nav>
+    <main class="content">
+      <div class="breadcrumb">Architecture <span>/</span> System Architecture</div>
+      <h1 class="page-title">System Architecture</h1>
+      <p class="page-subtitle">Verified service boundaries and state transitions based on code imports and endpoint calls.</p>
+      <div class="page-body">
+        <h2>System Overview</h2>
+        <div class="diagram-wrap">
+          <pre class="mermaid">flowchart TB
+  subgraph FE[Frontend - React/Vite]
+    APP[App.tsx]
+    MP[usePoseLandmarker]
+    API[api/client.ts]
+    SAFETY[SafetyContext]
+  end
+
+  subgraph BE[Backend - FastAPI]
+    MAIN[app/main.py]
+    EVAL[services/evaluator.py]
+    GROQ[ai/groq_client.py]
+    RULES[pose_rules/angle_calculator.py]
+    DB[core/db.py]
+  end
+
+  FE -->|HTTP /api/*| MAIN
+  APP --> MP
+  API --> MAIN
+  MAIN --> EVAL
+  EVAL --> GROQ
+  EVAL --> RULES
+  MAIN --> DB</pre>
+        </div>
+
+        <h2>MediaPipe Processing Path</h2>
+        <div class="diagram-wrap">
+          <pre class="mermaid">flowchart LR
+  CAM[UserCameraPanel video frame] --> LAND[usePoseLandmarker.detectForVideo]
+  LAND --> SMOOTH[Temporal smoothing in hook]
+  SMOOTH --> STATE[landmarks state in App.tsx]
+  STATE --> FRAME[computeFraming()]
+  STATE --> POST[/api/evaluate payload]
+  POST --> RESP[AlignmentResponse]
+  RESP --> UI[FeedbackPanel / overlays]</pre>
+        </div>
+
+        <h2>Frontend Session State Machine</h2>
+        <div class="diagram-wrap">
+          <pre class="mermaid">stateDiagram-v2
+  [*] --> welcome
+  welcome --> disclaimer: continue
+  welcome --> landing: profile exists
+  disclaimer --> health-check
+  health-check --> session-briefing
+  session-briefing --> landing
+  landing --> intro
+  landing --> breathwork-session
+  intro --> framing
+  framing --> evaluating
+  evaluating --> results
+  results --> intro: next pose
+  results --> sequence-complete: end sequence
+  sequence-complete --> landing
+  breathwork-session --> landing
+</pre>
+        </div>
+
+        <h2>Evaluate Request Lifecycle</h2>
+        <div class="diagram-wrap">
+          <pre class="mermaid">sequenceDiagram
+  participant FE as Frontend
+  participant API as FastAPI /api/evaluate
+  participant EV as AlignmentEvaluator
+  participant PR as Prompt Builder
+  participant GR as GroqClient
+
+  FE->>API: POST EvaluateRequest(client_id, expected_pose, landmarks)
+  API->>EV: evaluate(...)
+  EV->>PR: build_pose_context_block(...)
+  EV->>GR: evaluate_alignment(biomech_summary)
+  GR-->>EV: JSON response
+  EV-->>API: GeminiAlignmentResponse
+  API-->>FE: alignment JSON (+ credit fields)</pre>
+        </div>
+
+        <h2>Frontend Component Tree (Core Yoga Flow)</h2>
+        <div class="diagram-wrap">
+          <pre class="mermaid">flowchart TB
+  APP[App] --> WELCOME[WelcomePage]
+  APP --> LANDING[LandingPage]
+  APP --> INTRO[PoseIntroOverlay]
+  APP --> LIVE[UserCameraPanel]
+  APP --> INST[InstructorPanel]
+  INST --> FEED[FeedbackPanel]
+  INST --> SCORE[ScoreDisplay]
+  APP --> CREDIT[CreditIndicator]
+  APP --> CHAT[ChatBot]</pre>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script type="module" src="assets/diagrams.js"></script>
+  <script src="assets/nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session Flow — OorjaKull Docs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <button class="hamburger" aria-label="Menu">☰</button>
+  <div class="layout">
+    <nav class="sidebar" id="sidebar"></nav>
+    <main class="content">
+      <div class="breadcrumb">Product <span>/</span> Session Flow</div>
+      <h1 class="page-title">Session Flow</h1>
+      <p class="page-subtitle">State-driven journey for onboarding, safety profiling, live evaluation, and completion.</p>
+      <div class="page-body">
+        <h2>Experience Phases (from App.tsx)</h2>
+        <pre data-lang="ts"><code>type ExperiencePhase =
+  | 'welcome'
+  | 'landing'
+  | 'disclaimer'
+  | 'health-check'
+  | 'session-briefing'
+  | 'intro'
+  | 'framing'
+  | 'evaluating'
+  | 'results'
+  | 'sequence-complete'
+  | 'breathwork-session'</code></pre>
+
+        <h2>Full User Journey</h2>
+        <div class="diagram-wrap">
+          <pre class="mermaid">flowchart TD
+  A[Welcome] --> B{Authenticated?}
+  B -- No --> C[Landing]
+  B -- Yes + no profile --> D[Disclaimer]
+  D --> E[Health Questionnaire]
+  E --> F[Safety Profile Saved]
+  F --> C
+
+  C -->|Select Yoga Pose or Sequence| G[Intro]
+  G --> H[Framing]
+  H --> I[Evaluating]
+  I --> J[Results]
+  J -->|Next| G
+  J -->|Finish sequence| K[Sequence Complete]
+  K --> C
+
+  C -->|Select Breathwork| L[Breathwork Session]
+  L --> C</pre>
+        </div>
+
+        <h2>Safety-Oriented Session Planning</h2>
+        <ol>
+          <li>Frontend submits questionnaire data.</li>
+          <li>Backend <code>SafetyProfiler</code> computes risk tier and allowed/blocked/modified poses.</li>
+          <li><code>SessionOrchestrator</code> builds plan using latest risk profile + optional carry-over risk from previous session.</li>
+          <li>Plan and warnings are shown in session briefing before practice starts.</li>
+        </ol>
+
+        <h2>Evaluation Loop (Live)</h2>
+        <div class="diagram-wrap">
+          <pre class="mermaid">sequenceDiagram
+  participant CAM as Camera Stream
+  participant FE as App Evaluator Loop
+  participant BE as /api/evaluate
+
+  CAM->>FE: landmarks per frame
+  FE->>FE: local framing + stability checks
+  FE->>BE: periodic evaluate requests
+  BE-->>FE: score + correction + safety_note + credit fields
+  FE->>FE: update UI, voice guidance, overlays
+  FE->>FE: transition to results on hold completion/exit</pre>
+        </div>
+
+        <h2>Session Persistence Timeline</h2>
+        <table>
+          <thead><tr><th>Moment</th><th>API</th><th>Storage Effect</th></tr></thead>
+          <tbody>
+            <tr><td>Profile submission</td><td>POST /api/safety/profile</td><td>insert user_risk_profiles</td></tr>
+            <tr><td>Plan generation</td><td>POST /api/session/plan</td><td>insert session_logs (planned)</td></tr>
+            <tr><td>During session</td><td>POST /api/session/pain-check</td><td>insert pain_check_logs</td></tr>
+            <tr><td>Session end/update</td><td>PATCH /api/session/{session_id}/state</td><td>update session_logs + insert attempts/events</td></tr>
+            <tr><td>Progress fetch</td><td>GET /api/user/progression</td><td>aggregated read from logs</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Escalation Behavior</h2>
+        <p>When risk signals escalate during evaluating, frontend displays risk warning controls and can stop or safely end session via existing handlers in <code>App.tsx</code> and <code>SafetyContext</code>.</p>
+        <div class="scan-needed">SCAN NEEDED: Exact escalation thresholds and risk signal weighting from frontend safety modules line-by-line.</div>
+      </div>
+    </main>
+  </div>
+  <script type="module" src="assets/diagrams.js"></script>
+  <script src="assets/nav.js"></script>
+</body>
+</html>

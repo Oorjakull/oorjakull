@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Backend — OorjaKull Docs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <button class="hamburger" aria-label="Menu">☰</button>
+  <div class="layout">
+    <nav class="sidebar" id="sidebar"></nav>
+    <main class="content">
+      <div class="breadcrumb">Codebase <span>/</span> Backend</div>
+      <h1 class="page-title">Backend</h1>
+      <p class="page-subtitle">FastAPI monolith entrypoint with evaluation, safety, progression, assistant, and breathwork APIs.</p>
+      <div class="page-body">
+        <h2>Backend Tree (Annotated)</h2>
+        <pre data-lang="text"><code>backend/
+  api/index.py                 # Vercel ASGI entrypoint
+  app/main.py                  # Primary FastAPI routes
+  app/core/config.py           # env loading and settings
+  app/core/db.py               # Supabase singleton
+  app/core/auth.py             # Google token verification + auth dependencies
+  app/services/evaluator.py    # alignment scoring + LLM orchestration
+  app/services/assistant.py    # Madhu assistant chat service
+  app/services/pose_library.py # pose library access + contraindications
+  app/routers/breathwork.py    # /api/breathwork/protocols route + static catalog
+  safety/*                     # safety profiler and risk engine
+  session/session_orchestrator.py
+  data/progression_service.py  # progression and last risk carryover
+  scripts/*.sql                # database schema migrations</code></pre>
+
+        <h2>Core Endpoint Inventory</h2>
+        <table>
+          <thead><tr><th>Method</th><th>Path</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td>GET</td><td>/health</td><td>Health probe.</td></tr>
+            <tr><td>POST</td><td>/api/assistant</td><td>Conversational assistant response (Madhu).</td></tr>
+            <tr><td>POST</td><td>/api/tts</td><td>Google TTS + optional translation.</td></tr>
+            <tr><td>POST</td><td>/api/evaluate</td><td>Alignment evaluation (auth-gated + credit deduction).</td></tr>
+            <tr><td>GET</td><td>/api/user/credits</td><td>Returns credits/profile type.</td></tr>
+            <tr><td>POST</td><td>/api/pose/score</td><td>Deterministic low-latency scoring.</td></tr>
+            <tr><td>GET</td><td>/api/pose/library</td><td>Full pose library.</td></tr>
+            <tr><td>GET</td><td>/api/pose/library/{pose_id}</td><td>Pose detail.</td></tr>
+            <tr><td>POST</td><td>/api/pose/contraindications</td><td>Pose safety checks for conditions.</td></tr>
+            <tr><td>POST</td><td>/api/auth/google</td><td>Google JWT verification + user upsert.</td></tr>
+            <tr><td>POST</td><td>/api/safety/profile</td><td>Create/update questionnaire-derived risk profile.</td></tr>
+            <tr><td>GET</td><td>/api/safety/profile</td><td>Get latest risk profile.</td></tr>
+            <tr><td>POST</td><td>/api/session/plan</td><td>Build safety-filtered session plan.</td></tr>
+            <tr><td>PATCH</td><td>/api/session/{session_id}/state</td><td>Persist session state, pose attempts, risk events.</td></tr>
+            <tr><td>POST</td><td>/api/session/pain-check</td><td>Persist pain events.</td></tr>
+            <tr><td>GET</td><td>/api/user/progression</td><td>User progression summary.</td></tr>
+            <tr><td>GET</td><td>/api/train/poses</td><td>Enumerate TRAIN media and canonical pose names.</td></tr>
+            <tr><td>GET</td><td>/api/breathwork/protocols</td><td>Breathwork protocol catalog (router).</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Request/Response Contracts</h2>
+        <p>Primary Pydantic contracts are in <code>backend/app/models/contracts.py</code>, including:</p>
+        <ul>
+          <li><code>EvaluateRequest</code> and <code>GeminiAlignmentResponse</code></li>
+          <li><code>TTSRequest</code></li>
+          <li><code>AssistantRequest</code> and <code>AssistantResponse</code></li>
+          <li><code>BreathworkProtocol</code></li>
+        </ul>
+
+        <h2>Evaluation Pipeline (Backend)</h2>
+        <div class="diagram-wrap">
+          <pre class="mermaid">flowchart LR
+  A[/api/evaluate/] --> B[Auth & credit pre-check]
+  B --> C[AlignmentEvaluator.evaluate]
+  C --> D[compute_metrics + generic score]
+  C --> E[deterministic pose rules]
+  C --> F[Groq LLM structured output]
+  D --> G[blended score 60% deterministic + 40% generic]
+  E --> G
+  F --> H[sanitized response]
+  G --> H
+  H --> I[deduct_credit RPC]
+  I --> J[response with credits_remaining]</pre>
+        </div>
+
+        <h2>Auth and CORS</h2>
+        <ul>
+          <li>Auth dependency: optional and required user resolvers in <code>app/core/auth.py</code>.</li>
+          <li>Google OAuth credential verification endpoint: <code>/api/auth/google</code>.</li>
+          <li>CORS loaded from <code>CORS_ORIGINS</code> with defaults for localhost, capacitor, and oorjakull domains.</li>
+        </ul>
+
+        <h2>Error Handling Notes</h2>
+        <ul>
+          <li>LLM failures fallback to safe placeholder correction text.</li>
+          <li>Credit deduction failure is non-fatal; evaluation response is still returned.</li>
+          <li>TTS/Translate upstream failures map to HTTP 502 with short diagnostics.</li>
+        </ul>
+      </div>
+    </main>
+  </div>
+  <script type="module" src="assets/diagrams.js"></script>
+  <script src="assets/nav.js"></script>
+</body>
+</html>

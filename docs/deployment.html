@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deployment — OorjaKull Docs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <button class="hamburger" aria-label="Menu">☰</button>
+  <div class="layout">
+    <nav class="sidebar" id="sidebar"></nav>
+    <main class="content">
+      <div class="breadcrumb">Operations <span>/</span> Deployment</div>
+      <h1 class="page-title">Deployment</h1>
+      <p class="page-subtitle">Current runtime deployment is Vercel for app services and GitHub Pages for docs.</p>
+      <div class="page-body">
+        <h2>Frontend Deployment (Vercel)</h2>
+        <ul>
+          <li>Config file: <code>frontend/vercel.json</code></li>
+          <li>Rewrite rules:
+            <ul>
+              <li><code>/ai/(.*)</code> → <code>/$1</code></li>
+              <li><code>/ai</code> → <code>/</code></li>
+            </ul>
+          </li>
+          <li>Build command from package scripts: <code>npm run build</code>.</li>
+        </ul>
+
+        <h2>Backend Deployment (Vercel Serverless)</h2>
+        <ul>
+          <li>Config file: <code>backend/vercel.json</code></li>
+          <li>Entrypoint: <code>backend/api/index.py</code> exporting FastAPI <code>app</code>.</li>
+          <li>Route: all paths rewrite to <code>api/index.py</code>.</li>
+        </ul>
+
+        <h2>Environment Variables in Hosting</h2>
+        <table>
+          <thead><tr><th>Variable</th><th>Frontend</th><th>Backend</th></tr></thead>
+          <tbody>
+            <tr><td>VITE_API_BASE_URL</td><td>Required</td><td>n/a</td></tr>
+            <tr><td>GROQ_API_KEY</td><td>n/a</td><td>Required for LLM feedback/assistant</td></tr>
+            <tr><td>SUPABASE_URL</td><td>n/a</td><td>Required for auth, safety, progression, credits</td></tr>
+            <tr><td>SUPABASE_SERVICE_KEY</td><td>n/a</td><td>Required server-side DB access</td></tr>
+            <tr><td>GOOGLE_TTS_API_KEY</td><td>n/a</td><td>Required for /api/tts</td></tr>
+            <tr><td>GOOGLE_TRANSLATE_API_KEY</td><td>n/a</td><td>Required for non-en-IN translation path</td></tr>
+            <tr><td>GOOGLE_CLIENT_ID / VITE_GOOGLE_CLIENT_ID</td><td>OAuth UI</td><td>Token verification</td></tr>
+          </tbody>
+        </table>
+
+        <h2>SEO Artifacts (Already Added)</h2>
+        <ul>
+          <li><code>frontend/public/sitemap.xml</code> points to <code>https://oorjakull.com</code></li>
+          <li><code>frontend/public/robots.txt</code> includes sitemap URL</li>
+        </ul>
+
+        <h2>Docs Deployment (GitHub Pages)</h2>
+        <ol>
+          <li>Docs source folder: <code>/docs</code>.</li>
+          <li>Pages should publish from GitHub Actions workflow.</li>
+          <li>Jekyll disabled by <code>docs/.nojekyll</code>.</li>
+        </ol>
+
+        <h2>Release Checklist</h2>
+        <ul>
+          <li>Frontend build passes (<code>npm run build</code> in frontend).</li>
+          <li>Backend imports and startup path pass (<code>uvicorn app.main:app ...</code> in backend).</li>
+          <li>Critical routes return expected status: <code>/health</code>, <code>/api/evaluate</code>, <code>/api/breathwork/protocols</code>.</li>
+          <li>Environment values set in hosting dashboard.</li>
+          <li>Docs workflow green after push to default branch.</li>
+        </ul>
+      </div>
+    </main>
+  </div>
+  <script type="module" src="assets/diagrams.js"></script>
+  <script src="assets/nav.js"></script>
+</body>
+</html>

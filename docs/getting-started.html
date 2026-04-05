@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Getting Started — OorjaKull Docs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <button class="hamburger" aria-label="Menu">☰</button>
+  <div class="layout">
+    <nav class="sidebar" id="sidebar"></nav>
+    <main class="content">
+      <div class="breadcrumb">Setup <span>/</span> Getting Started</div>
+      <h1 class="page-title">Getting Started</h1>
+      <p class="page-subtitle">Exact local setup commands from README and package/dependency files.</p>
+      <div class="page-body">
+        <h2>Prerequisites</h2>
+        <ul>
+          <li>Node.js + npm (version not pinned in repo files).</li>
+          <li>Python (version not pinned in repo files).</li>
+          <li>Android Studio only if building mobile with Capacitor.</li>
+        </ul>
+        <div class="scan-needed">SCAN NEEDED: Node/Python version constraints. Check .nvmrc, engines in package.json, pyproject.toml, or .python-version (not found in current scan).</div>
+
+        <h2>Clone</h2>
+        <pre data-lang="bash"><code>git clone &lt;REPO_URL&gt;
+cd Yoga_GenAI</code></pre>
+        <div class="scan-needed">SCAN NEEDED: Exact repository remote URL from git config/origin.</div>
+
+        <h2>Frontend Setup</h2>
+        <pre data-lang="bash"><code>cd frontend
+npm install
+npm run dev</code></pre>
+        <p>Default frontend dev port is <code>5173</code> from <code>frontend/vite.config.ts</code>.</p>
+
+        <h2>Backend Setup</h2>
+        <pre data-lang="bash"><code>cd backend
+python -m pip install -r requirements.txt
+python -m uvicorn app.main:app --app-dir backend --reload --port 8000</code></pre>
+        <p>Default backend port is <code>8000</code> from the README command.</p>
+
+        <h2>Environment Variables</h2>
+        <h3>From backend/.env.example</h3>
+        <pre data-lang="dotenv"><code>GROQ_API_KEY=YOUR_GROQ_API_KEY
+GROQ_MODEL=llama-3.3-70b-versatile
+# GROQ_TEMPERATURE=0.3</code></pre>
+
+        <h3>Referenced in Code</h3>
+        <table>
+          <thead>
+            <tr><th>Variable</th><th>Layer</th><th>Used In</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>GROQ_API_KEY, GROQ_MODEL, GROQ_TEMPERATURE</td><td>Backend</td><td>backend/app/core/config.py, backend/app/ai/groq_client.py</td></tr>
+            <tr><td>GOOGLE_TTS_API_KEY, GOOGLE_TRANSLATE_API_KEY</td><td>Backend</td><td>backend/app/main.py</td></tr>
+            <tr><td>SUPABASE_URL, SUPABASE_SERVICE_KEY</td><td>Backend</td><td>backend/app/core/db.py</td></tr>
+            <tr><td>GOOGLE_CLIENT_ID</td><td>Backend</td><td>backend/app/core/auth.py</td></tr>
+            <tr><td>VITE_API_BASE_URL</td><td>Frontend</td><td>frontend/src/api/client.ts</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Quick Verification</h2>
+        <ul>
+          <li>Frontend app loads from Vite URL.</li>
+          <li><code>GET /health</code> returns backend status.</li>
+          <li><code>GET /api/train/poses</code> returns pose list.</li>
+          <li><code>GET /api/breathwork/protocols</code> returns protocol list.</li>
+        </ul>
+      </div>
+    </main>
+  </div>
+  <script type="module" src="assets/diagrams.js"></script>
+  <script src="assets/nav.js"></script>
+</body>
+</html>

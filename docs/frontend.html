@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Frontend — OorjaKull Docs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <button class="hamburger" aria-label="Menu">☰</button>
+  <div class="layout">
+    <nav class="sidebar" id="sidebar"></nav>
+    <main class="content">
+      <div class="breadcrumb">Codebase <span>/</span> Frontend</div>
+      <h1 class="page-title">Frontend</h1>
+      <p class="page-subtitle">React 18 + Vite app with state-driven experience flow (no path-based router found in scan).</p>
+      <div class="page-body">
+        <h2>Frontend Tree (Annotated)</h2>
+        <pre data-lang="text"><code>frontend/
+  src/
+    App.tsx                  # top-level experience state machine
+    main.tsx                 # React entry point
+    api/client.ts            # API request helpers + types
+    pages/
+      BreathworkPage.tsx
+      BreathworkSession.tsx
+    components/              # UI modules (camera, overlays, chatbot, safety)
+    hooks/                   # pose, voice, audio, theme, credits, state helpers
+    contexts/SafetyContext.tsx
+    data/                    # pose descriptions, sequences, chat responses
+    safety/                  # frontend risk scoring/signal extraction
+    types/health.ts
+  public/                    # static assets and training pose images
+  capacitor.config.ts
+  vite.config.ts
+  vercel.json</code></pre>
+
+        <h2>Routing</h2>
+        <p>No React Router config file was found. Navigation is state-based inside <code>App.tsx</code> via <code>ExperiencePhase</code> values and handlers.</p>
+        <table>
+          <thead><tr><th>Path</th><th>Component</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>NOT FOUND</td><td>NOT FOUND</td><td>No path-based router found in scan</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Key Global State</h2>
+        <table>
+          <thead><tr><th>State</th><th>File</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td>experiencePhase</td><td>frontend/src/App.tsx</td><td>Controls welcome/landing/yoga/breathwork/safety screens.</td></tr>
+            <tr><td>voiceEnabled, voiceLanguage, voiceGender</td><td>frontend/src/App.tsx</td><td>Voice guidance settings.</td></tr>
+            <tr><td>SafetyContext state</td><td>frontend/src/contexts/SafetyContext.tsx</td><td>User auth, profile, risk/session state and actions.</td></tr>
+            <tr><td>chat store state</td><td>frontend/src/hooks/useChatStore.ts</td><td>Chat messages, open/close, unread count.</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Hooks Catalogue</h2>
+        <table>
+          <thead><tr><th>Hook</th><th>File</th><th>Parameters</th><th>Returns</th><th>Side Effects</th></tr></thead>
+          <tbody>
+            <tr><td>usePoseLandmarker</td><td>frontend/src/hooks/usePoseLandmarker.ts</td><td>none</td><td>pose detection API + status</td><td>Loads MediaPipe model and closes landmarker on cleanup.</td></tr>
+            <tr><td>useVoiceGuide</td><td>frontend/src/hooks/useVoiceGuide.ts</td><td>voice settings + API base</td><td>speak/stop/prefetch/cache controls</td><td>Calls /api/tts, audio playback, IndexedDB cache.</td></tr>
+            <tr><td>useVoiceCommand</td><td>frontend/src/hooks/useVoiceCommand.ts</td><td>enabled + callbacks</td><td>startListening/stopListening/state</td><td>Browser speech recognition lifecycle.</td></tr>
+            <tr><td>useBreathAudio</td><td>frontend/src/hooks/useBreathAudio.ts</td><td>none</td><td>ambient controls</td><td>Web Audio oscillator/noise generation.</td></tr>
+            <tr><td>useBreathingSession</td><td>frontend/src/hooks/useBreathingSession.ts</td><td>protocol + controls</td><td>phase progress state</td><td>requestAnimationFrame + timers.</td></tr>
+            <tr><td>useCredits</td><td>frontend/src/hooks/useCredits.ts</td><td>apiBase + auth header getter</td><td>credits state + refresh</td><td>GET /api/user/credits.</td></tr>
+            <tr><td>useTheme</td><td>frontend/src/hooks/useTheme.ts</td><td>none</td><td>theme + setter</td><td>DOM class + localStorage.</td></tr>
+            <tr><td>useOrientation</td><td>frontend/src/hooks/useOrientation.ts</td><td>none</td><td>orientation flags</td><td>window/media query listeners.</td></tr>
+            <tr><td>useThrottledState</td><td>frontend/src/hooks/useThrottledState.ts</td><td>value + delay</td><td>throttled value</td><td>timeout scheduling.</td></tr>
+            <tr><td>useDelayedValue</td><td>frontend/src/hooks/useDelayedValue.ts</td><td>value + delay</td><td>delayed value</td><td>timeout scheduling.</td></tr>
+          </tbody>
+        </table>
+        <div class="scan-needed">SCAN NEEDED: Complete TypeScript signatures for all hook parameter and return types line-by-line.</div>
+
+        <h2>Component Inventory (High-Level)</h2>
+        <p>Primary component groups found during scan:</p>
+        <ul>
+          <li>Yoga flow: <code>LandingPage</code>, <code>PoseIntroOverlay</code>, <code>UserCameraPanel</code>, <code>InstructorPanel</code>, <code>FeedbackPanel</code>, <code>ScoreDisplay</code>.</li>
+          <li>Safety flow: <code>DisclaimerScreen</code>, <code>HealthQuestionnaire</code>, <code>SessionBriefing</code>, <code>RiskWarningBanner</code>, <code>PainCheckButton</code>.</li>
+          <li>Breathwork flow: <code>BreathworkPage</code>, <code>BreathworkSession</code>, and <code>components/breathwork/*</code>.</li>
+          <li>Monetization/auth: <code>WelcomePage</code>, <code>CreditIndicator</code>, <code>SignInPrompt</code>, <code>UpgradePrompt</code>.</li>
+          <li>Assistant: <code>ChatBot</code>.</li>
+        </ul>
+
+        <h2>MediaPipe Integration (Verified)</h2>
+        <table>
+          <thead><tr><th>Item</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>Library</td><td>@mediapipe/tasks-vision</td></tr>
+            <tr><td>Hook</td><td>usePoseLandmarker</td></tr>
+            <tr><td>Landmark state variable</td><td>landmarks (App.tsx)</td></tr>
+            <tr><td>Visibility threshold in framing</td><td>&gt; 0.6</td></tr>
+            <tr><td>Indices referenced</td><td>0, 11–32 subsets for head/shoulders/arms/hips/knees/ankles/feet checks</td></tr>
+          </tbody>
+        </table>
+        <div class="scan-needed">SCAN NEEDED: minDetectionConfidence/minTrackingConfidence values. Not found in scanned files.</div>
+
+        <h2>Breathwork Audio</h2>
+        <p>Breathwork audio is generated with Web Audio API (oscillator types <code>sine</code> and <code>triangle</code>) in <code>useBreathAudio.ts</code>. No static audio asset path was found for ambient tones.</p>
+
+        <h2>Translation</h2>
+        <p>No key-based i18n files were found. Translation is API-based in backend TTS path (language code passed via <code>TTSRequest.language_code</code>).</p>
+      </div>
+    </main>
+  </div>
+  <script type="module" src="assets/diagrams.js"></script>
+  <script src="assets/nav.js"></script>
+</body>
+</html>

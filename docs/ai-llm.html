@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI &amp; LLM — OorjaKull Docs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <button class="hamburger" aria-label="Menu">☰</button>
+  <div class="layout">
+    <nav class="sidebar" id="sidebar"></nav>
+    <main class="content">
+      <div class="breadcrumb">Codebase <span>/</span> AI &amp; LLM</div>
+      <h1 class="page-title">AI &amp; LLM</h1>
+      <p class="page-subtitle">Prompt-grounded alignment feedback, conversational assistant, and multilingual TTS.</p>
+      <div class="page-body">
+        <h2>AI Integration Inventory</h2>
+        <table>
+          <thead><tr><th>Capability</th><th>Provider</th><th>Entry Point</th></tr></thead>
+          <tbody>
+            <tr><td>Pose alignment LLM feedback</td><td>Groq</td><td>backend/app/ai/groq_client.py</td></tr>
+            <tr><td>Assistant chat (Madhu)</td><td>Groq</td><td>backend/app/services/assistant.py</td></tr>
+            <tr><td>Text-to-Speech</td><td>Google Cloud TTS</td><td>POST /api/tts</td></tr>
+            <tr><td>Translation for TTS</td><td>Google Translate v2</td><td>backend/app/main.py::_translate_text</td></tr>
+            <tr><td>Legacy/alternate alignment client</td><td>Gemini client wrapper (unused in evaluator path)</td><td>backend/app/ai/gemini_client.py</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Current Alignment Feedback Path</h2>
+        <div class="diagram-wrap">
+          <pre class="mermaid">sequenceDiagram
+  participant FE as Frontend
+  participant EV as AlignmentEvaluator
+  participant PR as Prompt
+  participant GQ as Groq
+  participant DET as Deterministic Rules
+
+  FE->>EV: expected_pose + landmarks + user_level
+  EV->>DET: calculate_pose_score(...)
+  EV->>PR: SYSTEM_PROMPT + USER_INSTRUCTIONS + pose_context
+  EV->>GQ: chat.completions (json_object)
+  GQ-->>EV: structured JSON
+  EV-->>FE: sanitized coaching + blended score + violation context</pre>
+        </div>
+
+        <h2>Prompt Design Principles (Verified)</h2>
+        <ul>
+          <li>Grounding-first: output must map to provided biomechanical evidence.</li>
+          <li>No fabricated praise/corrections for out-of-scope metrics.</li>
+          <li>Pose-specific violations are prioritized if available.</li>
+          <li>User-facing text should avoid explicit numeric measurements.</li>
+          <li>When deterministic score is high (&gt;= 90), tone should be mostly positive with minimal correction.</li>
+        </ul>
+
+        <h2>Expected JSON Schema (Alignment)</h2>
+        <pre data-lang="json"><code>{
+  "pose_match": "aligned | partially_aligned | misaligned",
+  "confidence": "high | medium | low",
+  "primary_focus_area": "front_knee | back_leg | arms | torso | hips | balance | none",
+  "deviations": [
+    {
+      "issue": "string",
+      "joint_or_area": "string",
+      "measured_value": 0,
+      "ideal_range": "string",
+      "severity": "minor | moderate | major"
+    }
+  ],
+  "correction_message": "Good: ...\\nNext: ...",
+  "correction_bullets": ["string"],
+  "positive_observation": "string",
+  "breath_cue": "string",
+  "safety_note": "string or null"
+}</code></pre>
+
+        <h2>LLM/AI Config Variables</h2>
+        <table>
+          <thead><tr><th>Variable</th><th>Used For</th><th>Default</th></tr></thead>
+          <tbody>
+            <tr><td>GROQ_API_KEY</td><td>Groq auth</td><td>none</td></tr>
+            <tr><td>GROQ_MODEL</td><td>chat model</td><td>llama-3.3-70b-versatile</td></tr>
+            <tr><td>GROQ_TEMPERATURE</td><td>alignment model temperature</td><td>0.3</td></tr>
+            <tr><td>GEMINI_API_KEY</td><td>Gemini wrapper (fallback/alternate path)</td><td>none</td></tr>
+            <tr><td>GOOGLE_TTS_API_KEY</td><td>TTS synthesis</td><td>falls back to GEMINI_API_KEY in settings</td></tr>
+            <tr><td>GOOGLE_TRANSLATE_API_KEY</td><td>translation for non-en-IN TTS output</td><td>none</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Assistant Behavior</h2>
+        <p><code>AssistantService</code> enforces a scoped Madhu persona for yoga/breathwork and returns strict JSON with optional product suggestions.</p>
+        <ul>
+          <li>Default format: <code>{"reply":"...","suggestion":null}</code></li>
+          <li>Suggestion types: <code>pose</code> or <code>breathwork</code></li>
+          <li>Context window: last 10 conversation messages</li>
+          <li>Fallback message is used on rate-limit/quota or parsing issues</li>
+        </ul>
+
+        <h2>TTS/Translation Notes</h2>
+        <ul>
+          <li>English (en-IN) uses pinned Neural2 voice names for consistency.</li>
+          <li>Non-English path translates from English first, while preserving Sanskrit pose names using placeholder protection.</li>
+          <li>In-memory warm-instance caches used for translation and audio bytes.</li>
+        </ul>
+      </div>
+    </main>
+  </div>
+  <script type="module" src="assets/diagrams.js"></script>
+  <script src="assets/nav.js"></script>
+</body>
+</html>

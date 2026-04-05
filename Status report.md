@@ -55,7 +55,22 @@ sequences.ts:54
 sequences.ts:86
 sequences.ts:110
 sequences.ts:132
-4) Validation
+4) AI feedback specificity fix (Section 5)
+Implemented backend grounding updates so feedback is pose-specific instead of generic:
+
+- Bridged deterministic pose-rule violations into evaluator response/prompt context
+- Added weighted scoring: 60% deterministic + 40% generic
+- Added deterministic fields in response contract (`deterministic_score`, `generic_score`, `pose_specific_violations`)
+- Updated prompt grounding to prioritize pose-specific violations and add 90%+ encouragement behavior
+- Replaced over-aggressive digit stripping with targeted sanitization to preserve sentence quality
+
+Backend entry points:
+
+backend/app/services/evaluator.py
+backend/app/ai/prompt.py
+backend/app/models/contracts.py
+
+5) Validation
 No TS errors in changed files and build passes:
 
 
@@ -64,7 +79,9 @@ Implemented
 Section 2: large set of corrected intro scripts (listed above), plus Ustrasana benefits.
 Section 3: sequence restructuring for Standing Strength, Gentle Morning, Hip Opening, Core & Balance; Surya updated partially.
 Section 6: contraindication warnings added to data + rendered in intro overlay.
+Section 5: AI feedback specificity backend implementation completed (60% deterministic / 40% generic scoring, pose-specific violation grounding, prompt/evaluator wiring).
 Section 8: Virabhadrasana I pronunciation issue reduced by “Virabhadrasana 1” wording in script.
+
 Not yet implemented
 Section 1 (pose taxonomy/excel mapping updates): not yet.
 Section 2: any pose text not part of this first implementation batch is still pending.
@@ -72,7 +89,7 @@ Section 3:
 Surya Namaskar still missing Asthanga Namaskara exact step.
 Per-step hold durations (10s/20s) not implemented yet.
 Section 4 (image corrections): not implemented (asset pipeline work required).
-Section 5 (AI feedback same-for-all issue): backend implementation completed (60% deterministic / 40% generic scoring, pose-specific violation grounding, prompt/evaluator wiring); live tests pending.
+Section 5: live tests/tuning pending (backend implementation already completed).
 Section 8 phonetic pronunciation system (SSML/phoneme-grade control): not implemented yet.
 TODO category (as requested: all 3 follow-ups)
 Surya blocker follow-up

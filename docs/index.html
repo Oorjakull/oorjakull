@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Documentation Overview — OorjaKull Docs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <button class="hamburger" aria-label="Menu">☰</button>
+  <div class="layout">
+    <nav class="sidebar" id="sidebar"></nav>
+    <main class="content">
+      <div class="breadcrumb">Overview <span>/</span> Home</div>
+      <h1 class="page-title">OorjaKull Developer Documentation</h1>
+      <p class="page-subtitle">Scan-verified reference for frontend, backend, AI integrations, and deployment in the OorjaKull monorepo.</p>
+      <div class="page-body">
+        <h2>Product Snapshot</h2>
+        <p>From the repository README, this project is an AI instructor-led yoga class POC with React + MediaPipe frontend and FastAPI + Groq backend.</p>
+        <div>
+          <span class="badge">React 18</span>
+          <span class="badge">Vite 5</span>
+          <span class="badge">TypeScript 5</span>
+          <span class="badge">FastAPI</span>
+          <span class="badge">Groq</span>
+          <span class="badge">MediaPipe Tasks Vision</span>
+          <span class="badge">Capacitor Android</span>
+          <span class="badge">Supabase</span>
+        </div>
+
+        <h2>How to Use These Docs</h2>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <h4>Start with setup</h4>
+              <p>Read Getting Started for exact install and run commands used in this repo.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <h4>Understand architecture</h4>
+              <p>Use Architecture and Session Flow pages to understand data and state transitions.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <h4>Deep-dive by layer</h4>
+              <p>Frontend, Backend, AI &amp; LLM, and Database pages are organized by implementation layer.</p>
+            </div>
+          </div>
+        </div>
+
+        <h2>System Overview</h2>
+        <div class="diagram-wrap">
+          <pre class="mermaid">flowchart LR
+  A[Frontend React App\nfrontend/src/App.tsx] -->|HTTP| B[FastAPI App\nbackend/app/main.py]
+  A -->|Landmarks + expected_pose| B
+  B --> C[AlignmentEvaluator\nbackend/app/services/evaluator.py]
+  C --> D[Groq Client\nbackend/app/ai/groq_client.py]
+  C --> E[Deterministic Pose Rules\nbackend/pose_rules/*]
+  B --> F[Google TTS API\n/api/tts path]
+  B --> G[Supabase\nbackend/app/core/db.py]
+  A --> H[MediaPipe Tasks Vision\nfrontend/src/hooks/usePoseLandmarker.ts]
+</pre>
+        </div>
+
+        <h2>Documentation Map</h2>
+        <table>
+          <thead>
+            <tr><th>Page</th><th>Purpose</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><a href="getting-started.html">Getting Started</a></td><td>Local setup, env vars, run commands.</td></tr>
+            <tr><td><a href="architecture.html">System Architecture</a></td><td>High-level flows and verified diagrams.</td></tr>
+            <tr><td><a href="frontend.html">Frontend</a></td><td>App states, components, hooks, MediaPipe path.</td></tr>
+            <tr><td><a href="backend.html">Backend</a></td><td>FastAPI endpoints, models, auth and CORS.</td></tr>
+            <tr><td><a href="ai-llm.html">AI &amp; LLM</a></td><td>Groq prompts, TTS, translation and constraints.</td></tr>
+            <tr><td><a href="database.html">Database</a></td><td>Supabase schema and persistence tables.</td></tr>
+            <tr><td><a href="session-flow.html">Session Flow</a></td><td>Questionnaire, risk gating, yoga/breathwork states.</td></tr>
+            <tr><td><a href="deployment.html">Deployment</a></td><td>Vercel + GitHub Pages docs deployment details.</td></tr>
+            <tr><td><a href="contributing.html">Contributing</a></td><td>Scan logs and contribution rules.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+  <script type="module" src="assets/diagrams.js"></script>
+  <script src="assets/nav.js"></script>
+</body>
+</html>

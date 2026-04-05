@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Database — OorjaKull Docs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <button class="hamburger" aria-label="Menu">☰</button>
+  <div class="layout">
+    <nav class="sidebar" id="sidebar"></nav>
+    <main class="content">
+      <div class="breadcrumb">Codebase <span>/</span> Database</div>
+      <h1 class="page-title">Database</h1>
+      <p class="page-subtitle">Supabase/Postgres schema for users, safety profiles, sessions, risks, and credits.</p>
+      <div class="page-body">
+        <h2>Source of Truth</h2>
+        <ul>
+          <li>backend/scripts/create_tables.sql</li>
+          <li>backend/scripts/002_user_profiles.sql</li>
+          <li>Runtime client: backend/app/core/db.py</li>
+        </ul>
+
+        <h2>ER Diagram</h2>
+        <div class="diagram-wrap">
+          <pre class="mermaid">erDiagram
+  users ||--o{ user_risk_profiles : has
+  users ||--o{ session_logs : has
+  users ||--|| user_profiles : has
+  session_logs ||--o{ pose_attempt_logs : has
+  session_logs ||--o{ risk_event_logs : has
+  session_logs ||--o{ pain_check_logs : has
+
+  users {
+    uuid id PK
+    text google_sub UK
+    text email
+    text display_name
+    timestamptz created_at
+  }
+
+  user_profiles {
+    uuid id PK
+    uuid user_id FK
+    profile_type profile_type
+    int credits_remaining
+    int credits_used
+  }
+
+  user_risk_profiles {
+    uuid id PK
+    uuid user_id FK
+    varchar risk_tier
+    jsonb profile_json
+    boolean consent_given
+    int profile_version
+  }
+
+  session_logs {
+    uuid id PK
+    uuid user_id FK
+    varchar flow_id
+    varchar state
+    jsonb session_plan_json
+    int final_risk_score
+    int duration_seconds
+    text session_summary_llm
+  }</pre>
+        </div>
+
+        <h2>Table Summary</h2>
+        <table>
+          <thead><tr><th>Table</th><th>Purpose</th><th>Primary Links</th></tr></thead>
+          <tbody>
+            <tr><td>users</td><td>Identity from Google auth.</td><td>parent of profiles and sessions</td></tr>
+            <tr><td>user_profiles</td><td>Credit and subscription tier model.</td><td>1:1 with users</td></tr>
+            <tr><td>user_risk_profiles</td><td>Versioned questionnaire-derived risk profiles.</td><td>many-to-1 with users</td></tr>
+            <tr><td>session_logs</td><td>Session lifecycle and summary.</td><td>many-to-1 with users</td></tr>
+            <tr><td>pose_attempt_logs</td><td>Per-pose scoring and violations.</td><td>many-to-1 with session_logs</td></tr>
+            <tr><td>risk_event_logs</td><td>Runtime risk events and reasons.</td><td>many-to-1 with session_logs</td></tr>
+            <tr><td>pain_check_logs</td><td>User-triggered pain indicators.</td><td>many-to-1 with session_logs</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Credit System Logic</h2>
+        <ul>
+          <li>Enum <code>profile_type</code>: <code>super_user</code>, <code>paid_user</code>, <code>free_user</code>.</li>
+          <li>Trigger auto-creates default <code>free_user</code> profile with 20 credits on new user insert.</li>
+          <li><code>deduct_credit(p_user_id)</code> RPC performs atomic decrement and returns JSON status.</li>
+          <li><code>NULL credits_remaining</code> means unlimited user.</li>
+        </ul>
+
+        <h2>Persistence Write Paths</h2>
+        <table>
+          <thead><tr><th>Endpoint</th><th>Writes</th></tr></thead>
+          <tbody>
+            <tr><td>POST /api/auth/google</td><td>upsert into users (+ trigger-based profile creation).</td></tr>
+            <tr><td>POST /api/safety/profile</td><td>insert into user_risk_profiles.</td></tr>
+            <tr><td>POST /api/session/plan</td><td>insert into session_logs (planned state).</td></tr>
+            <tr><td>PATCH /api/session/{session_id}/state</td><td>update session_logs + insert pose_attempt_logs + risk_event_logs.</td></tr>
+            <tr><td>POST /api/session/pain-check</td><td>insert pain_check_logs.</td></tr>
+            <tr><td>POST /api/evaluate</td><td>RPC call deduct_credit.</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Security Model</h2>
+        <p>Current backend uses Supabase service key from server-side env and handles access control in application code. RLS statements in migration are present as commented optional blocks.</p>
+      </div>
+    </main>
+  </div>
+  <script type="module" src="assets/diagrams.js"></script>
+  <script src="assets/nav.js"></script>
+</body>
+</html>

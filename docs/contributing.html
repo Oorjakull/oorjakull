@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contributing — OorjaKull Docs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <button class="hamburger" aria-label="Menu">☰</button>
+  <div class="layout">
+    <nav class="sidebar" id="sidebar"></nav>
+    <main class="content">
+      <div class="breadcrumb">Operations <span>/</span> Contributing</div>
+      <h1 class="page-title">Contributing</h1>
+      <p class="page-subtitle">Documentation-first contribution workflow with scan validation and explicit uncertainty handling.</p>
+      <div class="page-body">
+        <h2>Contribution Principles</h2>
+        <ul>
+          <li>Do not assume behavior that is not verified in code.</li>
+          <li>If uncertain, mark with a visible <code>SCAN NEEDED</code> note and exact follow-up target.</li>
+          <li>Keep docs synchronized with API contract and deployment config changes.</li>
+          <li>Preserve existing style and keep changes minimal in code PRs.</li>
+        </ul>
+
+        <h2>Branch &amp; PR Flow</h2>
+        <ol>
+          <li>Create a branch from default branch.</li>
+          <li>Implement code and update affected docs page(s).</li>
+          <li>Run local checks/build.</li>
+          <li>Open PR with testing evidence and screenshots for UI/docs changes.</li>
+        </ol>
+        <div class="scan-needed">SCAN NEEDED: Repository-specific branch naming and PR template standards (not found in scanned files).</div>
+
+        <h2>What to Update for Common Changes</h2>
+        <table>
+          <thead><tr><th>Change Type</th><th>Docs to Update</th></tr></thead>
+          <tbody>
+            <tr><td>New/changed API endpoint</td><td>backend.html + session-flow.html (if lifecycle-related)</td></tr>
+            <tr><td>Prompt/LLM behavior change</td><td>ai-llm.html + status report if milestone-related</td></tr>
+            <tr><td>DB schema migration</td><td>database.html + deployment notes if env/ops impacted</td></tr>
+            <tr><td>Frontend state or UX flow change</td><td>frontend.html + architecture.html + session-flow.html</td></tr>
+            <tr><td>Hosting or domain update</td><td>deployment.html + sitemap/robots assets if applicable</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Documentation QA Checklist</h2>
+        <ul>
+          <li>All links in sidebar resolve.</li>
+          <li>Mermaid diagrams render without syntax errors.</li>
+          <li>No orphan <code>SCAN NEEDED</code> sections for verified facts.</li>
+          <li>No stale endpoint names or env keys.</li>
+          <li>GitHub Pages deployment workflow passes on default branch.</li>
+        </ul>
+
+        <h2>Code QA Checklist</h2>
+        <ul>
+          <li>Frontend builds and starts locally.</li>
+          <li>Backend starts and <code>/health</code> responds.</li>
+          <li>Critical flows tested: auth, evaluate, session plan, breathwork protocols.</li>
+          <li>No secrets committed in source-controlled files.</li>
+        </ul>
+      </div>
+    </main>
+  </div>
+  <script type="module" src="assets/diagrams.js"></script>
+  <script src="assets/nav.js"></script>
+</body>
+</html>
