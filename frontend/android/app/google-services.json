@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "779179642504",
+    "project_id": "oorjakull-a19f3",
+    "storage_bucket": "oorjakull-a19f3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:779179642504:android:9113c2249c6d949556d93d",
+        "android_client_info": {
+          "package_name": "com.oorjakull.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "779179642504-8mjigimsban2ekkocmhd66f7j4rq82vu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuol17pq2N5v9pG50cofIZBsfXzbK1cOs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "779179642504-8mjigimsban2ekkocmhd66f7j4rq82vu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
