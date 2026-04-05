@@ -20,28 +20,13 @@
         <h2>System Overview</h2>
         <div class="diagram-wrap">
           <pre class="mermaid">flowchart TB
-  subgraph FE["Frontend - React + Vite"]
-    APP["App.tsx"]
-    MP["usePoseLandmarker"]
-    API["api/client.ts"]
-    SAFETY["SafetyContext"]
-  end
-
-  subgraph BE["Backend - FastAPI"]
-    MAIN["app/main.py"]
-    EVAL["services/evaluator.py"]
-    GROQ["ai/groq_client.py"]
-    RULES["pose_rules/angle_calculator.py"]
-    DB["core/db.py"]
-  end
-
-  FE -->|"HTTP /api/*"| MAIN
-  APP --> MP
-  API --> MAIN
-  MAIN --> EVAL
-  EVAL --> GROQ
-  EVAL --> RULES
-  MAIN --> DB</pre>
+  APP["Frontend App"] --> MP["Pose Landmarker Hook"]
+  APP --> CLIENT["API Client"]
+  CLIENT --> MAIN["FastAPI App"]
+  MAIN --> EVAL["Alignment Evaluator"]
+  EVAL --> GROQ["Groq Client"]
+  EVAL --> RULES["Pose Rules"]
+  MAIN --> DB["Supabase Client"]</pre>
         </div>
 
         <h2>MediaPipe Processing Path</h2>

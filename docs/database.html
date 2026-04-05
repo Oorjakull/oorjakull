@@ -27,47 +27,65 @@
         <h2>ER Diagram</h2>
         <div class="diagram-wrap">
           <pre class="mermaid">erDiagram
-  users ||--o{ user_risk_profiles : has
-  users ||--o{ session_logs : has
-  users ||--|| user_profiles : has
-  session_logs ||--o{ pose_attempt_logs : has
-  session_logs ||--o{ risk_event_logs : has
-  session_logs ||--o{ pain_check_logs : has
+  USERS ||--o{ USER_RISK_PROFILES : has
+  USERS ||--o{ SESSION_LOGS : has
+  USERS ||--|| USER_PROFILES : has
+  SESSION_LOGS ||--o{ POSE_ATTEMPT_LOGS : has
+  SESSION_LOGS ||--o{ RISK_EVENT_LOGS : has
+  SESSION_LOGS ||--o{ PAIN_CHECK_LOGS : has
 
-  users {
+  USERS {
     uuid id PK
-    text google_sub UK
-    text email
-    text display_name
-    timestamptz created_at
+    string google_sub
+    string email
+    string display_name
+    datetime created_at
   }
 
-  user_profiles {
+  USER_PROFILES {
     uuid id PK
     uuid user_id FK
-    profile_type profile_type
+    string profile_type
     int credits_remaining
     int credits_used
   }
 
-  user_risk_profiles {
+  USER_RISK_PROFILES {
     uuid id PK
     uuid user_id FK
-    varchar risk_tier
-    jsonb profile_json
+    string risk_tier
+    string profile_json
     boolean consent_given
     int profile_version
   }
 
-  session_logs {
+  SESSION_LOGS {
     uuid id PK
     uuid user_id FK
-    varchar flow_id
-    varchar state
-    jsonb session_plan_json
+    string flow_id
+    string state
+    string session_plan_json
     int final_risk_score
     int duration_seconds
-    text session_summary_llm
+    string session_summary_llm
+  }
+
+  POSE_ATTEMPT_LOGS {
+    uuid id PK
+    uuid session_id FK
+    string pose_key
+  }
+
+  RISK_EVENT_LOGS {
+    uuid id PK
+    uuid session_id FK
+    string event_type
+  }
+
+  PAIN_CHECK_LOGS {
+    uuid id PK
+    uuid session_id FK
+    string pain_area
   }</pre>
         </div>
 
