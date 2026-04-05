@@ -1,4 +1,3 @@
-import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.9.5/dist/mermaid.esm.min.mjs';
 mermaid.initialize({
   startOnLoad: false,
   securityLevel: 'loose',
@@ -24,6 +23,8 @@ mermaid.initialize({
   er:        { diagramPadding: 20 },
 });
 
-document.addEventListener('DOMContentLoaded', () => {
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => mermaid.run({ querySelector: '.mermaid' }));
+} else {
   mermaid.run({ querySelector: '.mermaid' });
-});
+}
