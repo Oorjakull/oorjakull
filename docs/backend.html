@@ -73,14 +73,14 @@
   A["/api/evaluate"] --> B["Auth and credit pre-check"]
   B --> C["AlignmentEvaluator.evaluate"]
   C --> D["compute_metrics + generic score"]
-  C --> E["deterministic pose rules"]
+  C --> E["Deterministic pose rules"]
   C --> F["Groq LLM structured output"]
-  D --> G["blended score 60 pct deterministic + 40 pct generic"]
+  D --> G["Blended score 60% deterministic + 40% generic"]
   E --> G
-  F --> H["sanitized response"]
+  F --> H["Sanitized response"]
   G --> H
   H --> I["deduct_credit RPC"]
-  I --> J["response with credits_remaining"]</pre>
+  I --> J["Response with credits_remaining"]</pre>
         </div>
 
         <h2>Auth and CORS</h2>

@@ -34,22 +34,22 @@
         <h2>Full User Journey</h2>
         <div class="diagram-wrap">
           <pre class="mermaid">flowchart TD
-  W["Welcome"] --> AUTH{"Authenticated"}
-  AUTH -->|No| LAND["Landing"]
-  AUTH -->|Needs profile| DISC["Disclaimer"]
-  DISC --> HEALTH["Health Questionnaire"]
-  HEALTH --> SAVED["Safety Profile Saved"]
+  W[Welcome] --> AUTH{Authenticated}
+  AUTH -->|No| LAND[Landing]
+  AUTH -->|Needs profile| DISC[Disclaimer]
+  DISC --> HEALTH[Health Questionnaire]
+  HEALTH --> SAVED[Safety Profile Saved]
   SAVED --> LAND
 
-  LAND -->|Yoga pose or sequence| INTRO["Intro"]
-  INTRO --> FRAME["Framing"]
-  FRAME --> EVAL["Evaluating"]
-  EVAL --> RESULT["Results"]
+  LAND -->|Yoga pose or sequence| INTRO[Intro]
+  INTRO --> FRAME[Framing]
+  FRAME --> EVAL[Evaluating]
+  EVAL --> RESULT[Results]
   RESULT -->|Next pose| INTRO
-  RESULT -->|Finish sequence| DONE["Sequence Complete"]
+  RESULT -->|Finish sequence| DONE[Sequence Complete]
   DONE --> LAND
 
-  LAND -->|Breathwork| BREATH["Breathwork Session"]
+  LAND -->|Breathwork| BREATH[Breathwork Session]
   BREATH --> LAND</pre>
         </div>
 
