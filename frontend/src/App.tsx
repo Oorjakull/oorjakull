@@ -10,7 +10,7 @@ import UserCameraPanel from './components/UserCameraPanel'
 import VoiceSettings from './components/VoiceSettings'
 import { POSE_DESCRIPTIONS } from './data/poseDescriptions'
 import { useVoiceGuide } from './hooks/useVoiceGuide'
-import { useVoiceCommand } from './hooks/useVoiceCommand'
+import { useVoiceCommand, type VoiceAction } from './hooks/useVoiceCommand'
 import { DEFAULT_VOICE_SETTINGS } from './hooks/useVoiceGuide'
 import type { VoiceSettings as VoiceSettingsType } from './hooks/useVoiceGuide'
 import { useTheme } from './hooks/useTheme'
@@ -173,8 +173,8 @@ const STATIC_VOICE_PROMPTS_TO_PREFETCH: string[] = [
   'I am not able to see your full body. Please step back a little.',
   'Hold the pose steady. I am going to evaluate your alignment.',
   'Done! You can relax and come back to a comfortable standing position.',
-  'Wonderful! You have completed the full sequence. Say next to finish, or say again to retry this pose.',
-  'Would you like to try this pose again, or try a different pose? Say again to retry, or say next for another pose.',
+  'Wonderful! You have completed the full sequence. Say next to finish, or say reset to retry this pose.',
+  'Would you like to try this pose again, or try a different pose? Say reset to retry, or say skip for another pose.',
 ]
 
 const BREATHWORK_STREAK_STORAGE_KEY = 'oorjakull_breathwork_streak_v1'
@@ -271,6 +271,7 @@ export default function App() {
   const chatStore = useChatStore(userName)
   const [activePanel, setActivePanel] = useState<'instructor' | 'self'>('self')
   const [cameraFullScreen, setCameraFullScreen] = useState(false)
+  const [cameraFullscreenDismissed, setCameraFullscreenDismissed] = useState(false)
   const [evaluating, setEvaluating] = useState(false)
 
   // ── Credit system state ──────────────────────────────────────────────────
@@ -500,12 +501,27 @@ export default function App() {
   
   const [introAutoStart, setIntroAutoStart] = useState(false)
 
-  // ── Auto-switch to camera view when evaluation starts ────────────────────
+  // ── Auto-switch to self view when entering active practice phases ────────
   useEffect(() => {
-    if (experiencePhase === 'evaluating') {
+    if (experiencePhase === 'framing' || experiencePhase === 'evaluating') {
       setActivePanel('self')
     }
   }, [experiencePhase])
+
+  // ── Portrait mobile: auto-open self camera fullscreen during active practice
+  useEffect(() => {
+    const shouldAutoFullscreen = isPortraitMobile && (experiencePhase === 'framing' || experiencePhase === 'evaluating')
+
+    if (shouldAutoFullscreen && !cameraFullscreenDismissed) {
+      setCameraFullScreen(true)
+      return
+    }
+
+    if (!shouldAutoFullscreen) {
+      setCameraFullScreen(false)
+      setCameraFullscreenDismissed(false)
+    }
+  }, [isPortraitMobile, experiencePhase, cameraFullscreenDismissed])
 
   // -- Voice intro when entering 'intro' phase ------------------------------
   useEffect(() => {
@@ -818,37 +834,91 @@ export default function App() {
     setStatusText('Press Start to evaluate once.')
   }
 
-  function startResultsVoiceCommands() {
-    if (!voiceOn || !voiceCommandSupported) return
+  function handlePracticeVoiceAction(action: VoiceAction) {
+    if (action === 'exit') {
+      if (isInSequence) {
+        handleExitSequence()
+      } else {
+        handleBackToLanding()
+      }
+      return
+    }
 
-    startVoiceCommandListening((action) => {
-      if (action === 'again') {
-        handleTryAgain()
+    if (action === 'next') {
+      if (experiencePhase === 'intro') {
+        handleIntroNext()
         return
       }
-      if (action === 'next') {
+      if (experiencePhase === 'framing') {
+        handleFramingReady()
+        return
+      }
+      if (experiencePhase === 'evaluating') {
+        if (!running && !isAnalyzing) {
+          startSession()
+        }
+        return
+      }
+      if (experiencePhase === 'results') {
         if (isInSequence) {
           handleNextInSequence()
         } else {
           handleTryAnother()
         }
+      }
+      return
+    }
+
+    if (action === 'reset' || action === 'again') {
+      if (experiencePhase === 'intro') {
+        handleIntroNext()
         return
       }
-      if (action === 'exit') {
-        if (isInSequence) {
-          handleExitSequence()
-        } else {
-          handleBackToLanding()
-        }
+      if (experiencePhase === 'framing' || experiencePhase === 'evaluating' || experiencePhase === 'results') {
+        handleTryAgain()
       }
+      return
+    }
+
+    if (action === 'skip') {
+      if (isInSequence) {
+        handleNextInSequence()
+      } else {
+        handleTryAnother()
+      }
+    }
+  }
+
+  function startPracticeVoiceCommands() {
+    if (!voiceOn || !voiceCommandSupported) return
+
+    startVoiceCommandListening((action) => {
+      handlePracticeVoiceAction(action)
     })
   }
 
   useEffect(() => {
-    if (experiencePhase !== 'results') {
+    const handsFreeEnabled = experiencePhase === 'intro' || experiencePhase === 'framing' || experiencePhase === 'evaluating' || experiencePhase === 'results'
+
+    if (!handsFreeEnabled || !voiceOn || !voiceCommandSupported) {
       stopVoiceCommandListening()
+      return
     }
-  }, [experiencePhase, stopVoiceCommandListening])
+
+    if (!isVoiceCommandListening) {
+      startPracticeVoiceCommands()
+    }
+  }, [
+    experiencePhase,
+    voiceOn,
+    voiceCommandSupported,
+    isVoiceCommandListening,
+    isInSequence,
+    running,
+    isAnalyzing,
+    startVoiceCommandListening,
+    stopVoiceCommandListening,
+  ])
 
   function runCountdownThenEvaluate() {
     if (countdownTimerRef.current) {
@@ -1038,9 +1108,9 @@ export default function App() {
 
       const afterPrompt = isInSequence
         ? sequenceIndex + 1 < sequencePoses.length
-          ? `Well done! Next up is ${sequencePoses[sequenceIndex + 1].pose}. Say next to continue, or say again to retry this pose.`
-          : 'Wonderful! You have completed the full sequence. Say next to finish, or say again to retry this pose.'
-        : 'Would you like to try this pose again, or try a different pose? Say again to retry, or say next for another pose.'
+          ? `Well done! Next up is ${sequencePoses[sequenceIndex + 1].pose}. Say next to continue, say reset to retry this pose, or say skip to move ahead.`
+          : 'Wonderful! You have completed the full sequence. Say next to finish, or say reset to retry this pose.'
+        : 'Would you like to try this pose again, or try a different pose? Say reset to retry, or say skip for another pose.'
 
       // Trainer prompt: tell user they can relax, then speak feedback + afterPrompt
       const relaxPrompt = 'Done! You can relax and come back to a comfortable standing position.'
@@ -1050,7 +1120,7 @@ export default function App() {
           speakFeedback(feedbackText, () => {
             setExperiencePhase('results')
             speak(afterPrompt, () => {
-              startResultsVoiceCommands()
+              startPracticeVoiceCommands()
             })
           })
         })
@@ -1058,7 +1128,7 @@ export default function App() {
         speak(relaxPrompt, () => {
           setExperiencePhase('results')
           speak(afterPrompt, () => {
-            startResultsVoiceCommands()
+            startPracticeVoiceCommands()
           })
         })
       }
@@ -1313,7 +1383,7 @@ export default function App() {
               <button
                 type="button"
                 onClick={handleBackToLanding}
-                className="flex items-center gap-1 rounded-2xl border border-slate-200 bg-white/80 px-2 py-1.5 text-xs text-slate-600 transition-colors hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 sm:gap-1.5 sm:px-3 sm:py-2 sm:text-sm dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10"
+                className="density-touch-target flex items-center gap-1 rounded-2xl border border-slate-200 bg-white/80 px-2 py-1.5 text-xs text-slate-600 transition-colors hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 sm:gap-1.5 sm:px-3 sm:py-2 sm:text-sm dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10"
               >
                 ←
               </button>
@@ -1337,7 +1407,7 @@ export default function App() {
                   <button
                     type="button"
                     onClick={() => (running || isFraming ? stopSession() : startSession())}
-                    className="h-8 rounded-2xl border border-slate-200 bg-white/80 px-3 text-xs text-slate-700 transition-colors duration-300 ease-in-out hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 sm:h-10 sm:px-4 sm:text-sm dark:border-white/10 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
+                    className="density-touch-target h-8 rounded-2xl border border-slate-200 bg-white/80 px-3 text-xs text-slate-700 transition-colors duration-300 ease-in-out hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 sm:h-10 sm:px-4 sm:text-sm dark:border-white/10 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
                   >
                     {running ? 'Pause' : isFraming ? 'Cancel' : 'Start'}
                   </button>
@@ -1377,7 +1447,7 @@ export default function App() {
               <button
                 type="button"
                 onClick={handleEndSession}
-                className="h-8 rounded-2xl border border-rose-200 bg-rose-50 px-2.5 text-xs font-medium text-rose-600 transition-colors hover:bg-rose-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-400 sm:h-10 sm:px-4 sm:text-sm dark:border-rose-500/20 dark:bg-rose-500/10 dark:text-rose-400 dark:hover:bg-rose-500/20"
+                className="density-touch-target h-8 rounded-2xl border border-rose-200 bg-rose-50 px-2.5 text-xs font-medium text-rose-600 transition-colors hover:bg-rose-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-400 sm:h-10 sm:px-4 sm:text-sm dark:border-rose-500/20 dark:bg-rose-500/10 dark:text-rose-400 dark:hover:bg-rose-500/20"
               >
                 End
               </button>
@@ -1600,7 +1670,10 @@ export default function App() {
           {/* Exit full-screen button */}
           <button
             type="button"
-            onClick={() => setCameraFullScreen(false)}
+            onClick={() => {
+              setCameraFullScreen(false)
+              setCameraFullscreenDismissed(true)
+            }}
             className="absolute right-3 top-3 z-[70] flex h-10 w-10 items-center justify-center rounded-full bg-black/60 text-lg text-white shadow-lg backdrop-blur-sm transition-all active:scale-90"
             style={{ marginTop: 'env(safe-area-inset-top, 0px)' }}
             title="Exit full screen"

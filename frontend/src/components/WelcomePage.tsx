@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { GoogleLogin, googleLogout, type CredentialResponse } from '@react-oauth/google'
 import { jwtDecode } from 'jwt-decode'
+import { Capacitor } from '@capacitor/core'
+import { SocialLogin } from '@capgo/capacitor-social-login'
 
 interface WelcomePageProps {
   userName?: string
@@ -27,6 +29,8 @@ export default function WelcomePage({
   onGoogleSignIn,
   onSignOut,
 }: WelcomePageProps) {
+  const googleClientId = (import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined)?.trim() ?? ''
+  const isNativePlatform = Capacitor.isNativePlatform()
   const [name, setName] = useState('')
   const [showGuestForm, setShowGuestForm] = useState(false)
   const [authError, setAuthError] = useState<string | null>(null)
@@ -37,6 +41,18 @@ export default function WelcomePage({
       setAuthError(null)
     }
   }, [signedInWithGoogle])
+
+  useEffect(() => {
+    if (!isNativePlatform || !googleClientId) return
+    void SocialLogin.initialize({
+      google: {
+        webClientId: googleClientId,
+        mode: 'online',
+      },
+    }).catch(() => {
+      setAuthError('Google sign-in is not configured for this build. You can continue as a guest.')
+    })
+  }, [isNativePlatform, googleClientId])
 
   const handleGoogleSuccess = (response: CredentialResponse) => {
     setAuthError(null)
@@ -57,14 +73,75 @@ export default function WelcomePage({
     setAuthError('Google sign-in was cancelled or blocked. You can continue as a guest.')
   }
 
+  const handleNativeGoogleSignIn = async () => {
+    setAuthError(null)
+    if (!googleClientId) {
+      setAuthError('Missing Google client configuration. You can continue as a guest.')
+      return
+    }
+
+    try {
+      const loginResult = await SocialLogin.login({
+        provider: 'google',
+        options: {
+          scopes: ['email', 'profile'],
+          filterByAuthorizedAccounts: false,
+        },
+      })
+
+      const result = loginResult.result as {
+        idToken?: string | null
+        profile?: { givenName?: string | null; name?: string | null }
+      }
+      const idToken = result.idToken ?? undefined
+      if (!idToken) {
+        setAuthError('Google sign-in succeeded but no ID token was returned. Please try again.')
+        return
+      }
+
+      let displayName = result.profile?.givenName || result.profile?.name || 'Yogi'
+      try {
+        const decoded = jwtDecode<GoogleJwtPayload>(idToken)
+        displayName = decoded.given_name || decoded.name || displayName
+      } catch {
+        // Non-fatal: fallback to profile-derived name
+      }
+
+      onGoogleSignIn(displayName, idToken)
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error)
+      console.error('Native Google sign-in failed:', error)
+
+      if (/NoCredentialException|No credentials available/i.test(message)) {
+        setAuthError('No eligible Google account found on this device. Please add/sign into a Google account and try again.')
+        return
+      }
+
+      if (/DEVELOPER_ERROR|10|invalid_audience|audience|server client|client id/i.test(message)) {
+        setAuthError('Google OAuth client configuration mismatch. Please verify the Android + Web client IDs and SHA fingerprint.')
+        return
+      }
+
+      setAuthError('Google sign-in was cancelled or unavailable on this device.')
+    }
+  }
+
   const handleGuestSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     const trimmed = name.trim()
     if (trimmed) onEnter(trimmed)
   }
 
-  const handleSignOut = () => {
-    googleLogout()
+  const handleSignOut = async () => {
+    if (isNativePlatform) {
+      try {
+        await SocialLogin.logout({ provider: 'google' })
+      } catch {
+        // Ignore native logout errors and continue clearing local state
+      }
+    } else {
+      googleLogout()
+    }
     setAuthError(null)
     setName('')
     setShowGuestForm(false)
@@ -160,18 +237,30 @@ export default function WelcomePage({
                   Sign in to get started
                 </p>
                 <div className="w-full rounded-2xl border border-slate-200 bg-white px-3 py-3 shadow-sm dark:border-white/10 dark:bg-slate-950/60">
-                  <div className="flex justify-center">
-                    <GoogleLogin
-                      onSuccess={handleGoogleSuccess}
-                      onError={handleGoogleError}
-                      shape="pill"
-                      size="large"
-                      text="continue_with"
-                      theme="outline"
-                      logo_alignment="left"
-                      width="320"
-                    />
-                  </div>
+                  {isNativePlatform ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        void handleNativeGoogleSignIn()
+                      }}
+                      className="mx-auto flex w-full max-w-[320px] items-center justify-center rounded-full border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+                    >
+                      Continue with Google
+                    </button>
+                  ) : (
+                    <div className="flex justify-center">
+                      <GoogleLogin
+                        onSuccess={handleGoogleSuccess}
+                        onError={handleGoogleError}
+                        shape="pill"
+                        size="large"
+                        text="continue_with"
+                        theme="outline"
+                        logo_alignment="left"
+                        width="320"
+                      />
+                    </div>
+                  )}
                 </div>
                 <p className="text-xs text-slate-400 dark:text-slate-500">Secure Google sign-in.</p>
               </div>

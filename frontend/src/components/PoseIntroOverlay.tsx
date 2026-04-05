@@ -244,7 +244,7 @@ export default function PoseIntroOverlay({
             {/* Reference image — large & prominent */}
             {fullSrc && (
               <motion.div
-                className="mx-auto mb-6 h-56 w-56 overflow-hidden rounded-2xl border-2 border-emerald-500/30 shadow-2xl shadow-emerald-900/30"
+                className="mx-auto mb-6 h-60 w-60 overflow-hidden rounded-2xl border-2 border-emerald-500/30 shadow-2xl shadow-emerald-900/30 xs:h-64 xs:w-64"
                 initial={{ opacity: 0, scale: 0.85 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.15, duration: 0.4 }}
@@ -322,7 +322,7 @@ export default function PoseIntroOverlay({
               ) : voiceEnabled ? (
                 <>
                   <span className="inline-block h-1.5 w-1.5 rounded-full bg-slate-500" />
-                  Voice guide is playing…
+                  Voice guide is playing… say next, reset, or skip anytime
                 </>
               ) : (
                 <>
@@ -509,6 +509,13 @@ export default function PoseIntroOverlay({
           <div className="mt-2 text-center text-xs text-slate-400">
             {statusMsg}
           </div>
+
+          {/* Voice command hint */}
+          {voiceEnabled && (
+            <div className="mt-2 text-center text-[11px] text-slate-500">
+              Hands-free commands: <span className="text-slate-300">next</span>, <span className="text-slate-300">reset</span>, <span className="text-slate-300">skip</span>
+            </div>
+          )}
         </motion.div>
       </motion.div>
     )
@@ -585,7 +592,7 @@ export default function PoseIntroOverlay({
             transition={{ delay: 0.4 }}
           >
             <span className={`inline-block h-1.5 w-1.5 rounded-full ${voiceListening ? 'animate-pulse bg-emerald-400' : 'bg-slate-500'}`} />
-            {voiceListening ? 'Listening for your choice… say next, again, or exit' : 'Voice commands ready'}
+            {voiceListening ? 'Listening… say next, reset, or skip' : 'Voice commands ready: next, reset, skip'}
           </motion.div>
         )}
 

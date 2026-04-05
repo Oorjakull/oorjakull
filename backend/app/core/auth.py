@@ -39,15 +39,20 @@ def verify_google_token(token: str) -> dict[str, Any]:
             status_code=503,
             detail="GOOGLE_CLIENT_ID not configured on the server.",
         )
-    try:
-        payload = google_id_token.verify_oauth2_token(
-            token,
-            google_requests.Request(),
-            audience=_GOOGLE_CLIENT_IDS[0],
-        )
-        return payload
-    except Exception as exc:
-        raise HTTPException(status_code=401, detail=f"Invalid Google token: {exc}") from exc
+    verifier = google_requests.Request()
+    last_error: Exception | None = None
+    for audience in _GOOGLE_CLIENT_IDS:
+        try:
+            payload = google_id_token.verify_oauth2_token(
+                token,
+                verifier,
+                audience=audience,
+            )
+            return payload
+        except Exception as exc:  # noqa: PERF203 - clarity over micro-optimization
+            last_error = exc
+            continue
+    raise HTTPException(status_code=401, detail=f"Invalid Google token: {last_error}") from last_error
 
 
 def upsert_user(google_payload: dict[str, Any]) -> dict[str, Any]:

@@ -50,7 +50,7 @@ function getSpeechRecognition(): SpeechRecognitionCtor | null {
 
 export const speechRecognitionSupported = !!getSpeechRecognition()
 
-export type VoiceAction = 'next' | 'again' | 'exit'
+export type VoiceAction = 'next' | 'reset' | 'skip' | 'again' | 'exit'
 
 function matchAction(transcript: string): VoiceAction | null {
   let t: string
@@ -87,9 +87,31 @@ function matchAction(transcript: string): VoiceAction | null {
   ) {
     return 'next'
   }
-  if (/\bagain\b/.test(t) || /\bretry\b/.test(t) || /\brepeat\b/.test(t) || /\bonce more\b/.test(t) || /\bdobara\b/.test(t) || /\bphir\s*se\b/.test(t)) {
-    return 'again'
+
+  if (
+    /\breset\b/.test(t) ||
+    /\brestart\b/.test(t) ||
+    /\bstart\s*over\b/.test(t) ||
+    /\btry\s*again\b/.test(t) ||
+    /\bagain\b/.test(t) ||
+    /\bretry\b/.test(t) ||
+    /\brepeat\b/.test(t) ||
+    /\bonce more\b/.test(t) ||
+    /\bdobara\b/.test(t) ||
+    /\bphir\s*se\b/.test(t)
+  ) {
+    return 'reset'
   }
+
+  if (
+    /\bskip\b/.test(t) ||
+    /\bpass\b/.test(t) ||
+    /\bmove\s*on\b/.test(t) ||
+    /\bnext\s*pose\b/.test(t)
+  ) {
+    return 'skip'
+  }
+
   if (
     /\bexit\b/.test(t) ||
     /\bstop\b/.test(t) ||

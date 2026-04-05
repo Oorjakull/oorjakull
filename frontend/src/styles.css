@@ -17,6 +17,58 @@ body {
   font-family: 'DM Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
+/* ── CSS-first density tokens (mobile / Android friendly) ────────────────── */
+:root {
+  --touch-target: 2.5rem;
+  --camera-chip-font: 0.75rem;
+  --camera-chip-px: 0.5rem;
+  --camera-chip-py: 0.25rem;
+  --camera-stack-gap: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --touch-target: 2.75rem;
+    --camera-chip-font: 0.75rem;
+    --camera-chip-px: 0.625rem;
+    --camera-chip-py: 0.3rem;
+    --camera-stack-gap: 0.6rem;
+  }
+}
+
+@media (max-width: 768px) and (min-resolution: 2dppx) {
+  :root {
+    --touch-target: 2.9rem;
+    --camera-chip-font: 0.8125rem;
+    --camera-chip-px: 0.7rem;
+    --camera-chip-py: 0.34rem;
+    --camera-stack-gap: 0.66rem;
+  }
+}
+
+@media (max-width: 768px) and (min-resolution: 3dppx) {
+  :root {
+    --touch-target: 3rem;
+    --camera-chip-font: 0.875rem;
+    --camera-chip-px: 0.75rem;
+    --camera-chip-py: 0.38rem;
+    --camera-stack-gap: 0.72rem;
+  }
+}
+
+.density-touch-target {
+  min-height: var(--touch-target);
+}
+
+.camera-hud-chip {
+  font-size: var(--camera-chip-font);
+  padding: var(--camera-chip-py) var(--camera-chip-px);
+}
+
+.camera-hud-stack {
+  gap: var(--camera-stack-gap);
+}
+
 /* ── Smooth theme transitions ────────────────────────────────────── */
 html {
   color-scheme: light;

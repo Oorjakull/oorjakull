@@ -219,12 +219,12 @@ export default memo(function UserCameraPanel(props: {
               </div>
             ) : null}
 
-            <div className="pointer-events-none absolute right-2 top-2 flex flex-col items-end gap-1.5 xs:gap-2 xs:right-3 xs:top-3">
+            <div className="pointer-events-none absolute right-2 top-2 camera-hud-stack flex flex-col items-end xs:right-3 xs:top-3">
               <ScoreDisplay score={props.score} isAnalyzing={props.isAnalyzing} variant="score" />
               {badge}
             </div>
 
-            <div className="pointer-events-none absolute left-2 top-2 rounded-2xl border border-white/10 bg-black/30 px-2 py-1 text-xs text-slate-100 backdrop-blur xs:left-3 xs:top-3 xs:px-3">
+            <div className="pointer-events-none absolute left-2 top-2 camera-hud-chip rounded-2xl border border-white/10 bg-black/30 text-slate-100 backdrop-blur xs:left-3 xs:top-3">
               {streamError ?? error ?? props.statusText}
             </div>
 

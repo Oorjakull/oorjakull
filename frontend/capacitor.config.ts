@@ -15,6 +15,15 @@ const config: CapacitorConfig = {
     Camera: {
       presentationStyle: 'fullscreen',
     },
+    SocialLogin: {
+      providers: {
+        google: true,
+        facebook: false,
+        apple: false,
+        twitter: false,
+      },
+      logLevel: 1,
+    },
   },
 }
 
