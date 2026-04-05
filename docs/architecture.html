@@ -45,8 +45,8 @@
         <div class="diagram-wrap">
           <pre class="mermaid">stateDiagram-v2
   [*] --> welcome
-  welcome --> disclaimer : continue
-  welcome --> landing : profile exists
+  welcome --> disclaimer: continue
+  welcome --> landing: profile exists
   disclaimer --> health_check
   health_check --> session_briefing
   session_briefing --> landing
@@ -55,8 +55,8 @@
   intro --> framing
   framing --> evaluating
   evaluating --> results
-  results --> intro : next pose
-  results --> sequence_complete : end sequence
+  results --> intro: next pose
+  results --> sequence_complete: end sequence
   sequence_complete --> landing
   breathwork_session --> landing
 </pre>

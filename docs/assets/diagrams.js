@@ -1,6 +1,6 @@
-import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.9.5/dist/mermaid.esm.min.mjs';
 mermaid.initialize({
-  startOnLoad: true,
+  startOnLoad: false,
   securityLevel: 'loose',
   theme: 'base',
   themeVariables: {
@@ -19,7 +19,11 @@ mermaid.initialize({
     fontFamily:         'DM Sans, sans-serif',
     fontSize:           '13px',
   },
-  flowchart: { curve: 'basis', padding: 20, htmlLabels: true },
+  flowchart: { curve: 'basis', padding: 20 },
   sequence:  { mirrorActors: false, messageAlign: 'center' },
   er:        { diagramPadding: 20 },
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  mermaid.run({ querySelector: '.mermaid' });
 });
