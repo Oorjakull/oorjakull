@@ -1,6 +1,7 @@
 import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
 mermaid.initialize({
   startOnLoad: true,
+  securityLevel: 'loose',
   theme: 'base',
   themeVariables: {
     primaryColor:       '#1e1e21',
@@ -18,7 +19,7 @@ mermaid.initialize({
     fontFamily:         'DM Sans, sans-serif',
     fontSize:           '13px',
   },
-  flowchart: { curve: 'basis', padding: 20 },
+  flowchart: { curve: 'basis', padding: 20, htmlLabels: true },
   sequence:  { mirrorActors: false, messageAlign: 'center' },
   er:        { diagramPadding: 20 },
 });

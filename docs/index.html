@@ -58,14 +58,14 @@
         <h2>System Overview</h2>
         <div class="diagram-wrap">
           <pre class="mermaid">flowchart LR
-  A[Frontend React App\nfrontend/src/App.tsx] -->|HTTP| B[FastAPI App\nbackend/app/main.py]
-  A -->|Landmarks + expected_pose| B
-  B --> C[AlignmentEvaluator\nbackend/app/services/evaluator.py]
-  C --> D[Groq Client\nbackend/app/ai/groq_client.py]
-  C --> E[Deterministic Pose Rules\nbackend/pose_rules/*]
-  B --> F[Google TTS API\n/api/tts path]
-  B --> G[Supabase\nbackend/app/core/db.py]
-  A --> H[MediaPipe Tasks Vision\nfrontend/src/hooks/usePoseLandmarker.ts]
+  A["Frontend React App<br/>frontend/src/App.tsx"] -->|HTTP| B["FastAPI App<br/>backend/app/main.py"]
+  A -->|"Landmarks + expected_pose"| B
+  B --> C["AlignmentEvaluator<br/>services/evaluator.py"]
+  C --> D["Groq Client<br/>ai/groq_client.py"]
+  C --> E["Deterministic Pose Rules<br/>pose_rules"]
+  B --> F["Google TTS API<br/>api/tts path"]
+  B --> G["Supabase<br/>core/db.py"]
+  A --> H["MediaPipe Tasks Vision<br/>usePoseLandmarker.ts"]
 </pre>
         </div>
 

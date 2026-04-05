@@ -20,22 +20,22 @@
         <h2>System Overview</h2>
         <div class="diagram-wrap">
           <pre class="mermaid">flowchart TB
-  subgraph FE[Frontend - React/Vite]
-    APP[App.tsx]
-    MP[usePoseLandmarker]
-    API[api/client.ts]
-    SAFETY[SafetyContext]
+  subgraph FE["Frontend - React + Vite"]
+    APP["App.tsx"]
+    MP["usePoseLandmarker"]
+    API["api/client.ts"]
+    SAFETY["SafetyContext"]
   end
 
-  subgraph BE[Backend - FastAPI]
-    MAIN[app/main.py]
-    EVAL[services/evaluator.py]
-    GROQ[ai/groq_client.py]
-    RULES[pose_rules/angle_calculator.py]
-    DB[core/db.py]
+  subgraph BE["Backend - FastAPI"]
+    MAIN["app/main.py"]
+    EVAL["services/evaluator.py"]
+    GROQ["ai/groq_client.py"]
+    RULES["pose_rules/angle_calculator.py"]
+    DB["core/db.py"]
   end
 
-  FE -->|HTTP /api/*| MAIN
+  FE -->|"HTTP /api/*"| MAIN
   APP --> MP
   API --> MAIN
   MAIN --> EVAL
@@ -47,13 +47,13 @@
         <h2>MediaPipe Processing Path</h2>
         <div class="diagram-wrap">
           <pre class="mermaid">flowchart LR
-  CAM[UserCameraPanel video frame] --> LAND[usePoseLandmarker.detectForVideo]
-  LAND --> SMOOTH[Temporal smoothing in hook]
-  SMOOTH --> STATE[landmarks state in App.tsx]
-  STATE --> FRAME[computeFraming()]
-  STATE --> POST[/api/evaluate payload]
-  POST --> RESP[AlignmentResponse]
-  RESP --> UI[FeedbackPanel / overlays]</pre>
+  CAM["UserCameraPanel video frame"] --> LAND["usePoseLandmarker.detectForVideo"]
+  LAND --> SMOOTH["Temporal smoothing in hook"]
+  SMOOTH --> STATE["landmarks state in App.tsx"]
+  STATE --> FRAME["computeFraming"]
+  STATE --> POST["/api/evaluate payload"]
+  POST --> RESP["AlignmentResponse"]
+  RESP --> UI["FeedbackPanel + overlays"]</pre>
         </div>
 
         <h2>Frontend Session State Machine</h2>
@@ -62,18 +62,18 @@
   [*] --> welcome
   welcome --> disclaimer: continue
   welcome --> landing: profile exists
-  disclaimer --> health-check
-  health-check --> session-briefing
-  session-briefing --> landing
+  disclaimer --> health_check
+  health_check --> session_briefing
+  session_briefing --> landing
   landing --> intro
-  landing --> breathwork-session
+  landing --> breathwork_session
   intro --> framing
   framing --> evaluating
   evaluating --> results
   results --> intro: next pose
-  results --> sequence-complete: end sequence
-  sequence-complete --> landing
-  breathwork-session --> landing
+  results --> sequence_complete: end sequence
+  sequence_complete --> landing
+  breathwork_session --> landing
 </pre>
         </div>
 
@@ -81,18 +81,18 @@
         <div class="diagram-wrap">
           <pre class="mermaid">sequenceDiagram
   participant FE as Frontend
-  participant API as FastAPI /api/evaluate
+  participant API as FastAPI Evaluate
   participant EV as AlignmentEvaluator
   participant PR as Prompt Builder
   participant GR as GroqClient
 
-  FE->>API: POST EvaluateRequest(client_id, expected_pose, landmarks)
-  API->>EV: evaluate(...)
-  EV->>PR: build_pose_context_block(...)
-  EV->>GR: evaluate_alignment(biomech_summary)
+  FE->>API: POST EvaluateRequest payload
+  API->>EV: evaluate landmarks
+  EV->>PR: build_pose_context_block
+  EV->>GR: evaluate_alignment with biomech summary
   GR-->>EV: JSON response
   EV-->>API: GeminiAlignmentResponse
-  API-->>FE: alignment JSON (+ credit fields)</pre>
+  API-->>FE: alignment JSON + credit fields</pre>
         </div>
 
         <h2>Frontend Component Tree (Core Yoga Flow)</h2>

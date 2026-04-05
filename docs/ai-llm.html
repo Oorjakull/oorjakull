@@ -39,9 +39,9 @@
   participant DET as Deterministic Rules
 
   FE->>EV: expected_pose + landmarks + user_level
-  EV->>DET: calculate_pose_score(...)
+  EV->>DET: calculate_pose_score
   EV->>PR: SYSTEM_PROMPT + USER_INSTRUCTIONS + pose_context
-  EV->>GQ: chat.completions (json_object)
+  EV->>GQ: chat.completions with json_object mode
   GQ-->>EV: structured JSON
   EV-->>FE: sanitized coaching + blended score + violation context</pre>
         </div>

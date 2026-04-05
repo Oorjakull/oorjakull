@@ -66,14 +66,14 @@
           <pre class="mermaid">sequenceDiagram
   participant CAM as Camera Stream
   participant FE as App Evaluator Loop
-  participant BE as /api/evaluate
+  participant BE as Backend Evaluate
 
   CAM->>FE: landmarks per frame
   FE->>FE: local framing + stability checks
   FE->>BE: periodic evaluate requests
   BE-->>FE: score + correction + safety_note + credit fields
   FE->>FE: update UI, voice guidance, overlays
-  FE->>FE: transition to results on hold completion/exit</pre>
+  FE->>FE: transition to results on hold or exit</pre>
         </div>
 
         <h2>Session Persistence Timeline</h2>
