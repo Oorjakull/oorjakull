@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
@@ -88,6 +88,9 @@ class GeminiAlignmentResponse(BaseModel):
     positive_observation: str = ""
     breath_cue: str = ""
     safety_note: str | None = None
+    deterministic_score: int | None = Field(default=None, ge=0, le=100)
+    generic_score: int | None = Field(default=None, ge=0, le=100)
+    pose_specific_violations: list[dict[str, Any]] = Field(default_factory=list)
 
     # ── Credit system fields (populated by the /api/evaluate endpoint) ───────
     credits_remaining: int | None = Field(default=None, description="Remaining credits (null = unlimited)")

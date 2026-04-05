@@ -15,15 +15,21 @@ from app.services.pose_library import get_pose
 from app.ai.prompt import build_pose_context_block
 from app.utils.hash import stable_hash
 
-
-_DIGITS_RE = re.compile(r"\d+(?:\.\d+)?")
+try:
+    from pose_rules.angle_rules import POSE_RULES as _POSE_RULES
+    from pose_rules.angle_calculator import calculate_pose_score as _det_score
+    _HAS_DETERMINISTIC_RULES = True
+except Exception:
+    _POSE_RULES = {}
+    _HAS_DETERMINISTIC_RULES = False
 
 
 def _strip_digits(text: str) -> str:
-    # Keep this intentionally simple: users asked for plain-English feedback
-    # without numbers/angles/ranges.
-    t = _DIGITS_RE.sub("", text)
+    # Light sanitization only: keep sentence structure intact and only remove
+    # explicit measurement-like numeric fragments.
     t = t.replace("°", "")
+    t = re.sub(r"\b\d+(?:\.\d+)?\s*(?:degrees?|deg|percent|%|cm|mm|inches?|in)\b", "", t, flags=re.IGNORECASE)
+    t = re.sub(r"\b\d+(?:\.\d+)?\s*-\s*\d+(?:\.\d+)?\b", "", t)
     # Preserve newlines (formatting) but collapse repeated spaces/tabs.
     t = re.sub(r"[ \t]{2,}", " ", t).strip()
     return t
@@ -159,7 +165,8 @@ class AlignmentEvaluator:
         else:
             fallback = POSE_TEMPLATES.get("Tadasana")
             ideal_ranges = fallback.ideal_ranges if fallback is not None else {}
-        score = compute_pose_score(metrics, ideal_ranges)
+        generic_score = compute_pose_score(metrics, ideal_ranges)
+        score = generic_score
 
         biomech_summary = {
             "expected_pose": expected_pose,
@@ -176,6 +183,31 @@ class AlignmentEvaluator:
         pose_context = build_pose_context_block(pose_data)
         if pose_context:
             biomech_summary["pose_context"] = pose_context
+
+        det_score: int | None = None
+        det_violations: list[dict[str, Any]] = []
+        if _HAS_DETERMINISTIC_RULES and pose_id and pose_id in _POSE_RULES:
+            try:
+                det_result = _det_score(landmarks, pose_id, _POSE_RULES[pose_id])
+                det_raw_score = det_result.get("score") if isinstance(det_result, dict) else None
+                det_raw_violations = det_result.get("violations") if isinstance(det_result, dict) else None
+
+                if isinstance(det_raw_score, (int, float)):
+                    det_score = int(round(det_raw_score))
+
+                if isinstance(det_raw_violations, list):
+                    det_violations = [v for v in det_raw_violations if isinstance(v, dict)]
+            except Exception:
+                det_score = None
+                det_violations = []
+
+        if det_violations:
+            biomech_summary["pose_specific_violations"] = det_violations
+        if det_score is not None:
+            biomech_summary["deterministic_score"] = det_score
+            biomech_summary["generic_score"] = generic_score
+            # Weighted blend requested by user: 60% deterministic / 40% generic
+            score = int(round((0.6 * det_score) + (0.4 * generic_score)))
 
         summary_hash = stable_hash(biomech_summary)
 
@@ -245,6 +277,9 @@ class AlignmentEvaluator:
 
         parsed = _sanitize_alignment_response(parsed)
         parsed["score"] = score
+        parsed["deterministic_score"] = det_score
+        parsed["generic_score"] = generic_score
+        parsed["pose_specific_violations"] = det_violations
 
         state.last_metrics = metrics
         state.last_metrics_ts = now
