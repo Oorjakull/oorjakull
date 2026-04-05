@@ -35,24 +35,24 @@
   SESSION_LOGS ||--o{ PAIN_CHECK_LOGS : has
 
   USERS {
-    uuid id PK
+    string id
     string google_sub
     string email
     string display_name
-    datetime created_at
+    string created_at
   }
 
   USER_PROFILES {
-    uuid id PK
-    uuid user_id FK
+    string id
+    string user_id
     string profile_type
     int credits_remaining
     int credits_used
   }
 
   USER_RISK_PROFILES {
-    uuid id PK
-    uuid user_id FK
+    string id
+    string user_id
     string risk_tier
     string profile_json
     boolean consent_given
@@ -60,8 +60,8 @@
   }
 
   SESSION_LOGS {
-    uuid id PK
-    uuid user_id FK
+    string id
+    string user_id
     string flow_id
     string state
     string session_plan_json
@@ -71,20 +71,20 @@
   }
 
   POSE_ATTEMPT_LOGS {
-    uuid id PK
-    uuid session_id FK
+    string id
+    string session_id
     string pose_key
   }
 
   RISK_EVENT_LOGS {
-    uuid id PK
-    uuid session_id FK
+    string id
+    string session_id
     string event_type
   }
 
   PAIN_CHECK_LOGS {
-    uuid id PK
-    uuid session_id FK
+    string id
+    string session_id
     string pain_area
   }</pre>
         </div>
