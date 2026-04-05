@@ -58,13 +58,13 @@
         <h2>System Overview</h2>
         <div class="diagram-wrap">
           <pre class="mermaid">flowchart LR
-  FE["Frontend App"] --> MP["MediaPipe Landmarker"]
-  FE --> API["FastAPI Backend"]
-  API --> EVAL["Alignment Evaluator"]
-  EVAL --> LLM["Groq Client"]
-  EVAL --> RULES["Pose Rules"]
-  API --> TTS["Google TTS"]
-  API --> DB["Supabase"]
+  FE[Frontend App] --> MP[MediaPipe Landmarker]
+  FE --> API[FastAPI Backend]
+  API --> EVAL[Alignment Evaluator]
+  EVAL --> LLM[Groq Client]
+  EVAL --> RULES[Pose Rules]
+  API --> TTS[Google TTS]
+  API --> DB[Supabase]
 </pre>
         </div>
 

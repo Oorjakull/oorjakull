@@ -70,17 +70,17 @@
         <h2>Evaluation Pipeline (Backend)</h2>
         <div class="diagram-wrap">
           <pre class="mermaid">flowchart LR
-  A["/api/evaluate"] --> B["Auth and credit pre-check"]
-  B --> C["AlignmentEvaluator.evaluate"]
-  C --> D["compute_metrics + generic score"]
-  C --> E["Deterministic pose rules"]
-  C --> F["Groq LLM structured output"]
-  D --> G["Blended score 60% deterministic + 40% generic"]
+  A[Evaluate API endpoint] --> B[Auth and credit pre check]
+  B --> C[AlignmentEvaluator evaluate]
+  C --> D[compute metrics and generic score]
+  C --> E[Deterministic pose rules]
+  C --> F[Groq structured output]
+  D --> G[Blended score]
   E --> G
-  F --> H["Sanitized response"]
+  F --> H[Sanitized response]
   G --> H
-  H --> I["deduct_credit RPC"]
-  I --> J["Response with credits_remaining"]</pre>
+  H --> I[deduct credit RPC]
+  I --> J[Response with credits remaining]</pre>
         </div>
 
         <h2>Auth and CORS</h2>

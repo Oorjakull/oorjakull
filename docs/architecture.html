@@ -20,25 +20,25 @@
         <h2>System Overview</h2>
         <div class="diagram-wrap">
           <pre class="mermaid">flowchart TB
-  APP["Frontend App"] --> MP["Pose Landmarker Hook"]
-  APP --> CLIENT["API Client"]
-  CLIENT --> MAIN["FastAPI App"]
-  MAIN --> EVAL["Alignment Evaluator"]
-  EVAL --> GROQ["Groq Client"]
-  EVAL --> RULES["Pose Rules"]
-  MAIN --> DB["Supabase Client"]</pre>
+  APP[Frontend App] --> MP[Pose Landmarker Hook]
+  APP --> CLIENT[API Client]
+  CLIENT --> MAIN[FastAPI App]
+  MAIN --> EVAL[Alignment Evaluator]
+  EVAL --> GROQ[Groq Client]
+  EVAL --> RULES[Pose Rules]
+  MAIN --> DB[Supabase Client]</pre>
         </div>
 
         <h2>MediaPipe Processing Path</h2>
         <div class="diagram-wrap">
           <pre class="mermaid">flowchart LR
-  CAM["UserCameraPanel video frame"] --> LAND["usePoseLandmarker detectForVideo"]
-  LAND --> SMOOTH["Temporal smoothing in hook"]
-  SMOOTH --> STATE["landmarks state in App.tsx"]
-  STATE --> FRAME["computeFraming"]
-  STATE --> POST["api evaluate payload"]
-  POST --> RESP["AlignmentResponse"]
-  RESP --> UI["FeedbackPanel and overlays"]</pre>
+  CAM[UserCameraPanel video frame] --> LAND[usePoseLandmarker detectForVideo]
+  LAND --> SMOOTH[Temporal smoothing in hook]
+  SMOOTH --> STATE[landmarks state in App tsx]
+  STATE --> FRAME[computeFraming]
+  STATE --> POST[api evaluate payload]
+  POST --> RESP[AlignmentResponse]
+  RESP --> UI[FeedbackPanel and overlays]</pre>
         </div>
 
         <h2>Frontend Session State Machine</h2>
