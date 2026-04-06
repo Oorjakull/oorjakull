@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import type { AlignmentResponse, BreathworkProtocol, ExpectedPose, Landmark, Severity, TrainMedia, UserLevel } from './api/client'
 import { evaluateAlignment, fetchTrainPoses } from './api/client'
+import { getApiBaseUrl } from './api/baseUrl'
 import InstructorPanel from './components/InstructorPanel'
 import LandingPage from './components/LandingPage'
 import AppSectionTabs from './components/AppSectionTabs'
@@ -346,7 +347,7 @@ export default function App() {
     supported: voiceCommandSupported,
   } = useVoiceCommand()
 
-  const baseUrl = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/api\/?$/, '').replace(/\/$/, '') ?? 'http://localhost:8000'
+  const baseUrl = getApiBaseUrl()
 
   const [poseOptions, setPoseOptions] = useState<string[]>(() => POSE_REFERENCES.map((p) => p.pose))
   const [trainMediaByPose, setTrainMediaByPose] = useState<Record<string, TrainMedia[]>>({})

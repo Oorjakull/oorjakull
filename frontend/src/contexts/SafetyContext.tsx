@@ -14,8 +14,9 @@ import type {
 import { RiskSignalExtractor } from '../safety/riskSignalExtractor'
 import { RiskScoringEngine } from '../safety/riskScoringEngine'
 import type { Landmark } from '../api/client'
+import { API_BASE_URL } from '../api/baseUrl'
 
-const BASE_URL = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/api\/?$/, '').replace(/\/$/, '') ?? 'http://localhost:8000'
+const BASE_URL = API_BASE_URL
 
 // ── Auth helpers ────────────────────────────────────────────────────────────
 

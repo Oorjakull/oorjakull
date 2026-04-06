@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import { fetchUserCredits, type UserCredits } from '../api/client'
+import { API_BASE_URL } from '../api/baseUrl'
 
-const BASE_URL = (import.meta.env.VITE_API_BASE_URL as string | undefined)
-  ?.replace(/\/api\/?$/, '')
-  .replace(/\/$/, '') ?? 'http://localhost:8000'
+const BASE_URL = API_BASE_URL
 
 type UseCreditsReturn = {
   /** null while loading, or if user is not authenticated */

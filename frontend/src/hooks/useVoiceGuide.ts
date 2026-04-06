@@ -1,5 +1,6 @@
 import { useCallback, useRef } from 'react'
 import { synthesizeSpeech } from '../api/client'
+import { getApiBaseUrl } from '../api/baseUrl'
 import { POSE_DESCRIPTIONS } from '../data/poseDescriptions'
 
 export type VoiceGender = 'male' | 'female'
@@ -254,10 +255,7 @@ function cacheSet(key: string, blob: Blob) {
 
 // ── Resolve the backend base URL (same logic as App.tsx) ───────────────────
 function getBaseUrl(): string {
-  return (
-    (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/api\/?$/, '').replace(/\/$/, '') ??
-    'http://localhost:8000'
-  )
+  return getApiBaseUrl()
 }
 
 export function useVoiceGuide(

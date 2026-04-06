@@ -1,4 +1,5 @@
 import type { ExpectedPose, FocusArea, Severity } from '../api/client'
+import { getApiBaseUrl } from '../api/baseUrl'
 import { POSE_REFERENCES, severityColor } from '../poses/reference'
 import { POSE_DESCRIPTIONS } from '../data/poseDescriptions'
 
@@ -32,9 +33,7 @@ export default function ReferencePanel(props: {
   const ids = focusToIds(props.primaryFocusArea)
   const color = props.severity ? severityColor(props.severity) : '#000'
 
-  const baseUrl = props.baseUrl
-    ?? (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/api\/?$/, '').replace(/\/$/, '')
-    ?? 'http://localhost:8000'
+  const baseUrl = props.baseUrl ?? getApiBaseUrl()
   const mediaSrc = ref?.src
     ? ref.kind === 'video'
       ? `${baseUrl}${ref.src}`
