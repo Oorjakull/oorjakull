@@ -41,6 +41,15 @@ from pose_rules.angle_calculator import calculate_pose_score as _det_score  # no
 
 app = FastAPI(title="Yoga GenAI POC", version="0.1.0")
 
+# ── CORS must be added before any routes/mounts ─────────────────────────────
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.cors_origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # Expose training assets (e.g., reference videos) to the frontend.
 # On Vercel serverless, TRAIN/ won't exist — guard gracefully.
 _repo_root = Path(__file__).resolve().parents[2]
@@ -122,14 +131,6 @@ def list_train_poses() -> dict[str, object]:
         poses_payload.append({"pose": pose, "media": media_list})
 
     return {"poses": poses_payload}
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=settings.cors_origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 evaluator = AlignmentEvaluator()
 assistant_service = AssistantService()
