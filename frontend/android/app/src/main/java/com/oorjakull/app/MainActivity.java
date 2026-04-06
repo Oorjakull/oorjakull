@@ -7,6 +7,7 @@ import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
 
 import com.getcapacitor.BridgeActivity;
+import com.getcapacitor.BridgeWebChromeClient;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginHandle;
 
@@ -22,7 +23,7 @@ public class MainActivity extends BridgeActivity implements ModifiedMainActivity
 		super.onCreate(savedInstanceState);
 
 		if (this.bridge != null && this.bridge.getWebView() != null) {
-			this.bridge.getWebView().setWebChromeClient(new WebChromeClient() {
+			this.bridge.getWebView().setWebChromeClient(new BridgeWebChromeClient(this.bridge) {
 				@Override
 				public void onPermissionRequest(final PermissionRequest request) {
 					request.grant(request.getResources());

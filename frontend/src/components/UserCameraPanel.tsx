@@ -185,7 +185,7 @@ export default memo(function UserCameraPanel(props: {
       <div className={`min-h-0 flex-1 ${props.isPortrait ? '' : 'px-3 pb-3'}`}>
         <div className={`relative h-full overflow-hidden bg-black shadow-xl shadow-black/30 ${props.isPortrait ? '' : 'rounded-2xl border border-white/10'}`}>
           <div ref={stageRef} className="relative h-full w-full">
-            <video ref={videoRef} playsInline muted className={`absolute inset-0 h-full w-full object-${fitMode}`} />
+            <video ref={videoRef} autoPlay playsInline muted className={`absolute inset-0 h-full w-full object-${fitMode}`} />
             <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
 
             <div className="pointer-events-none absolute inset-0 p-3">

@@ -94,7 +94,7 @@ export default function LivePanel(props: {
       </div>
       <div className="panelBody">
         <div className="videoStage">
-          <video ref={videoRef} playsInline muted />
+          <video ref={videoRef} autoPlay playsInline muted />
           <canvas ref={canvasRef} />
           <div className="statusPill">{streamError ?? error ?? props.statusText}</div>
           {props.countdown > 0 ? <div className="countdown">{props.countdown}</div> : null}
