@@ -67,6 +67,31 @@ export default memo(function UserCameraPanel(props: {
   const stageRef = useRef<HTMLDivElement | null>(null)
   const fitModeRef = useRef<'cover' | 'contain'>('cover')
 
+  // Stable ref for the onLandmarks callback — updated every render but never
+  // listed as a rAF effect dependency, so the frame loop never restarts due to
+  // App.tsx re-renders (countdown ticks, status text changes, etc.)
+  const onLandmarksRef = useRef(props.onLandmarks)
+  useEffect(() => { onLandmarksRef.current = props.onLandmarks })
+
+  // Cache stage dimensions via ResizeObserver to avoid getBoundingClientRect
+  // on every animation frame (layout thrash at 60fps → jank + battery drain).
+  const stageDimsRef = useRef({ w: 0, h: 0 })
+  useEffect(() => {
+    const stage = stageRef.current
+    if (!stage) return
+    const ro = new ResizeObserver((entries) => {
+      const entry = entries[0]
+      if (entry) {
+        stageDimsRef.current = {
+          w: Math.max(1, Math.round(entry.contentRect.width)),
+          h: Math.max(1, Math.round(entry.contentRect.height)),
+        }
+      }
+    })
+    ro.observe(stage)
+    return () => ro.disconnect()
+  }, [])
+
   const { ready, error, getLandmarksFromVideo } = usePoseLandmarker()
   const [streamError, setStreamError] = useState<string | null>(null)
 
@@ -151,9 +176,16 @@ export default memo(function UserCameraPanel(props: {
             return
           }
 
-          const rect = stage.getBoundingClientRect()
-          const displayWidth = Math.max(1, Math.round(rect.width))
-          const displayHeight = Math.max(1, Math.round(rect.height))
+          // Use cached stage dimensions; fallback to getBoundingClientRect on the
+          // very first frame (before ResizeObserver has fired its initial callback).
+          let displayWidth = stageDimsRef.current.w
+          let displayHeight = stageDimsRef.current.h
+          if (!displayWidth || !displayHeight) {
+            const rect = stage.getBoundingClientRect()
+            displayWidth = Math.max(1, Math.round(rect.width))
+            displayHeight = Math.max(1, Math.round(rect.height))
+            stageDimsRef.current = { w: displayWidth, h: displayHeight }
+          }
 
           // Match canvas internal resolution to CSS pixels * DPR so drawings stay sharp.
           const dpr = window.devicePixelRatio || 1
@@ -167,9 +199,9 @@ export default memo(function UserCameraPanel(props: {
           const ctx = canvas.getContext('2d')
           if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
 
-          // Performance: evaluate framing at max 2Hz.
+          // Performance: evaluate framing at 5 Hz (was 2 Hz).
           const now = performance.now()
-          if (now - lastLandmarksTs >= 500) {
+          if (now - lastLandmarksTs >= 200) {
             lastLandmarksTs = now
 
             const landmarks = await getLandmarksFromVideo(video)
@@ -184,7 +216,7 @@ export default memo(function UserCameraPanel(props: {
                 objectFit: fitModeRef.current,
               })
               const visibilityMean = landmarks.reduce((a, l) => a + l.visibility, 0) / landmarks.length
-              props.onLandmarks(landmarks, visibilityMean)
+              onLandmarksRef.current(landmarks, visibilityMean)
             }
           }
         }
@@ -196,7 +228,7 @@ export default memo(function UserCameraPanel(props: {
 
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
-  }, [props.running, ready, getLandmarksFromVideo, props.onLandmarks])
+  }, [props.running, ready, getLandmarksFromVideo])
 
   const headerBadge = ready ? 'MediaPipe ready' : 'Loading…'
   // Always cover: fills edge-to-edge with no black bars.

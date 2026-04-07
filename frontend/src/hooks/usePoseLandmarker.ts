@@ -2,8 +2,9 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import type { Landmark } from '../api/client'
 import { FilesetResolver, PoseLandmarker } from '@mediapipe/tasks-vision'
 
-/** Exponential Moving Average smoothing factor (0 = all previous, 1 = all current) */
-const EMA_ALPHA = 0.4
+/** Exponential Moving Average smoothing factor (0 = all previous, 1 = all current)
+ * At 5 Hz detection rate, 0.7 gives responsive tracking without jitter. */
+const EMA_ALPHA = 0.7
 
 function smoothLandmarks(prev: Landmark[], curr: Landmark[]): Landmark[] {
   return curr.map((c, i) => {

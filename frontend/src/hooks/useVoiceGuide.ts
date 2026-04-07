@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { synthesizeSpeech } from '../api/client'
 import { getApiBaseUrl } from '../api/baseUrl'
 import { POSE_DESCRIPTIONS } from '../data/poseDescriptions'
@@ -376,12 +376,12 @@ export function useVoiceGuide(
       stopAudio()
 
       if (!voiceEnabled) {
-        // When voice is off, fire onEnd after 5 s so the app flow continues
+        // When voice is off, fire onEnd after 800 ms so the app flow continues without stalling
         if (onEnd) {
           silentTimerRef.current = setTimeout(() => {
             silentTimerRef.current = null
             onEnd()
-          }, 5000)
+          }, 800)
         }
         return
       }
@@ -456,6 +456,22 @@ export function useVoiceGuide(
       silentTimerRef.current = null
     }
     stopAudio()
+  }, [stopAudio])
+
+  // Close AudioContext and clear timers on unmount.
+  // Android WebView caps AudioContext instances at 6 — orphaned contexts cause hard crashes.
+  useEffect(() => {
+    return () => {
+      if (silentTimerRef.current !== null) {
+        clearTimeout(silentTimerRef.current)
+        silentTimerRef.current = null
+      }
+      stopAudio()
+      if (audioCtxRef.current && audioCtxRef.current.state !== 'closed') {
+        audioCtxRef.current.close().catch(() => undefined)
+        audioCtxRef.current = null
+      }
+    }
   }, [stopAudio])
 
   return { speak, speakFeedback, prefetch, cancel }

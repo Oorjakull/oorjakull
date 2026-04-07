@@ -311,9 +311,9 @@ export default function App() {
   const posingStableCountRef = useRef(0)     // consecutive frames where body is fully framed during 'posing'
   const framingAcquireStableCountRef = useRef(0) // consecutive fullyFramed samples before detect->pose
   const framingLoseStableCountRef = useRef(0)    // consecutive non-fullyFramed samples before pose->detect
-  const POSING_STABLE_THRESHOLD = 4          // ~2 seconds at 2 Hz before starting countdown
-  const FRAMING_ACQUIRE_THRESHOLD = 2
-  const FRAMING_LOSE_THRESHOLD = 2
+  const POSING_STABLE_THRESHOLD = 10         // ~2 seconds at 5 Hz before starting countdown
+  const FRAMING_ACQUIRE_THRESHOLD = 5         // ~1 second at 5 Hz
+  const FRAMING_LOSE_THRESHOLD = 4            // ~0.8 seconds at 5 Hz
 
   /** Set sub-phase in both React state (for UI) and ref (for synchronous guards) */
   function setSubPhase(phase: 'detecting' | 'posing' | 'countdown') {
@@ -1116,10 +1116,14 @@ export default function App() {
       // Trainer prompt: tell user they can relax, then speak feedback + afterPrompt
       const relaxPrompt = 'Done! You can relax and come back to a comfortable standing position.'
 
+      // ── Non-blocking: show results UI immediately, voice plays in background ──
+      // This eliminates the 10-15 s dead time where the screen showed "Analyzing"
+      // while waiting for the full voice chain to finish before transitioning.
+      setExperiencePhase('results')
+
       if (feedbackText) {
         speak(relaxPrompt, () => {
           speakFeedback(feedbackText, () => {
-            setExperiencePhase('results')
             speak(afterPrompt, () => {
               startPracticeVoiceCommands()
             })
@@ -1127,7 +1131,6 @@ export default function App() {
         })
       } else {
         speak(relaxPrompt, () => {
-          setExperiencePhase('results')
           speak(afterPrompt, () => {
             startPracticeVoiceCommands()
           })
