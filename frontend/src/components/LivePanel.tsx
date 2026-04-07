@@ -38,10 +38,31 @@ export default function LivePanel(props: {
 
     async function start() {
       try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: { exact: 'user' },
+            width: { ideal: 1280, max: 1920 },
+            height: { ideal: 720, max: 1080 },
+            aspectRatio: { ideal: 16 / 9 },
+            advanced: [{ zoom: 1.0 } as any, { focusMode: 'continuous' } as any],
+          },
+          audio: false,
+        })
+
+        // Android WebView zoom fix — forces zoom to hardware minimum if Camera2 exposes it
+        const track = stream.getVideoTracks()[0]
+        if (track) {
+          const capabilities = (track as any).getCapabilities?.()
+          if (capabilities?.zoom) {
+            await track.applyConstraints({
+              advanced: [{ zoom: capabilities.zoom.min } as any],
+            })
+          }
+        }
+
         if (videoRef.current) {
           videoRef.current.srcObject = stream
-          await videoRef.current.play()
+          videoRef.current.play().catch(() => undefined)
         }
       } catch (e) {
         setStreamError('Camera permission denied or camera unavailable.')

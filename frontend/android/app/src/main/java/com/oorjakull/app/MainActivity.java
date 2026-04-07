@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 
 import com.getcapacitor.BridgeActivity;
 import com.getcapacitor.BridgeWebChromeClient;
@@ -29,6 +30,14 @@ public class MainActivity extends BridgeActivity implements ModifiedMainActivity
 					request.grant(request.getResources());
 				}
 			});
+
+			// Fix: prevent WebView from applying its own viewport scaling to camera streams
+			WebSettings settings = this.bridge.getWebView().getSettings();
+			settings.setUseWideViewPort(true);
+			settings.setLoadWithOverviewMode(true);
+			settings.setMediaPlaybackRequiresUserGesture(false);
+			settings.setBuiltInZoomControls(false);
+			settings.setDisplayZoomControls(false);
 		}
 	}
 

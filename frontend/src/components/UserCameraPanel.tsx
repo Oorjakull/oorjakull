@@ -78,13 +78,37 @@ export default memo(function UserCameraPanel(props: {
       try {
         // In portrait mode request portrait-friendly resolution to avoid cropping
         const videoConstraints: MediaTrackConstraints = props.isPortrait
-          ? { facingMode: 'user', width: { ideal: 720 }, height: { ideal: 1280 } }
-          : { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } }
+          ? {
+              facingMode: { exact: 'user' },
+              width: { ideal: 720, max: 1080 },
+              height: { ideal: 1280, max: 1920 },
+              aspectRatio: { ideal: 9 / 16 },
+              advanced: [{ zoom: 1.0 } as any, { focusMode: 'continuous' } as any],
+            }
+          : {
+              facingMode: { exact: 'user' },
+              width: { ideal: 1280, max: 1920 },
+              height: { ideal: 720, max: 1080 },
+              aspectRatio: { ideal: 16 / 9 },
+              advanced: [{ zoom: 1.0 } as any, { focusMode: 'continuous' } as any],
+            }
 
         stream = await navigator.mediaDevices.getUserMedia({
           video: videoConstraints,
           audio: false
         })
+
+        // Android WebView zoom fix — forces zoom to hardware minimum if Camera2 exposes it
+        const track = stream.getVideoTracks()[0]
+        if (track) {
+          const capabilities = (track as any).getCapabilities?.()
+          if (capabilities?.zoom) {
+            await track.applyConstraints({
+              advanced: [{ zoom: capabilities.zoom.min } as any],
+            })
+          }
+        }
+
         if (videoRef.current) {
           videoRef.current.srcObject = stream
           // Some browsers can reject autoplay even when muted; don't treat that as camera failure.
@@ -162,7 +186,11 @@ export default memo(function UserCameraPanel(props: {
   }, [props.running, ready, getLandmarksFromVideo, props.onLandmarks])
 
   const headerBadge = ready ? 'MediaPipe ready' : 'Loading…'
-  const fitMode = (props.fullScreen || !props.isPortrait) ? 'cover' : 'contain'
+  // Fullscreen portrait must use 'contain' so full body is visible for pose detection.
+  // Landscape non-fullscreen uses 'cover' for cosmetic fill.
+  const fitMode = (props.fullScreen && props.isPortrait) ? 'contain'
+    : (!props.isPortrait && !props.fullScreen) ? 'cover'
+    : 'contain'
   const framed = props.framingState === 'fullyFramed'
   const frameTone = framed ? 'text-emerald-200' : 'text-amber-200'
   const framePulse = framed ? '' : 'calib-pulse'
@@ -183,7 +211,7 @@ export default memo(function UserCameraPanel(props: {
       )}
 
       <div className={`min-h-0 flex-1 ${props.isPortrait ? '' : 'px-3 pb-3'}`}>
-        <div className={`relative h-full overflow-hidden bg-black shadow-xl shadow-black/30 ${props.isPortrait ? '' : 'rounded-2xl border border-white/10'}`}>
+        <div className={`relative h-full overflow-hidden shadow-xl shadow-black/30 ${props.isPortrait ? '' : 'rounded-2xl border border-white/10'}`} style={{ background: 'radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0a 100%)' }}>
           <div ref={stageRef} className="relative h-full w-full">
             <video ref={videoRef} autoPlay playsInline muted className={`absolute inset-0 h-full w-full object-${fitMode}`} />
             <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
