@@ -76,27 +76,35 @@ export default memo(function UserCameraPanel(props: {
 
     async function start() {
       try {
-        // In portrait mode request portrait-friendly resolution to avoid cropping
-        const videoConstraints: MediaTrackConstraints = props.isPortrait
+        // Build constraints — portrait vs landscape resolution
+        const baseConstraints = (facing: MediaTrackConstraints['facingMode']): MediaTrackConstraints => props.isPortrait
           ? {
-              facingMode: { exact: 'user' },
+              facingMode: facing,
               width: { ideal: 720, max: 1080 },
               height: { ideal: 1280, max: 1920 },
               aspectRatio: { ideal: 9 / 16 },
               advanced: [{ zoom: 1.0 } as any, { focusMode: 'continuous' } as any],
             }
           : {
-              facingMode: { exact: 'user' },
+              facingMode: facing,
               width: { ideal: 1280, max: 1920 },
               height: { ideal: 720, max: 1080 },
               aspectRatio: { ideal: 16 / 9 },
               advanced: [{ zoom: 1.0 } as any, { focusMode: 'continuous' } as any],
             }
 
-        stream = await navigator.mediaDevices.getUserMedia({
-          video: videoConstraints,
-          audio: false
-        })
+        // Try exact:'user' first; fall back to plain 'user' if OverconstrainedError
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({
+            video: baseConstraints({ exact: 'user' }),
+            audio: false,
+          })
+        } catch {
+          stream = await navigator.mediaDevices.getUserMedia({
+            video: baseConstraints('user'),
+            audio: false,
+          })
+        }
 
         // Android WebView zoom fix — forces zoom to hardware minimum if Camera2 exposes it
         const track = stream.getVideoTracks()[0]
@@ -105,7 +113,7 @@ export default memo(function UserCameraPanel(props: {
           if (capabilities?.zoom) {
             await track.applyConstraints({
               advanced: [{ zoom: capabilities.zoom.min } as any],
-            })
+            }).catch(() => undefined)
           }
         }
 
@@ -131,52 +139,56 @@ export default memo(function UserCameraPanel(props: {
     let lastLandmarksTs = 0
 
     const tick = async () => {
-      if (videoRef.current && canvasRef.current && ready) {
-        const video = videoRef.current
-        const canvas = canvasRef.current
+      try {
+        if (videoRef.current && canvasRef.current && ready) {
+          const video = videoRef.current
+          const canvas = canvasRef.current
 
-        const stage = stageRef.current
-        if (!stage || !video.videoWidth || !video.videoHeight) {
-          raf = requestAnimationFrame(tick)
-          return
-        }
+          const stage = stageRef.current
+          if (!stage || !video.videoWidth || !video.videoHeight) {
+            raf = requestAnimationFrame(tick)
+            return
+          }
 
-        const rect = stage.getBoundingClientRect()
-        const displayWidth = Math.max(1, Math.round(rect.width))
-        const displayHeight = Math.max(1, Math.round(rect.height))
+          const rect = stage.getBoundingClientRect()
+          const displayWidth = Math.max(1, Math.round(rect.width))
+          const displayHeight = Math.max(1, Math.round(rect.height))
 
-        // Match canvas internal resolution to CSS pixels * DPR so drawings stay sharp.
-        const dpr = window.devicePixelRatio || 1
-        const targetW = Math.max(1, Math.round(displayWidth * dpr))
-        const targetH = Math.max(1, Math.round(displayHeight * dpr))
-        if (canvas.width !== targetW || canvas.height !== targetH) {
-          canvas.width = targetW
-          canvas.height = targetH
-        }
+          // Match canvas internal resolution to CSS pixels * DPR so drawings stay sharp.
+          const dpr = window.devicePixelRatio || 1
+          const targetW = Math.max(1, Math.round(displayWidth * dpr))
+          const targetH = Math.max(1, Math.round(displayHeight * dpr))
+          if (canvas.width !== targetW || canvas.height !== targetH) {
+            canvas.width = targetW
+            canvas.height = targetH
+          }
 
-        const ctx = canvas.getContext('2d')
-        if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+          const ctx = canvas.getContext('2d')
+          if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
 
-        // Performance: evaluate framing at max 2Hz.
-        const now = performance.now()
-        if (now - lastLandmarksTs >= 500) {
-          lastLandmarksTs = now
+          // Performance: evaluate framing at max 2Hz.
+          const now = performance.now()
+          if (now - lastLandmarksTs >= 500) {
+            lastLandmarksTs = now
 
-          const landmarks = await getLandmarksFromVideo(video)
-          if (landmarks && landmarks.length === 33) {
-            drawSkeleton({
-              canvas,
-              landmarks,
-              displayWidth,
-              displayHeight,
-              videoWidth: video.videoWidth,
-              videoHeight: video.videoHeight,
-              objectFit: fitMode,
-            })
-            const visibilityMean = landmarks.reduce((a, l) => a + l.visibility, 0) / landmarks.length
-            props.onLandmarks(landmarks, visibilityMean)
+            const landmarks = await getLandmarksFromVideo(video)
+            if (landmarks && landmarks.length === 33) {
+              drawSkeleton({
+                canvas,
+                landmarks,
+                displayWidth,
+                displayHeight,
+                videoWidth: video.videoWidth,
+                videoHeight: video.videoHeight,
+                objectFit: fitMode,
+              })
+              const visibilityMean = landmarks.reduce((a, l) => a + l.visibility, 0) / landmarks.length
+              props.onLandmarks(landmarks, visibilityMean)
+            }
           }
         }
+      } catch {
+        // MediaPipe or canvas error — swallow to keep the frame loop alive
       }
       raf = requestAnimationFrame(tick)
     }

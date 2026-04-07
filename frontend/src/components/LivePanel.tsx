@@ -38,16 +38,24 @@ export default function LivePanel(props: {
 
     async function start() {
       try {
-        stream = await navigator.mediaDevices.getUserMedia({
+        const constraints = {
           video: {
-            facingMode: { exact: 'user' },
+            facingMode: { exact: 'user' } as MediaTrackConstraints['facingMode'],
             width: { ideal: 1280, max: 1920 },
             height: { ideal: 720, max: 1080 },
             aspectRatio: { ideal: 16 / 9 },
             advanced: [{ zoom: 1.0 } as any, { focusMode: 'continuous' } as any],
           },
-          audio: false,
-        })
+          audio: false as const,
+        }
+
+        // Try exact:'user' first; fall back to plain 'user' if OverconstrainedError
+        try {
+          stream = await navigator.mediaDevices.getUserMedia(constraints)
+        } catch {
+          constraints.video.facingMode = 'user'
+          stream = await navigator.mediaDevices.getUserMedia(constraints)
+        }
 
         // Android WebView zoom fix — forces zoom to hardware minimum if Camera2 exposes it
         const track = stream.getVideoTracks()[0]
@@ -56,7 +64,7 @@ export default function LivePanel(props: {
           if (capabilities?.zoom) {
             await track.applyConstraints({
               advanced: [{ zoom: capabilities.zoom.min } as any],
-            })
+            }).catch(() => undefined)
           }
         }
 

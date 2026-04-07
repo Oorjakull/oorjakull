@@ -63,10 +63,14 @@ export function usePoseLandmarker() {
     const landmarker = landmarkerRef.current
     if (!landmarker) return null
 
-    const ts = performance.now()
-    const result = landmarker.detectForVideo(video, ts)
-    const pose = result.landmarks?.[0]
-    if (!pose || pose.length !== 33) return null
+    // Guard: video must have loaded metadata and have an active stream
+    if (!video.videoWidth || !video.videoHeight || video.readyState < 2) return null
+
+    try {
+      const ts = performance.now()
+      const result = landmarker.detectForVideo(video, ts)
+      const pose = result.landmarks?.[0]
+      if (!pose || pose.length !== 33) return null
 
     const raw: Landmark[] = pose.map((p) => ({
       x: p.x,
@@ -81,6 +85,10 @@ export function usePoseLandmarker() {
     prevLandmarksRef.current = smoothed
 
     return smoothed
+    } catch {
+      // MediaPipe WASM / WebGL error — return null so frame loop continues
+      return null
+    }
   }, [])
 
   return { ready, error, getLandmarksFromVideo }

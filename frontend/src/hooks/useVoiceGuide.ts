@@ -265,47 +265,68 @@ export function useVoiceGuide(
   const lastSpokenRef = useRef<string>('')
   const lastSpeakTsRef = useRef<number>(0)
   const silentTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const currentAudioRef = useRef<HTMLAudioElement | null>(null)
-  const currentObjectUrlRef = useRef<string | null>(null)
+  const audioCtxRef = useRef<AudioContext | null>(null)
+  const sourceNodeRef = useRef<AudioBufferSourceNode | null>(null)
+  const gainNodeRef = useRef<GainNode | null>(null)
 
-  /** Stop currently-playing audio and revoke its object URL. */
-  const stopAudio = useCallback(() => {
-    const audio = currentAudioRef.current
-    if (audio) {
-      audio.pause()
-      audio.onended = null
-      audio.onerror = null
-      currentAudioRef.current = null
+  /** Lazily create / resume a shared AudioContext (works around Android WebView autoplay gate). */
+  const getAudioContext = useCallback((): AudioContext => {
+    if (!audioCtxRef.current || audioCtxRef.current.state === 'closed') {
+      audioCtxRef.current = new AudioContext()
     }
-    if (currentObjectUrlRef.current) {
-      URL.revokeObjectURL(currentObjectUrlRef.current)
-      currentObjectUrlRef.current = null
+    if (audioCtxRef.current.state === 'suspended') {
+      audioCtxRef.current.resume().catch(() => undefined)
+    }
+    return audioCtxRef.current
+  }, [])
+
+  /** Stop currently-playing audio source. */
+  const stopAudio = useCallback(() => {
+    const src = sourceNodeRef.current
+    if (src) {
+      try { src.stop() } catch { /* already stopped */ }
+      src.disconnect()
+      sourceNodeRef.current = null
     }
   }, [])
 
-  /** Play a Blob and call onEnd when it finishes. */
+  /** Play a Blob via AudioContext → decodeAudioData → AudioBufferSourceNode (stutter-free on Android WebView). */
   const playBlob = useCallback(
     (blob: Blob, volume: number, onEnd?: () => void) => {
       stopAudio()
-      const url = URL.createObjectURL(blob)
-      currentObjectUrlRef.current = url
-      const audio = new Audio(url)
-      audio.volume = volume
-      currentAudioRef.current = audio
-      audio.onended = () => {
-        stopAudio()
-        onEnd?.()
-      }
-      audio.onerror = () => {
-        stopAudio()
-        onEnd?.()
-      }
-      audio.play().catch(() => {
-        stopAudio()
-        onEnd?.()
-      })
+      void (async () => {
+        try {
+          const ctx = getAudioContext()
+          const arrayBuf = await blob.arrayBuffer()
+          const audioBuf = await ctx.decodeAudioData(arrayBuf)
+
+          const source = ctx.createBufferSource()
+          source.buffer = audioBuf
+
+          // Volume via GainNode
+          const gain = ctx.createGain()
+          gain.gain.value = volume
+          gainNodeRef.current = gain
+
+          source.connect(gain).connect(ctx.destination)
+          sourceNodeRef.current = source
+
+          source.onended = () => {
+            source.disconnect()
+            gain.disconnect()
+            sourceNodeRef.current = null
+            gainNodeRef.current = null
+            onEnd?.()
+          }
+
+          source.start(0)
+        } catch {
+          stopAudio()
+          onEnd?.()
+        }
+      })()
     },
-    [stopAudio],
+    [stopAudio, getAudioContext],
   )
 
   const fetchAudioBlob = useCallback(
