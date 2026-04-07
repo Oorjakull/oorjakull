@@ -65,6 +65,7 @@ export default memo(function UserCameraPanel(props: {
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const stageRef = useRef<HTMLDivElement | null>(null)
+  const fitModeRef = useRef<'cover' | 'contain'>('cover')
 
   const { ready, error, getLandmarksFromVideo } = usePoseLandmarker()
   const [streamError, setStreamError] = useState<string | null>(null)
@@ -180,7 +181,7 @@ export default memo(function UserCameraPanel(props: {
                 displayHeight,
                 videoWidth: video.videoWidth,
                 videoHeight: video.videoHeight,
-                objectFit: fitMode,
+                objectFit: fitModeRef.current,
               })
               const visibilityMean = landmarks.reduce((a, l) => a + l.visibility, 0) / landmarks.length
               props.onLandmarks(landmarks, visibilityMean)
@@ -198,11 +199,10 @@ export default memo(function UserCameraPanel(props: {
   }, [props.running, ready, getLandmarksFromVideo, props.onLandmarks])
 
   const headerBadge = ready ? 'MediaPipe ready' : 'Loading…'
-  // Fullscreen portrait must use 'contain' so full body is visible for pose detection.
-  // Landscape non-fullscreen uses 'cover' for cosmetic fill.
-  const fitMode = (props.fullScreen && props.isPortrait) ? 'contain'
-    : (!props.isPortrait && !props.fullScreen) ? 'cover'
-    : 'contain'
+  // Always cover: fills edge-to-edge with no black bars.
+  // The camera zoom fix (v1.0.4) ensures adequate FOV so the full body is visible.
+  const fitMode = 'cover' as const
+  fitModeRef.current = fitMode
   const framed = props.framingState === 'fullyFramed'
   const frameTone = framed ? 'text-emerald-200' : 'text-amber-200'
   const framePulse = framed ? '' : 'calib-pulse'

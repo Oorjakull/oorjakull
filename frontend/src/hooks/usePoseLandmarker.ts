@@ -36,7 +36,7 @@ export function usePoseLandmarker() {
         const landmarker = await PoseLandmarker.createFromOptions(vision, {
           baseOptions: {
             modelAssetPath:
-              'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_heavy/float16/1/pose_landmarker_heavy.task'
+              'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task'
           },
           runningMode: 'VIDEO',
           numPoses: 1
@@ -63,8 +63,8 @@ export function usePoseLandmarker() {
     const landmarker = landmarkerRef.current
     if (!landmarker) return null
 
-    // Guard: video must have loaded metadata and have an active stream
-    if (!video.videoWidth || !video.videoHeight || video.readyState < 2) return null
+    // Guard: videoWidth/Height are 0 until the first decoded frame — sufficient check for Android WebView
+    if (!video.videoWidth || !video.videoHeight) return null
 
     try {
       const ts = performance.now()
