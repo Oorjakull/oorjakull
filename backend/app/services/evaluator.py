@@ -27,7 +27,7 @@ except Exception:
 def _strip_digits(text: str) -> str:
     # Light sanitization only: keep sentence structure intact and only remove
     # explicit measurement-like numeric fragments.
-    t = t.replace("°", "")
+    t = text.replace("°", "")
     t = re.sub(r"\b\d+(?:\.\d+)?\s*(?:degrees?|deg|percent|%|cm|mm|inches?|in)\b", "", t, flags=re.IGNORECASE)
     t = re.sub(r"\b\d+(?:\.\d+)?\s*-\s*\d+(?:\.\d+)?\b", "", t)
     # Preserve newlines (formatting) but collapse repeated spaces/tabs.
