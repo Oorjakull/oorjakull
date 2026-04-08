@@ -5,7 +5,6 @@ import { evaluateAlignment, fetchTrainPoses } from './api/client'
 import { getApiBaseUrl } from './api/baseUrl'
 import InstructorPanel from './components/InstructorPanel'
 import LandingPage from './components/LandingPage'
-import AppSectionTabs from './components/AppSectionTabs'
 import PoseIntroOverlay from './components/PoseIntroOverlay'
 import UserCameraPanel from './components/UserCameraPanel'
 import BottomNav from './components/BottomNav'
@@ -491,6 +490,7 @@ export default function App() {
   const alignedPulseTimerRef = useRef<number | null>(null)
   const [alignedPulseActive, setAlignedPulseActive] = useState(false)
   const [alignedPulseKey, setAlignedPulseKey] = useState(0)
+  const [isSpeakingFeedback, setIsSpeakingFeedback] = useState(false)
 
   const severity: Severity | null = alignment.deviations.length
     ? worstSeverity(alignment.deviations)
@@ -727,6 +727,7 @@ export default function App() {
 
   function handleNextInSequence() {
     stopVoiceCommandListening()
+    setIsSpeakingFeedback(false)
     const currentResult = {
       pose: expectedPose,
       score: alignment.score ?? null,
@@ -754,6 +755,7 @@ export default function App() {
 
   function handleExitSequence() {
     stopVoiceCommandListening()
+    setIsSpeakingFeedback(false)
     cancelVoice()
     stopSession()
     resetAlignmentState()
@@ -798,6 +800,7 @@ export default function App() {
 
   function handleTryAgain() {
     stopVoiceCommandListening()
+    setIsSpeakingFeedback(false)
     cancelVoice()
     stopSession()
     resetAlignmentState()
@@ -807,6 +810,7 @@ export default function App() {
 
   function handleTryAnother() {
     stopVoiceCommandListening()
+    setIsSpeakingFeedback(false)
     cancelVoice()
     stopSession()
     resetAlignmentState()
@@ -1132,11 +1136,13 @@ export default function App() {
       // This eliminates the 10-15 s dead time where the screen showed "Analyzing"
       // while waiting for the full voice chain to finish before transitioning.
       setExperiencePhase('results')
+      setIsSpeakingFeedback(true)     // gate buttons until TTS finishes
 
       if (feedbackText) {
         speak(relaxPrompt, () => {
           speakFeedback(feedbackText, () => {
             speak(afterPrompt, () => {
+              setIsSpeakingFeedback(false)
               startPracticeVoiceCommands()
             })
           })
@@ -1144,6 +1150,7 @@ export default function App() {
       } else {
         speak(relaxPrompt, () => {
           speak(afterPrompt, () => {
+            setIsSpeakingFeedback(false)
             startPracticeVoiceCommands()
           })
         })
@@ -1277,21 +1284,6 @@ export default function App() {
       <AnimatePresence>
         {experiencePhase === 'landing' && activeBottomTab !== 'account' && (
           <div className="absolute inset-0 z-50 flex flex-col" style={{ paddingBottom: 'calc(4rem + env(safe-area-inset-bottom, 0px))' }}>
-            {/* ── Slim toolbar: credit indicator only ───────────────── */}
-            <div className="sticky top-0 z-30 flex w-full items-center justify-between gap-2 bg-slate-50/80 px-3 py-2 backdrop-blur-lg dark:bg-slate-950/80 sm:px-4 sm:py-3">
-              <AppSectionTabs value={activeSection} onChange={handleSectionChange} />
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                {safety.isAuthenticated && (
-                  <CreditIndicator
-                    creditsRemaining={credits?.credits_remaining ?? null}
-                    isUnlimited={isUnlimited}
-                    creditsUsed={credits?.credits_used}
-                    variant="summary"
-                  />
-                )}
-              </div>
-            </div>
-
             <div className="flex-1 overflow-y-auto">
               {activeSection === 'yoga' ? (
                 <LandingPage
@@ -1636,6 +1628,8 @@ export default function App() {
                   onNextInSequence={isInSequence ? handleNextInSequence : undefined}
                   onExitSequence={isInSequence ? handleExitSequence : undefined}
                   voiceListening={isVoiceCommandListening}
+                  buttonsDisabled={isSpeakingFeedback}
+                  onSkipVoice={() => { cancelVoice(); setIsSpeakingFeedback(false) }}
                 />
               )}
             </AnimatePresence>

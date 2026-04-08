@@ -37,6 +37,10 @@ interface PoseIntroOverlayProps {
   autoStart?: boolean
   /** Indicates active voice-command listening state */
   voiceListening?: boolean
+  /** Disables all action buttons while TTS is speaking feedback */
+  buttonsDisabled?: boolean
+  /** Called when user taps the skip button to stop TTS early */
+  onSkipVoice?: () => void
 }
 
 function MediaThumb({ src, alt }: { src: string; alt: string }) {
@@ -77,6 +81,8 @@ export default function PoseIntroOverlay({
   framingSubPhase = 'detecting',
   autoStart = false,
   voiceListening = false,
+  buttonsDisabled = false,
+  onSkipVoice,
 }: PoseIntroOverlayProps) {
   const [showButton, setShowButton] = useState(false)
   const [introSecondsLeft, setIntroSecondsLeft] = useState(10)
@@ -602,10 +608,27 @@ export default function PoseIntroOverlay({
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.45 }}
         >
+          {/* Skip-voice button — only visible while TTS is still speaking */}
+          {buttonsDisabled && onSkipVoice && (
+            <button
+              type="button"
+              onClick={onSkipVoice}
+              className="mb-1 flex items-center justify-center gap-1.5 text-xs text-slate-400 transition-colors hover:text-slate-200 focus:outline-none"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M6 18V6l4 4V6l8 6-8 6v-4l-4 4z"/>
+              </svg>
+              Skip voice
+            </button>
+          )}
+
           <button
             type="button"
             onClick={onNext}
-            className="flex-1 rounded-2xl bg-emerald-500 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-900/50 transition-colors hover:bg-emerald-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+            disabled={buttonsDisabled}
+            className={`flex-1 rounded-2xl bg-emerald-500 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-900/50 transition-colors hover:bg-emerald-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
+              buttonsDisabled ? 'cursor-not-allowed opacity-40' : ''
+            }`}
           >
             🔄  Try Again
           </button>
@@ -614,14 +637,20 @@ export default function PoseIntroOverlay({
               <button
                 type="button"
                 onClick={onNextInSequence}
-                className="w-full rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 py-3 text-sm font-semibold text-white shadow-lg shadow-amber-900/40 transition-all hover:from-amber-400 hover:to-orange-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                disabled={buttonsDisabled}
+                className={`w-full rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 py-3 text-sm font-semibold text-white shadow-lg shadow-amber-900/40 transition-all hover:from-amber-400 hover:to-orange-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 ${
+                  buttonsDisabled ? 'cursor-not-allowed opacity-40' : ''
+                }`}
               >
                 {nextPoseName ? `Next: ${nextPoseName} →` : '✓ Finish Sequence'}
               </button>
               <button
                 type="button"
                 onClick={onExitSequence}
-                className="mt-1 text-xs text-slate-500 underline-offset-2 transition-colors hover:text-slate-300 hover:underline focus:outline-none"
+                disabled={buttonsDisabled}
+                className={`mt-1 text-xs text-slate-500 underline-offset-2 transition-colors hover:text-slate-300 hover:underline focus:outline-none ${
+                  buttonsDisabled ? 'cursor-not-allowed opacity-40' : ''
+                }`}
               >
                 Exit Sequence
               </button>
@@ -630,7 +659,10 @@ export default function PoseIntroOverlay({
             <button
               type="button"
               onClick={onTryAnother}
-              className="flex-1 rounded-2xl border border-white/15 bg-white/10 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/25"
+              disabled={buttonsDisabled}
+              className={`flex-1 rounded-2xl border border-white/15 bg-white/10 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/25 ${
+                buttonsDisabled ? 'cursor-not-allowed opacity-40' : ''
+              }`}
             >
               🧘  Try Another Pose
             </button>
