@@ -1484,6 +1484,7 @@ export default function App() {
                 {(!showFlipButton || activePanel === 'self') && (
                   <UserCameraPanel
                     running={running}
+                    detectionActive={experiencePhase === 'framing' || experiencePhase === 'evaluating'}
                     countdown={countdown}
                     statusText={statusText}
                     confidence={alignment.confidence}
@@ -1628,6 +1629,7 @@ export default function App() {
           <UserCameraPanel
             fullScreen
             running={running}
+            detectionActive={experiencePhase === 'framing' || experiencePhase === 'evaluating'}
             countdown={countdown}
             statusText={statusText}
             confidence={alignment.confidence}

@@ -56,6 +56,8 @@ export default memo(function UserCameraPanel(props: {
   breathCue?: string
   safetyNote?: string | null
   onLandmarks: (landmarks: Landmark[], visibilityMean: number) => void
+  /** When false, MediaPipe is paused and the skeleton canvas is cleared (e.g. during results phase). */
+  detectionActive?: boolean
   framingEnabled: boolean
   framingState: 'cameraLoading' | 'notFramed' | 'partiallyFramed' | 'handsNotRaised' | 'fullyFramed'
   framingMessage: string
@@ -72,6 +74,11 @@ export default memo(function UserCameraPanel(props: {
   // App.tsx re-renders (countdown ticks, status text changes, etc.)
   const onLandmarksRef = useRef(props.onLandmarks)
   useEffect(() => { onLandmarksRef.current = props.onLandmarks })
+
+  // Tracks whether detection should run — false during results phase.
+  // Using a ref avoids adding it to rAF effect deps (no loop restart on toggle).
+  const detectionActiveRef = useRef(props.detectionActive !== false)
+  useEffect(() => { detectionActiveRef.current = props.detectionActive !== false })
 
   // Cache stage dimensions via ResizeObserver to avoid getBoundingClientRect
   // on every animation frame (layout thrash at 60fps → jank + battery drain).
@@ -199,6 +206,14 @@ export default memo(function UserCameraPanel(props: {
           const ctx = canvas.getContext('2d')
           if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
 
+          // When detection is inactive (results phase), clear stale skeleton and
+          // skip MediaPipe entirely to free GPU/CPU for the feedback UI.
+          if (!detectionActiveRef.current) {
+            if (ctx) ctx.clearRect(0, 0, displayWidth, displayHeight)
+            raf = requestAnimationFrame(tick)
+            return
+          }
+
           // Performance: evaluate framing at 5 Hz (was 2 Hz).
           const now = performance.now()
           if (now - lastLandmarksTs >= 200) {
@@ -257,8 +272,10 @@ export default memo(function UserCameraPanel(props: {
       <div className={`min-h-0 flex-1 ${props.isPortrait ? '' : 'px-3 pb-3'}`}>
         <div className={`relative h-full overflow-hidden shadow-xl shadow-black/30 ${props.isPortrait ? '' : 'rounded-2xl border border-white/10'}`} style={{ background: 'radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0a 100%)' }}>
           <div ref={stageRef} className="relative h-full w-full">
-            <video ref={videoRef} autoPlay playsInline muted className={`absolute inset-0 h-full w-full object-${fitMode}`} />
-            <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
+            {/* scaleX(-1) mirrors both video and canvas for a natural selfie view.
+                Canvas gets the same flip so skeleton dots stay aligned with the body. */}
+            <video ref={videoRef} autoPlay playsInline muted className={`absolute inset-0 h-full w-full object-${fitMode}`} style={{ transform: 'scaleX(-1)' }} />
+            <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" style={{ transform: 'scaleX(-1)' }} />
 
             <div className="pointer-events-none absolute inset-0 p-3">
               {props.framingEnabled ? (
