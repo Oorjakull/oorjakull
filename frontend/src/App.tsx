@@ -8,7 +8,8 @@ import LandingPage from './components/LandingPage'
 import AppSectionTabs from './components/AppSectionTabs'
 import PoseIntroOverlay from './components/PoseIntroOverlay'
 import UserCameraPanel from './components/UserCameraPanel'
-import VoiceSettings from './components/VoiceSettings'
+import BottomNav from './components/BottomNav'
+import AccountScreen from './pages/AccountScreen'
 import { POSE_DESCRIPTIONS } from './data/poseDescriptions'
 import { useVoiceGuide } from './hooks/useVoiceGuide'
 import { useVoiceCommand, type VoiceAction } from './hooks/useVoiceCommand'
@@ -260,6 +261,7 @@ export default function App() {
   const [healthLoading, setHealthLoading] = useState(false)
   const [authLoading, setAuthLoading] = useState(false)
   const [activeSection, setActiveSection] = useState<'yoga' | 'breathwork'>('yoga')
+  const [activeBottomTab, setActiveBottomTab] = useState<'yoga' | 'breathwork' | 'account'>('yoga')
   const [userName, setUserName] = useState('')
   const [signedInWithGoogle, setSignedInWithGoogle] = useState(false)
   const [expectedPose, setExpectedPose] = useState<ExpectedPose>('Warrior II')
@@ -655,11 +657,20 @@ export default function App() {
     stopSession()
     setBreathworkToast(null)
     setActiveSection(section)
+    setActiveBottomTab(section)
     if (experiencePhase !== 'landing') {
       resetAlignmentState()
       setVisibleLandmarkCount(0)
       setExperiencePhase('landing')
     }
+  }
+
+  function handleBottomTabChange(tab: 'yoga' | 'breathwork' | 'account') {
+    setActiveBottomTab(tab)
+    if (tab === 'yoga' || tab === 'breathwork') {
+      handleSectionChange(tab)
+    }
+    // 'account' just shows the AccountScreen overlay — no phase change needed
   }
 
   function handleStartBreathwork(protocol: BreathworkProtocol) {
@@ -781,6 +792,7 @@ export default function App() {
     stopSession()
     resetAlignmentState()
     setVisibleLandmarkCount(0)
+    setActiveBottomTab(activeSection as 'yoga' | 'breathwork')
     setExperiencePhase('landing')
   }
 
@@ -1263,13 +1275,12 @@ export default function App() {
 
       {/* ── Landing page ───────────────────────────────────────────────────── */}
       <AnimatePresence>
-        {experiencePhase === 'landing' && (
-          <div className="absolute inset-0 z-50 overflow-y-auto">
-            {/* ── Unified toolbar: tabs + controls ───────────────── */}
+        {experiencePhase === 'landing' && activeBottomTab !== 'account' && (
+          <div className="absolute inset-0 z-50 flex flex-col" style={{ paddingBottom: 'calc(4rem + env(safe-area-inset-bottom, 0px))' }}>
+            {/* ── Slim toolbar: credit indicator only ───────────────── */}
             <div className="sticky top-0 z-30 flex w-full items-center justify-between gap-2 bg-slate-50/80 px-3 py-2 backdrop-blur-lg dark:bg-slate-950/80 sm:px-4 sm:py-3">
               <AppSectionTabs value={activeSection} onChange={handleSectionChange} />
               <div className="flex items-center gap-1.5 sm:gap-2">
-                {/* Credit summary — visible for authenticated free-tier users */}
                 {safety.isAuthenticated && (
                   <CreditIndicator
                     creditsRemaining={credits?.credits_remaining ?? null}
@@ -1278,46 +1289,55 @@ export default function App() {
                     variant="summary"
                   />
                 )}
-                <button
-                  type="button"
-                  onClick={toggleTheme}
-                  className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 bg-white/80 text-sm text-slate-600 backdrop-blur transition-colors hover:bg-slate-100 dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10 sm:h-9 sm:w-9"
-                  title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-                >
-                  {theme === 'dark' ? '☀️' : '🌙'}
-                </button>
-                {activeSection === 'yoga' && (
-                  <VoiceSettings
-                    voiceOn={voiceOn}
-                    onToggleVoice={setVoiceOn}
-                    settings={voiceSettings}
-                    onChangeSettings={setVoiceSettings}
-                    onPreview={() => speak('Namaste. Welcome to your practice.')}
-                  />
-                )}
               </div>
             </div>
 
-            {activeSection === 'yoga' ? (
-              <LandingPage
-                poses={poseOptions}
-                onSelectPose={handleSelectPose}
-                onBackHome={handleBackToHome}
-                sequences={SEQUENCES}
-                onSelectSequence={handleSelectSequence}
-                showCreditCost={safety.isAuthenticated}
-              />
-            ) : (
-              <BreathworkPage
-                baseUrl={baseUrl}
-                onBackHome={handleBackToHome}
-                onStartSession={handleStartBreathwork}
-                streakDays={breathworkStreak.currentStreak}
-                totalSessions={breathworkStreak.totalSessions}
-                toastMessage={breathworkToast}
-                onToastDone={() => setBreathworkToast(null)}
-              />
-            )}
+            <div className="flex-1 overflow-y-auto">
+              {activeSection === 'yoga' ? (
+                <LandingPage
+                  poses={poseOptions}
+                  onSelectPose={handleSelectPose}
+                  onBackHome={handleBackToHome}
+                  sequences={SEQUENCES}
+                  onSelectSequence={handleSelectSequence}
+                  showCreditCost={safety.isAuthenticated}
+                />
+              ) : (
+                <BreathworkPage
+                  baseUrl={baseUrl}
+                  onBackHome={handleBackToHome}
+                  onStartSession={handleStartBreathwork}
+                  streakDays={breathworkStreak.currentStreak}
+                  totalSessions={breathworkStreak.totalSessions}
+                  toastMessage={breathworkToast}
+                  onToastDone={() => setBreathworkToast(null)}
+                />
+              )}
+            </div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Account screen ─────────────────────────────────────────────────── */}
+      <AnimatePresence>
+        {activeBottomTab === 'account' && experiencePhase === 'landing' && (
+          <div className="absolute inset-0 z-50 overflow-y-auto bg-slate-50 dark:bg-slate-950" style={{ paddingBottom: 'calc(4rem + env(safe-area-inset-bottom, 0px))' }}>
+            <AccountScreen
+              userName={userName}
+              signedInWithGoogle={signedInWithGoogle}
+              onSignOut={handleSignOut}
+              creditsRemaining={credits?.credits_remaining ?? null}
+              creditsUsed={credits?.credits_used}
+              isUnlimited={isUnlimited}
+              onShowUpgrade={() => setShowUpgradePrompt(true)}
+              voiceOn={voiceOn}
+              onToggleVoice={setVoiceOn}
+              voiceSettings={voiceSettings}
+              onChangeVoiceSettings={setVoiceSettings}
+              onPreviewVoice={() => speak('Namaste. Welcome to your practice.')}
+              theme={theme}
+              onToggleTheme={toggleTheme}
+            />
           </div>
         )}
       </AnimatePresence>
@@ -1709,6 +1729,14 @@ export default function App() {
           }}
           userName={userName}
           baseUrl={baseUrl}
+        />
+      )}
+
+      {/* ── Bottom navigation (visible on landing / account) ─────────────── */}
+      {(experiencePhase === 'landing') && (
+        <BottomNav
+          activeTab={activeBottomTab}
+          onChangeTab={handleBottomTabChange}
         />
       )}
     </div>
