@@ -10,6 +10,13 @@
       rel="stylesheet"
     />
     <title>OorjaKull</title>
+    <!-- OorjaKull default: dark mode — blocking script prevents flash of light theme -->
+    <script>
+      (function(){
+        var t = localStorage.getItem('yoga-theme');
+        if (!t || t === 'dark') document.documentElement.classList.add('dark');
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

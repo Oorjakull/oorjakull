@@ -192,3 +192,137 @@ body,
     padding: 0 !important;
   }
 }
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   OorjaKull Light Mode — Warm Brand Palette
+   ─────────────────────────────────────────────────────────────────────────
+   All rules scoped to html:not(.dark) — dark mode is completely untouched.
+   Tailwind's dark: prefixed utilities are unaffected.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Brand tokens ─────────────────────────────────────────────────────────── */
+:root {
+  --ok-bg-page:         #F7F3ED;   /* warm cream — primary canvas           */
+  --ok-bg-surface:      #FFFFFF;   /* pure white — elevated cards            */
+  --ok-bg-raised:       #FDFAF5;   /* near-white — modals, dropdowns         */
+  --ok-bg-sunken:       #EFE9DF;   /* deeper cream — input fills             */
+  --ok-text-primary:    #1C1712;   /* deep warm near-black                   */
+  --ok-text-secondary:  #5C4F3D;   /* warm mid-brown                         */
+  --ok-text-muted:      #9C8E7E;   /* warm stone                             */
+  --ok-accent:          #C49A3C;   /* amber gold — CTA, active states        */
+  --ok-accent-hover:    #A67C2A;   /* darker amber — hover                   */
+  --ok-accent-subtle:   #F5ECD6;   /* amber tint — badges, tags              */
+  --ok-sage:            #6B8F6E;   /* muted sage — breathwork secondary      */
+  --ok-sage-subtle:     #E8F0E9;   /* sage tint                              */
+  --ok-border:          #DDD3C5;   /* warm light tan                         */
+  --ok-border-strong:   #C4B5A0;   /* medium warm tan                        */
+  --ok-nav-bg:          #1C1712;   /* nav — always dark (brand)              */
+  --ok-nav-border:      #2E2620;
+  --ok-nav-text:        #F7F3ED;
+}
+
+/* ── Warm page base ───────────────────────────────────────────────────────── */
+html:not(.dark) body {
+  background-color: var(--ok-bg-page);
+  color: var(--ok-text-primary);
+}
+
+/* ── Slate backgrounds → warm creams ────────────────────────────────────── */
+html:not(.dark) .bg-slate-50              { background-color: var(--ok-bg-page)    !important; }
+html:not(.dark) .bg-slate-100             { background-color: var(--ok-bg-sunken)  !important; }
+html:not(.dark) .bg-slate-200             { background-color: var(--ok-border)     !important; }
+html:not(.dark) .hover\:bg-slate-50:hover  { background-color: var(--ok-bg-page)   !important; }
+html:not(.dark) .hover\:bg-slate-100:hover { background-color: var(--ok-bg-sunken) !important; }
+
+/* Translucent backdrops */
+html:not(.dark) .bg-slate-50\/80          { background-color: rgba(247,243,237,0.80) !important; }
+html:not(.dark) .bg-slate-50\/90          { background-color: rgba(247,243,237,0.90) !important; }
+
+/* ── Text → warm ink hierarchy ──────────────────────────────────────────── */
+html:not(.dark) .text-slate-900           { color: var(--ok-text-primary)   !important; }
+html:not(.dark) .text-slate-800           { color: #2E2418                  !important; }
+html:not(.dark) .text-slate-700           { color: var(--ok-text-secondary) !important; }
+html:not(.dark) .text-slate-600           { color: #6B5B47                  !important; }
+html:not(.dark) .text-slate-500           { color: var(--ok-text-muted)     !important; }
+html:not(.dark) .text-slate-400           { color: #B5A898                  !important; }
+html:not(.dark) .text-slate-300           { color: var(--ok-border-strong)  !important; }
+html:not(.dark) .hover\:text-slate-600:hover  { color: #6B5B47                 !important; }
+html:not(.dark) .hover\:text-slate-300:hover  { color: var(--ok-border-strong) !important; }
+
+/* ── Borders → warm tans ────────────────────────────────────────────────── */
+html:not(.dark) .border-slate-100         { border-color: var(--ok-bg-sunken)      !important; }
+html:not(.dark) .border-slate-200         { border-color: var(--ok-border)         !important; }
+html:not(.dark) .border-slate-300         { border-color: var(--ok-border-strong)  !important; }
+html:not(.dark) .border-slate-200\/80     { border-color: rgba(221,211,197,0.80)   !important; }
+html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--ok-border) !important;
+}
+
+/* ── Accent: emerald → amber gold ───────────────────────────────────────── */
+/* Fills */
+html:not(.dark) .bg-emerald-500              { background-color: var(--ok-accent)        !important; }
+html:not(.dark) .bg-emerald-400              { background-color: #D4AA4C                 !important; }
+html:not(.dark) .bg-emerald-50               { background-color: var(--ok-accent-subtle) !important; }
+html:not(.dark) .hover\:bg-emerald-400:hover { background-color: var(--ok-accent-hover)  !important; }
+html:not(.dark) .hover\:bg-emerald-500:hover { background-color: var(--ok-accent-hover)  !important; }
+
+/* Text */
+html:not(.dark) .text-emerald-700            { color: #8A6020                !important; }
+html:not(.dark) .text-emerald-600            { color: #9A7030                !important; }
+html:not(.dark) .text-emerald-500            { color: var(--ok-accent)       !important; }
+html:not(.dark) .text-emerald-400            { color: #D4AA4C                !important; }
+html:not(.dark) .text-emerald-300            { color: var(--ok-accent)       !important; }
+
+/* Borders */
+html:not(.dark) .border-emerald-200          { border-color: #E8D5A8          !important; }
+html:not(.dark) .border-emerald-500          { border-color: var(--ok-accent) !important; }
+
+/* Amber-toned shadows replace emerald shadows */
+html:not(.dark) .shadow-emerald-900\/50 {
+  --tw-shadow: 0 10px 15px -3px rgba(101,67,0,0.28), 0 4px 6px -4px rgba(101,67,0,0.18) !important;
+  --tw-shadow-colored: 0 10px 15px -3px rgba(101,67,0,0.28), 0 4px 6px -4px rgba(101,67,0,0.18) !important;
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow) !important;
+}
+html:not(.dark) .shadow-emerald-900\/40 {
+  --tw-shadow: 0 10px 15px -3px rgba(101,67,0,0.20), 0 4px 6px -4px rgba(101,67,0,0.13) !important;
+  --tw-shadow-colored: 0 10px 15px -3px rgba(101,67,0,0.20), 0 4px 6px -4px rgba(101,67,0,0.13) !important;
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow) !important;
+}
+html:not(.dark) .shadow-amber-900\/40 {
+  --tw-shadow: 0 10px 15px -3px rgba(101,67,0,0.20), 0 4px 6px -4px rgba(101,67,0,0.13) !important;
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow) !important;
+}
+
+/* Focus rings */
+html:not(.dark) .ring-emerald-400,
+html:not(.dark) .focus-visible\:ring-emerald-400:focus-visible {
+  --tw-ring-color: #D4AA4C !important;
+}
+
+/* ── Breathwork accent: teal → warm sage ────────────────────────────────── */
+html:not(.dark) .bg-teal-500              { background-color: var(--ok-sage)        !important; }
+html:not(.dark) .bg-teal-50               { background-color: var(--ok-sage-subtle) !important; }
+html:not(.dark) .text-teal-700            { color: #3D6B41                          !important; }
+html:not(.dark) .text-teal-500            { color: var(--ok-sage)                   !important; }
+html:not(.dark) .text-teal-400            { color: #7BA07E                          !important; }
+html:not(.dark) .border-teal-200          { border-color: #C5D9C6                   !important; }
+html:not(.dark) .hover\:bg-teal-400:hover { background-color: #7BA07E               !important; }
+
+/* ── BottomNav: always dark in light mode (matches oorjakull.com header) ─── */
+html:not(.dark) [data-bottom-nav] {
+  background-color: var(--ok-nav-bg)     !important;
+  border-color:     var(--ok-nav-border) !important;
+  backdrop-filter:  none;
+  -webkit-backdrop-filter: none;
+}
+html:not(.dark) [data-bottom-nav] .text-emerald-500,
+html:not(.dark) [data-bottom-nav] .text-emerald-400 {
+  color: var(--ok-accent) !important;
+}
+html:not(.dark) [data-bottom-nav] .text-slate-400 {
+  color: rgba(247,243,237,0.45) !important;
+}
+html:not(.dark) [data-bottom-nav] .hover\:text-slate-600:hover {
+  color: var(--ok-nav-text) !important;
+}

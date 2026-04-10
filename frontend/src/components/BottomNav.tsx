@@ -57,6 +57,7 @@ const TABS: Array<{
 export default function BottomNav({ activeTab, onChangeTab }: BottomNavProps) {
   return (
     <nav
+      data-bottom-nav
       className="fixed inset-x-0 bottom-0 z-[100] border-t border-slate-200/80 bg-white/95 backdrop-blur-lg dark:border-white/10 dark:bg-slate-950/95"
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
     >
