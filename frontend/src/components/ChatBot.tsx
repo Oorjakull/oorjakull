@@ -162,6 +162,7 @@ interface ChatBotProps {
   onNavigate?: (type: 'breathwork' | 'pose', id: string) => void
   userName: string
   baseUrl: string
+  avoidBottomNav?: boolean
 }
 
 export default function ChatBot({
@@ -174,6 +175,7 @@ export default function ChatBot({
   onBotSuggestion,
   onNavigate,
   baseUrl,
+  avoidBottomNav = false,
 }: ChatBotProps) {
   const [input, setInput] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -233,7 +235,14 @@ export default function ChatBot({
   }
 
   return (
-    <div className="fixed bottom-4 right-4 z-[60] flex flex-col items-end gap-3">
+    <div
+      className="fixed right-4 z-[60] flex flex-col items-end gap-3"
+      style={{
+        bottom: avoidBottomNav
+          ? 'calc(4.5rem + env(safe-area-inset-bottom, 0px))'
+          : 'max(1rem, env(safe-area-inset-bottom, 0px))',
+      }}
+    >
       {/* Chat panel */}
       <AnimatePresence>
         {open && (

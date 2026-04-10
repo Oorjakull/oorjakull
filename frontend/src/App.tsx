@@ -26,6 +26,7 @@ import { SEQUENCES } from './data/sequences'
 import type { PoseSequence, SequenceStep } from './data/sequences'
 import BreathworkPage from './pages/BreathworkPage'
 import BreathworkSession from './pages/BreathworkSession'
+import { Capacitor } from '@capacitor/core'
 
 // Safety architecture imports
 import { useSafety } from './contexts/SafetyContext'
@@ -255,6 +256,7 @@ function nextStreakState(previous: BreathworkStreakState, completedAt: Date): Br
 }
 
 export default function App() {
+  const isNativePlatform = Capacitor.isNativePlatform()
   const safety = useSafety()
   const [experiencePhase, setExperiencePhase] = useState<ExperiencePhase>('welcome')
   const [healthLoading, setHealthLoading] = useState(false)
@@ -1282,8 +1284,45 @@ export default function App() {
 
       {/* ── Landing page ───────────────────────────────────────────────────── */}
       <AnimatePresence>
+        {experiencePhase === 'landing' && !isNativePlatform && (
+          <div className="absolute inset-x-0 top-0 z-[70] border-b border-slate-200/80 bg-white/95 backdrop-blur-lg dark:border-white/10 dark:bg-slate-950/95">
+            <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-center gap-2 px-3">
+              {([
+                ['yoga', 'Yoga'],
+                ['breathwork', 'Breathe'],
+                ['account', 'Account'],
+              ] as const).map(([key, label]) => {
+                const active = activeBottomTab === key
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => handleBottomTabChange(key)}
+                    className={
+                      'rounded-xl px-4 py-2 text-sm font-semibold transition-colors ' +
+                      (active
+                        ? 'bg-emerald-500 text-white'
+                        : 'text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-slate-200')
+                    }
+                  >
+                    {label}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
         {experiencePhase === 'landing' && activeBottomTab !== 'account' && (
-          <div className="absolute inset-0 z-50 flex flex-col" style={{ paddingBottom: 'calc(4rem + env(safe-area-inset-bottom, 0px))' }}>
+          <div
+            className="absolute inset-0 z-50 flex flex-col"
+            style={{
+              paddingTop: isNativePlatform ? '0' : '3.5rem',
+              paddingBottom: isNativePlatform ? 'calc(4rem + env(safe-area-inset-bottom, 0px))' : '0',
+            }}
+          >
             <div className="flex-1 overflow-y-auto">
               {activeSection === 'yoga' ? (
                 <LandingPage
@@ -1313,7 +1352,13 @@ export default function App() {
       {/* ── Account screen ─────────────────────────────────────────────────── */}
       <AnimatePresence>
         {activeBottomTab === 'account' && experiencePhase === 'landing' && (
-          <div className="absolute inset-0 z-50 overflow-y-auto bg-slate-50 dark:bg-slate-950" style={{ paddingBottom: 'calc(4rem + env(safe-area-inset-bottom, 0px))' }}>
+          <div
+            className="absolute inset-0 z-50 overflow-y-auto bg-slate-50 dark:bg-slate-950"
+            style={{
+              paddingTop: isNativePlatform ? '0' : '3.5rem',
+              paddingBottom: isNativePlatform ? 'calc(4rem + env(safe-area-inset-bottom, 0px))' : '0',
+            }}
+          >
             <AccountScreen
               userName={userName}
               signedInWithGoogle={signedInWithGoogle}
@@ -1723,11 +1768,12 @@ export default function App() {
           }}
           userName={userName}
           baseUrl={baseUrl}
+          avoidBottomNav={experiencePhase === 'landing' && isNativePlatform}
         />
       )}
 
       {/* ── Bottom navigation (visible on landing / account) ─────────────── */}
-      {(experiencePhase === 'landing') && (
+      {(experiencePhase === 'landing' && isNativePlatform) && (
         <BottomNav
           activeTab={activeBottomTab}
           onChangeTab={handleBottomTabChange}
