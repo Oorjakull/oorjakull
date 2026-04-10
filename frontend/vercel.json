@@ -1,7 +1,9 @@
 {
+  "redirects": [
+    { "source": "/ai", "destination": "https://oorjakull-six.vercel.app/", "permanent": false },
+    { "source": "/ai/:path*", "destination": "https://oorjakull-six.vercel.app/:path*", "permanent": false }
+  ],
   "rewrites": [
-    { "source": "/ai/(.*)", "destination": "/$1" },
-    { "source": "/ai", "destination": "/" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
