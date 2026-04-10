@@ -309,6 +309,52 @@ html:not(.dark) .text-teal-400            { color: #7BA07E                      
 html:not(.dark) .border-teal-200          { border-color: #C5D9C6                   !important; }
 html:not(.dark) .hover\:bg-teal-400:hover { background-color: #7BA07E               !important; }
 
+/* ── White surfaces → warm off-white ─────────────────────────────────────── */
+html:not(.dark) .bg-white                 { background-color: var(--ok-bg-raised)         !important; }
+html:not(.dark) .bg-white\/80             { background-color: rgba(253,250,245,0.80)      !important; }
+html:not(.dark) .bg-white\/85             { background-color: rgba(253,250,245,0.85)      !important; }
+html:not(.dark) .bg-white\/90             { background-color: rgba(253,250,245,0.90)      !important; }
+html:not(.dark) .bg-white\/95             { background-color: rgba(253,250,245,0.95)      !important; }
+html:not(.dark) .hover\:bg-white\/10:hover { background-color: rgba(253,250,245,0.10)     !important; }
+html:not(.dark) .hover\:bg-white\/15:hover { background-color: rgba(253,250,245,0.15)     !important; }
+html:not(.dark) .hover\:bg-white\/20:hover { background-color: rgba(253,250,245,0.20)     !important; }
+
+/* ── Gray utilities → warm neutrals ─────────────────────────────────────── */
+html:not(.dark) .bg-gray-50              { background-color: var(--ok-bg-page)             !important; }
+html:not(.dark) .bg-gray-200             { background-color: var(--ok-border)              !important; }
+html:not(.dark) .text-gray-900           { color: var(--ok-text-primary)                   !important; }
+html:not(.dark) .text-gray-700           { color: var(--ok-text-secondary)                 !important; }
+html:not(.dark) .text-gray-600           { color: #6B5B47                                  !important; }
+html:not(.dark) .text-gray-500           { color: var(--ok-text-muted)                     !important; }
+html:not(.dark) .text-gray-400           { color: #B5A898                                  !important; }
+html:not(.dark) .text-gray-300           { color: var(--ok-border)                         !important; }
+html:not(.dark) .border-gray-200         { border-color: var(--ok-border)                  !important; }
+html:not(.dark) .border-gray-300         { border-color: var(--ok-border-strong)           !important; }
+html:not(.dark) .hover\:bg-gray-50:hover { background-color: var(--ok-bg-sunken)           !important; }
+
+/* ── Additional emerald fills ───────────────────────────────────────────── */
+html:not(.dark) .bg-emerald-100              { background-color: var(--ok-accent-subtle) !important; }
+html:not(.dark) .bg-emerald-600              { background-color: var(--ok-accent-hover)  !important; }
+html:not(.dark) .hover\:bg-emerald-100:hover { background-color: #EDE0BF               !important; }
+
+/* ── Green/indigo → warm tone-down ──────────────────────────────────────── */
+html:not(.dark) .bg-green-50             { background-color: var(--ok-sage-subtle)        !important; }
+html:not(.dark) .text-green-800          { color: #3D6B41                                 !important; }
+
+/* ── Gradients: warm-ify from/to/via stops ──────────────────────────────── */
+html:not(.dark) .from-slate-50           { --tw-gradient-from: var(--ok-bg-page) var(--tw-gradient-from-position) !important; }
+html:not(.dark) .to-slate-100            { --tw-gradient-to: var(--ok-bg-sunken) var(--tw-gradient-to-position)   !important; }
+html:not(.dark) .from-emerald-50         { --tw-gradient-from: var(--ok-accent-subtle) var(--tw-gradient-from-position) !important; }
+html:not(.dark) .from-emerald-400        { --tw-gradient-from: #D4AA4C var(--tw-gradient-from-position) !important; }
+html:not(.dark) .from-emerald-500        { --tw-gradient-from: var(--ok-accent) var(--tw-gradient-from-position)  !important; }
+html:not(.dark) .to-emerald-400\/60      { --tw-gradient-to: rgba(212,170,76,0.60) var(--tw-gradient-to-position) !important; }
+html:not(.dark) .from-teal-50            { --tw-gradient-from: var(--ok-sage-subtle) var(--tw-gradient-from-position) !important; }
+html:not(.dark) .from-teal-500           { --tw-gradient-from: var(--ok-sage) var(--tw-gradient-from-position)    !important; }
+html:not(.dark) .to-teal-50              { --tw-gradient-to: var(--ok-sage-subtle) var(--tw-gradient-to-position)  !important; }
+
+/* ── Ring color overrides ───────────────────────────────────────────────── */
+html:not(.dark) .ring-emerald-200        { --tw-ring-color: #E8D5A8 !important; }
+
 /* ── BottomNav: always dark in light mode (matches oorjakull.com header) ─── */
 html:not(.dark) [data-bottom-nav] {
   background-color: var(--ok-nav-bg)     !important;
