@@ -4,6 +4,7 @@ import type { BreathworkProtocol } from '../api/client'
 import { fetchBreathworkProtocols } from '../api/client'
 import BreathworkIcon from '../components/BreathworkIcons'
 import BreathworkInfoSheet from '../components/BreathworkInfoSheet'
+import { useTheme } from '../hooks/useTheme'
 
 // Breathwork is always free — no credit check or auth gate required.
 
@@ -49,6 +50,7 @@ export default function BreathworkPage({
   toastMessage,
   onToastDone,
 }: BreathworkPageProps) {
+  const { theme } = useTheme()
   const [protocols, setProtocols] = useState<BreathworkProtocol[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -94,13 +96,17 @@ export default function BreathworkPage({
     return Array.from(map.entries())
   }, [protocols])
 
+  const isDark = theme === 'dark'
+
   return (
-    <div className="relative min-h-screen overflow-y-auto bg-[#0a0a0a] text-white">
+    <div className="relative min-h-screen overflow-y-auto bg-[var(--ok-bg-page)] text-slate-900 dark:bg-[#0a0a0a] dark:text-white">
       <div
         className="pointer-events-none absolute inset-0 opacity-15"
         style={{
           background:
-            'radial-gradient(circle at 20% 20%, rgba(78,205,196,0.22), transparent 30%), radial-gradient(circle at 80% 30%, rgba(45,88,130,0.18), transparent 32%), radial-gradient(circle at 50% 100%, rgba(24,60,88,0.22), transparent 42%)',
+            isDark
+              ? 'radial-gradient(circle at 20% 20%, rgba(78,205,196,0.22), transparent 30%), radial-gradient(circle at 80% 30%, rgba(45,88,130,0.18), transparent 32%), radial-gradient(circle at 50% 100%, rgba(24,60,88,0.22), transparent 42%)'
+              : 'radial-gradient(circle at 20% 20%, rgba(196,154,60,0.18), transparent 30%), radial-gradient(circle at 80% 30%, rgba(78,205,196,0.13), transparent 32%), radial-gradient(circle at 50% 100%, rgba(194,161,83,0.15), transparent 42%)',
         }}
       />
 
@@ -109,7 +115,7 @@ export default function BreathworkPage({
           <button
             type="button"
             onClick={onBackHome}
-            className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-semibold text-slate-200 backdrop-blur transition hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 sm:px-4 sm:py-2.5 sm:text-sm"
+            className="inline-flex items-center gap-2 rounded-2xl border border-slate-300/70 bg-white/80 px-3 py-2 text-xs font-semibold text-slate-700 backdrop-blur transition hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 sm:px-4 sm:py-2.5 sm:text-sm dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:bg-white/10"
           >
             <span aria-hidden="true">←</span>
             Back to home
@@ -122,22 +128,22 @@ export default function BreathworkPage({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55 }}
         >
-          <p className="font-cinzel text-sm uppercase tracking-[0.35em] text-teal-300/80">OorjaKull Breathwork</p>
-          <h1 className="mt-3 font-cinzel text-4xl font-semibold tracking-[0.06em] text-white sm:text-5xl">
+          <p className="font-cinzel text-sm uppercase tracking-[0.35em] text-teal-700/90 dark:text-teal-300/80">OorjaKull Breathwork</p>
+          <h1 className="mt-3 font-cinzel text-4xl font-semibold tracking-[0.06em] text-slate-900 sm:text-5xl dark:text-white">
             Guided breath rituals for regulation, focus, and energy
           </h1>
-          <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-400 sm:text-base">
+          <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-600 sm:text-base dark:text-slate-400">
             Explore calming, balancing, and activating protocols. Each session guides your rhythm visually using the OorjaKull logo so your breath, mind, and body move together.
           </p>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
-            <div className="rounded-2xl border border-teal-300/25 bg-teal-400/10 px-4 py-3 text-left backdrop-blur-xl">
-              <p className="text-[11px] uppercase tracking-[0.18em] text-teal-100/75">Current streak</p>
-              <p className="mt-1 text-2xl font-semibold text-teal-100">{streakDays} day{streakDays === 1 ? '' : 's'}</p>
+            <div className="rounded-2xl border border-teal-300/40 bg-teal-400/10 px-4 py-3 text-left backdrop-blur-xl dark:border-teal-300/25">
+              <p className="text-[11px] uppercase tracking-[0.18em] text-teal-700/80 dark:text-teal-100/75">Current streak</p>
+              <p className="mt-1 text-2xl font-semibold text-teal-700 dark:text-teal-100">{streakDays} day{streakDays === 1 ? '' : 's'}</p>
             </div>
-            <div className="rounded-2xl border border-white/12 bg-white/5 px-4 py-3 text-left backdrop-blur-xl">
-              <p className="text-[11px] uppercase tracking-[0.18em] text-white/55">Total sessions</p>
-              <p className="mt-1 text-2xl font-semibold text-white/90">{totalSessions}</p>
+            <div className="rounded-2xl border border-slate-300/70 bg-white/70 px-4 py-3 text-left backdrop-blur-xl dark:border-white/12 dark:bg-white/5">
+              <p className="text-[11px] uppercase tracking-[0.18em] text-slate-600 dark:text-white/55">Total sessions</p>
+              <p className="mt-1 text-2xl font-semibold text-slate-800 dark:text-white/90">{totalSessions}</p>
             </div>
           </div>
         </motion.div>
@@ -147,10 +153,10 @@ export default function BreathworkPage({
             {[0, 1].map((section) => (
               <div key={section}>
                 <div className="mb-5 flex items-center gap-3">
-                  <h2 className="font-cinzel text-sm uppercase tracking-[0.2em] text-teal-300/90">
+                  <h2 className="font-cinzel text-sm uppercase tracking-[0.2em] text-teal-700/90 dark:text-teal-300/90">
                     Loading Breathwork
                   </h2>
-                  <div className="h-px flex-1 bg-gradient-to-r from-teal-400/40 to-transparent" />
+                  <div className="h-px flex-1 bg-gradient-to-r from-teal-500/40 to-transparent dark:from-teal-400/40" />
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                   {[0, 1, 2].map((i) => (
@@ -204,20 +210,20 @@ export default function BreathworkPage({
                       onStartSession(protocol)
                     }
                   }}
-                  className="group relative overflow-hidden rounded-[28px] border border-white/8 bg-white/[0.04] p-5 text-left backdrop-blur-xl transition duration-300 hover:-translate-y-0.5 hover:border-[#4ecdc4]/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4ecdc4]"
+                  className="group relative overflow-hidden rounded-[28px] border border-slate-300/70 bg-white/75 p-5 text-left backdrop-blur-xl transition duration-300 hover:-translate-y-0.5 hover:border-[#4ecdc4]/45 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4ecdc4] dark:border-white/8 dark:bg-white/[0.04] dark:hover:border-[#4ecdc4]/30"
                   whileHover={{ y: -2 }}
                 >
                   <div className="pointer-events-none absolute inset-y-4 left-0 w-1 rounded-full bg-transparent transition group-hover:bg-[#4ecdc4]" />
                   <div className="flex items-start gap-4">
-                    <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#4ecdc4]/30 via-[#2f7f85]/25 to-[#15363d]/30 text-[#8ff7ef] shadow-lg shadow-[#4ecdc4]/10">
+                    <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#4ecdc4]/35 via-[#2f7f85]/20 to-[#15363d]/20 text-teal-700 shadow-lg shadow-[#4ecdc4]/10 dark:from-[#4ecdc4]/30 dark:via-[#2f7f85]/25 dark:to-[#15363d]/30 dark:text-[#8ff7ef]">
                       <BreathworkIcon protocol={protocol} />
                     </div>
 
                     <div className="min-w-0 flex-1">
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
-                          <h3 className="truncate text-base font-semibold text-white">{protocol.name}</h3>
-                          <p className="mt-1 text-xs text-slate-400">
+                          <h3 className="truncate text-base font-semibold text-slate-900 dark:text-white">{protocol.name}</h3>
+                          <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">
                             {protocol.tagline} • {protocol.duration_mins} min
                           </p>
                         </div>
@@ -228,14 +234,14 @@ export default function BreathworkPage({
                             setInfoProtocol(protocol)
                           }}
                           aria-label={`Learn more about ${protocol.name}`}
-                          className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/5 text-xs text-slate-300 transition hover:border-[#4ecdc4]/30 hover:text-[#9beddf]"
+                          className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-slate-300/70 bg-white/80 text-xs text-slate-600 transition hover:border-[#4ecdc4]/40 hover:text-teal-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:border-[#4ecdc4]/30 dark:hover:text-[#9beddf]"
                         >
                           ⓘ
                         </button>
                       </div>
                     </div>
 
-                    <div className="pt-1 text-xl text-slate-500 transition group-hover:text-[#9beddf]">→</div>
+                    <div className="pt-1 text-xl text-slate-500 transition group-hover:text-teal-700 dark:group-hover:text-[#9beddf]">→</div>
                   </div>
                 </motion.div>
               ))}
@@ -247,7 +253,7 @@ export default function BreathworkPage({
       <AnimatePresence>
         {toastMessage && (
           <motion.div
-            className="fixed bottom-6 left-1/2 z-[90] -translate-x-1/2 rounded-full border border-teal-400/25 bg-[#0f181b]/90 px-4 py-2 text-sm font-medium text-teal-100 shadow-xl shadow-black/30 backdrop-blur-xl"
+            className="fixed bottom-6 left-1/2 z-[90] -translate-x-1/2 rounded-full border border-teal-400/35 bg-white/90 px-4 py-2 text-sm font-medium text-teal-700 shadow-xl shadow-black/20 backdrop-blur-xl dark:border-teal-400/25 dark:bg-[#0f181b]/90 dark:text-teal-100 dark:shadow-black/30"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 12 }}
