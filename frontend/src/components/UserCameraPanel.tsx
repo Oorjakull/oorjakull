@@ -113,26 +113,18 @@ export default memo(function UserCameraPanel(props: {
 
     async function start() {
       try {
-        // Build constraints — portrait vs landscape resolution
-        const baseConstraints = (facing: MediaTrackConstraints['facingMode']): MediaTrackConstraints => props.isPortrait
-          ? {
-              facingMode: facing,
-              width: { ideal: 720, max: 1080 },
-              height: { ideal: 1280, max: 1920 },
-              aspectRatio: { ideal: 9 / 16 },
-              advanced: [{ zoom: 1.0 } as any, { focusMode: 'continuous' } as any],
-            }
-          : {
-              facingMode: facing,
-              width: { ideal: 1280, max: 1920 },
-              height: { ideal: 720, max: 1080 },
-              aspectRatio: { ideal: 16 / 9 },
-              advanced: [{ zoom: 1.0 } as any, { focusMode: 'continuous' } as any],
-            }
+        // Web: single unified 16:9 constraint — all browsers and devices (laptop, mobile, tablet).
+        // No portrait/landscape branching; browsers negotiate resolution correctly on any device.
+        const webConstraints = (facing: MediaTrackConstraints['facingMode']): MediaTrackConstraints => ({
+          facingMode: facing,
+          width:  { ideal: 1280, max: 1920 },
+          height: { ideal: 720,  max: 1080 },
+          aspectRatio: { ideal: 16 / 9 },
+          advanced: [{ zoom: 1.0 } as any, { focusMode: 'continuous' } as any],
+        })
 
         // OorjaKull Android fix: WebView negotiates resolution differently from Chrome.
         // 4:3 640x480 is what Android camera HAL delivers natively — avoids digital zoom fallback.
-        // The existing baseConstraints (16:9 / 9:16) remain the web path — untouched.
         const androidConstraints = (facing: MediaTrackConstraints['facingMode']): MediaTrackConstraints => ({
           facingMode: facing,
           width:  { ideal: 640, max: 1280 },
@@ -141,7 +133,7 @@ export default memo(function UserCameraPanel(props: {
           advanced: [{ zoom: 1.0 } as any],
         })
 
-        const constraintsFn = isAndroid ? androidConstraints : baseConstraints
+        const constraintsFn = isAndroid ? androidConstraints : webConstraints
 
         // Try exact:'user' first; fall back to plain 'user' if OverconstrainedError
         try {
@@ -192,11 +184,14 @@ export default memo(function UserCameraPanel(props: {
     return () => {
       if (stream) stream.getTracks().forEach((t) => t.stop())
     }
-  }, [props.isPortrait])
+  }, [])
 
   useEffect(() => {
     let raf = 0
     let lastLandmarksTs = 0
+    let consecutiveFrameErrors = 0
+    // Android WebView drops frames more aggressively; web browsers are more stable.
+    const MAX_CONSECUTIVE_ERRORS = isAndroid ? 10 : 5
 
     const tick = async () => {
       try {
@@ -221,17 +216,17 @@ export default memo(function UserCameraPanel(props: {
             stageDimsRef.current = { w: displayWidth, h: displayHeight }
           }
 
-          // Match canvas internal resolution to CSS pixels * DPR so drawings stay sharp.
-          const dpr = window.devicePixelRatio || 1
-          const targetW = Math.max(1, Math.round(displayWidth * dpr))
-          const targetH = Math.max(1, Math.round(displayHeight * dpr))
+          // Size canvas to container dimensions — no DPR scaling.
+          // drawSkeleton works in displayWidth×displayHeight coordinate space; CSS handles
+          // display scaling. DPR scaling is excluded per spec to keep canvas 1:1 with logical space.
+          const targetW = Math.max(1, Math.round(displayWidth))
+          const targetH = Math.max(1, Math.round(displayHeight))
           if (canvas.width !== targetW || canvas.height !== targetH) {
             canvas.width = targetW
             canvas.height = targetH
           }
 
           const ctx = canvas.getContext('2d')
-          if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
 
           // When detection is inactive (results phase), clear stale skeleton and
           // skip MediaPipe entirely to free GPU/CPU for the feedback UI.
@@ -247,6 +242,7 @@ export default memo(function UserCameraPanel(props: {
             lastLandmarksTs = now
 
             const landmarks = await getLandmarksFromVideo(video)
+            consecutiveFrameErrors = 0 // reset on success
             if (landmarks && landmarks.length === 33) {
               drawSkeleton({
                 canvas,
@@ -263,7 +259,12 @@ export default memo(function UserCameraPanel(props: {
           }
         }
       } catch {
-        // MediaPipe or canvas error — swallow to keep the frame loop alive
+        consecutiveFrameErrors++
+        if (consecutiveFrameErrors >= MAX_CONSECUTIVE_ERRORS) {
+          setStreamError('Camera stream failed. Please reload.')
+          return
+        }
+        // Single frame failure — continue loop
       }
       raf = requestAnimationFrame(tick)
     }

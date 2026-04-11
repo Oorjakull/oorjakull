@@ -116,7 +116,9 @@ export default function LivePanel(props: {
   useEffect(() => {
     let raf = 0
     let consecutiveFrameErrors = 0
-    const MAX_CONSECUTIVE_ERRORS = 10
+    // Android WebView drops frames more aggressively under GPU load — allow more retries.
+    // Web browsers are more stable; 5 consecutive failures signals a genuine stream problem.
+    const MAX_CONSECUTIVE_ERRORS = isAndroid ? 10 : 5
 
     const tick = async () => {
       if (props.running && videoRef.current && canvasRef.current && ready) {
@@ -136,44 +138,24 @@ export default function LivePanel(props: {
           canvas.height = video.videoHeight
         }
 
-        if (isAndroid) {
-          // OorjaKull Android fix: occasional frame drops are normal on Android due to lower
-          // GPU budget in WebView. Do not treat a single frame failure as fatal.
-          try {
-            const landmarks = await getLandmarksFromVideo(video)
-            consecutiveFrameErrors = 0 // reset on success
-            if (landmarks && landmarks.length === 33) {
-              drawSkeleton(canvas, landmarks)
-              const visibilityMean = landmarks.reduce((a, l) => a + l.visibility, 0) / landmarks.length
-              props.onLandmarks(landmarks, visibilityMean)
-            }
-          } catch (err) {
-            consecutiveFrameErrors++
-            console.error(`[OorjaKull Android] MediaPipe frame error (${consecutiveFrameErrors}):`, err)
-            if (consecutiveFrameErrors >= MAX_CONSECUTIVE_ERRORS) {
-              // 10 consecutive failures — stream is genuinely broken; surface error and stop loop
-              setStreamError('Camera stream failed. Please reload.')
-              return
-            }
-            // Single frame failure — do NOT navigate away, continue to next frame
+        try {
+          const landmarks = await getLandmarksFromVideo(video)
+          consecutiveFrameErrors = 0 // reset on success
+          if (landmarks && landmarks.length === 33) {
+            drawSkeleton(canvas, landmarks)
+            const visibilityMean = landmarks.reduce((a, l) => a + l.visibility, 0) / landmarks.length
+            props.onLandmarks(landmarks, visibilityMean)
           }
-        } else {
-          try {
-            const landmarks = await getLandmarksFromVideo(video)
-            consecutiveFrameErrors = 0
-            if (landmarks && landmarks.length === 33) {
-              drawSkeleton(canvas, landmarks)
-              const visibilityMean = landmarks.reduce((a, l) => a + l.visibility, 0) / landmarks.length
-              props.onLandmarks(landmarks, visibilityMean)
-            }
-          } catch (err) {
-            consecutiveFrameErrors++
-            console.error(`[OorjaKull Web] MediaPipe frame error (${consecutiveFrameErrors}):`, err)
-            if (consecutiveFrameErrors >= MAX_CONSECUTIVE_ERRORS) {
-              setStreamError('Camera stream failed. Please reload.')
-              return
-            }
+        } catch (err) {
+          consecutiveFrameErrors++
+          const platform = isAndroid ? 'Android' : 'Web'
+          console.error(`[OorjaKull ${platform}] MediaPipe frame error (${consecutiveFrameErrors}):`, err)
+          if (consecutiveFrameErrors >= MAX_CONSECUTIVE_ERRORS) {
+            // Sustained failure — stream is genuinely broken; surface error and stop loop
+            setStreamError('Camera stream failed. Please reload.')
+            return
           }
+          // Single frame failure — do NOT navigate away, continue to next frame
         }
       }
       raf = requestAnimationFrame(tick)
