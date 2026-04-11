@@ -268,6 +268,9 @@ export function useVoiceGuide(
   const audioCtxRef = useRef<AudioContext | null>(null)
   const sourceNodeRef = useRef<AudioBufferSourceNode | null>(null)
   const gainNodeRef = useRef<GainNode | null>(null)
+  // Generation counter: incremented by cancel() to invalidate all in-flight speak() fetches.
+  // Prevents stale framing TTS from playing after cancelVoice() + new evaluation TTS has started.
+  const speakGenerationRef = useRef(0)
 
   /** Lazily create / resume a shared AudioContext (works around Android WebView autoplay gate). */
   const getAudioContext = useCallback((): AudioContext => {
@@ -386,11 +389,18 @@ export function useVoiceGuide(
         return
       }
 
+      // Capture generation before async — if cancel() fires before the blob arrives,
+      // the generation counter will have incremented and we skip playback entirely.
+      // This prevents stale framing TTS from playing after cancelVoice() was called.
+      const generation = speakGenerationRef.current
+
       void (async () => {
         try {
           const blob = await fetchAudioBlob(text)
+          if (speakGenerationRef.current !== generation) return  // cancelled via cancel()
           playBlob(blob, settings.volume, onEnd)
         } catch {
+          if (speakGenerationRef.current !== generation) return  // cancelled via cancel()
           // TTS failed — fire onEnd after a short delay so app flow isn't stuck
           if (onEnd) {
             silentTimerRef.current = setTimeout(() => {
@@ -451,6 +461,9 @@ export function useVoiceGuide(
   )
 
   const cancel = useCallback(() => {
+    // Increment generation first — any in-flight speak() fetches will see the mismatch
+    // and skip playBlob(), preventing stale audio from overriding the next speak() call.
+    speakGenerationRef.current++
     if (silentTimerRef.current !== null) {
       clearTimeout(silentTimerRef.current)
       silentTimerRef.current = null

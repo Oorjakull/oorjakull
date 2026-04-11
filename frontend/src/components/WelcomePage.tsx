@@ -109,7 +109,12 @@ export default function WelcomePage({
 
       onGoogleSignIn(displayName, idToken)
     } catch (error) {
-      const message = error instanceof Error ? error.message : String(error)
+      const message =
+        error instanceof Error
+          ? error.message
+          : typeof error === 'object' && error !== null
+            ? JSON.stringify(error)
+            : String(error)
       console.error('Native Google sign-in failed:', error)
 
       if (/NoCredentialException|No credentials available/i.test(message)) {
@@ -117,12 +122,17 @@ export default function WelcomePage({
         return
       }
 
-      if (/DEVELOPER_ERROR|10|invalid_audience|audience|server client|client id/i.test(message)) {
-        setAuthError('Google OAuth client configuration mismatch. Please verify the Android + Web client IDs and SHA fingerprint.')
+      if (/DEVELOPER_ERROR|ApiException\s*:?\s*10|"code"\s*:\s*10|invalid_audience|audience|server client|client id/i.test(message)) {
+        setAuthError('Google OAuth client configuration mismatch. Please verify package name + SHA fingerprint in Google Cloud.')
         return
       }
 
-      setAuthError('Google sign-in was cancelled or unavailable on this device.')
+      if (/cancel|canceled|cancelled/i.test(message)) {
+        setAuthError('Google sign-in was cancelled. Please try again and select a Google account.')
+        return
+      }
+
+      setAuthError(`Google sign-in unavailable on this device. Details: ${message}`)
     }
   }
 
