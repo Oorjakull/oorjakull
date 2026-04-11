@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
+import { Capacitor } from '@capacitor/core'
 import type { Landmark } from '../api/client'
 import { usePoseLandmarker } from '../hooks/usePoseLandmarker'
+
+// Evaluated once at module load — never changes during the app lifecycle
+const isAndroid = Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android'
 
 function drawSkeleton(canvas: HTMLCanvasElement, landmarks: Landmark[]) {
   const ctx = canvas.getContext('2d')
@@ -49,12 +53,31 @@ export default function LivePanel(props: {
           audio: false as const,
         }
 
+        // OorjaKull Android fix: 4:3 640x480 matches Android camera HAL native output.
+        // The existing constraints object (16:9 1280x720) remains the untouched web path.
+        const androidConstraints = {
+          video: {
+            facingMode: { exact: 'user' } as MediaTrackConstraints['facingMode'],
+            width:  { ideal: 640, max: 1280 },
+            height: { ideal: 480, max: 720  },
+            aspectRatio: { ideal: 4 / 3 },
+            advanced: [{ zoom: 1.0 } as any],
+          },
+          audio: false as const,
+        }
+
+        const activeConstraints = isAndroid ? androidConstraints : constraints
+
         // Try exact:'user' first; fall back to plain 'user' if OverconstrainedError
         try {
-          stream = await navigator.mediaDevices.getUserMedia(constraints)
+          stream = await navigator.mediaDevices.getUserMedia(activeConstraints)
         } catch {
-          constraints.video.facingMode = 'user'
-          stream = await navigator.mediaDevices.getUserMedia(constraints)
+          if (isAndroid) {
+            (androidConstraints.video as any).facingMode = 'user'
+          } else {
+            constraints.video.facingMode = 'user'
+          }
+          stream = await navigator.mediaDevices.getUserMedia(activeConstraints)
         }
 
         // Android WebView zoom fix — forces zoom to hardware minimum if Camera2 exposes it
@@ -66,6 +89,12 @@ export default function LivePanel(props: {
               advanced: [{ zoom: capabilities.zoom.min } as any],
             }).catch(() => undefined)
           }
+        }
+
+        // OorjaKull Android fix: read actual negotiated dimensions — never trust requested values
+        if (isAndroid && track) {
+          const _actualSettings = track.getSettings() // dimensions available for future diagnostic use
+          void _actualSettings
         }
 
         if (videoRef.current) {
@@ -86,11 +115,20 @@ export default function LivePanel(props: {
 
   useEffect(() => {
     let raf = 0
+    let consecutiveFrameErrors = 0
+    const MAX_CONSECUTIVE_ERRORS = 10
 
     const tick = async () => {
       if (props.running && videoRef.current && canvasRef.current && ready) {
         const video = videoRef.current
         const canvas = canvasRef.current
+
+        // OorjaKull Android fix: WebView fires loadedmetadata before videoWidth is non-zero.
+        // Skip canvas sync until dimensions are confirmed. Not needed on Chrome desktop.
+        if (isAndroid && (!video.videoWidth || !video.videoHeight)) {
+          raf = requestAnimationFrame(tick)
+          return
+        }
 
         // Keep canvas in sync
         if (canvas.width !== video.videoWidth || canvas.height !== video.videoHeight) {
@@ -98,11 +136,35 @@ export default function LivePanel(props: {
           canvas.height = video.videoHeight
         }
 
-        const landmarks = await getLandmarksFromVideo(video)
-        if (landmarks && landmarks.length === 33) {
-          drawSkeleton(canvas, landmarks)
-          const visibilityMean = landmarks.reduce((a, l) => a + l.visibility, 0) / landmarks.length
-          props.onLandmarks(landmarks, visibilityMean)
+        if (isAndroid) {
+          // OorjaKull Android fix: occasional frame drops are normal on Android due to lower
+          // GPU budget in WebView. Do not treat a single frame failure as fatal.
+          try {
+            const landmarks = await getLandmarksFromVideo(video)
+            consecutiveFrameErrors = 0 // reset on success
+            if (landmarks && landmarks.length === 33) {
+              drawSkeleton(canvas, landmarks)
+              const visibilityMean = landmarks.reduce((a, l) => a + l.visibility, 0) / landmarks.length
+              props.onLandmarks(landmarks, visibilityMean)
+            }
+          } catch (err) {
+            consecutiveFrameErrors++
+            console.error(`[OorjaKull Android] MediaPipe frame error (${consecutiveFrameErrors}):`, err)
+            if (consecutiveFrameErrors >= MAX_CONSECUTIVE_ERRORS) {
+              // 10 consecutive failures — stream is genuinely broken; surface error and stop loop
+              setStreamError('Camera stream failed. Please reload.')
+              return
+            }
+            // Single frame failure — do NOT navigate away, continue to next frame
+          }
+        } else {
+          // Web path — unchanged
+          const landmarks = await getLandmarksFromVideo(video)
+          if (landmarks && landmarks.length === 33) {
+            drawSkeleton(canvas, landmarks)
+            const visibilityMean = landmarks.reduce((a, l) => a + l.visibility, 0) / landmarks.length
+            props.onLandmarks(landmarks, visibilityMean)
+          }
         }
       }
       raf = requestAnimationFrame(tick)

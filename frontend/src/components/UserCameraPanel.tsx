@@ -1,10 +1,14 @@
 import { memo, useEffect, useMemo, useRef, useState } from 'react'
+import { Capacitor } from '@capacitor/core'
 import type { AlignmentResponse, Landmark } from '../api/client'
 import { usePoseLandmarker } from '../hooks/usePoseLandmarker'
 import ConfidenceBadge from './ConfidenceBadge'
 import FeedbackPanel from './FeedbackPanel'
 import ScoreDisplay from './ScoreDisplay'
 import { AnimatePresence, motion } from 'framer-motion'
+
+// Evaluated once at module load — never changes during the app lifecycle
+const isAndroid = Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android'
 
 function drawSkeleton(params: {
   canvas: HTMLCanvasElement
@@ -126,15 +130,28 @@ export default memo(function UserCameraPanel(props: {
               advanced: [{ zoom: 1.0 } as any, { focusMode: 'continuous' } as any],
             }
 
+        // OorjaKull Android fix: WebView negotiates resolution differently from Chrome.
+        // 4:3 640x480 is what Android camera HAL delivers natively — avoids digital zoom fallback.
+        // The existing baseConstraints (16:9 / 9:16) remain the web path — untouched.
+        const androidConstraints = (facing: MediaTrackConstraints['facingMode']): MediaTrackConstraints => ({
+          facingMode: facing,
+          width:  { ideal: 640, max: 1280 },
+          height: { ideal: 480, max: 720  },
+          aspectRatio: { ideal: 4 / 3 },
+          advanced: [{ zoom: 1.0 } as any],
+        })
+
+        const constraintsFn = isAndroid ? androidConstraints : baseConstraints
+
         // Try exact:'user' first; fall back to plain 'user' if OverconstrainedError
         try {
           stream = await navigator.mediaDevices.getUserMedia({
-            video: baseConstraints({ exact: 'user' }),
+            video: constraintsFn({ exact: 'user' }),
             audio: false,
           })
         } catch {
           stream = await navigator.mediaDevices.getUserMedia({
-            video: baseConstraints('user'),
+            video: constraintsFn('user'),
             audio: false,
           })
         }
@@ -148,6 +165,16 @@ export default memo(function UserCameraPanel(props: {
               advanced: [{ zoom: capabilities.zoom.min } as any],
             }).catch(() => undefined)
           }
+        }
+
+        // OorjaKull Android fix: read actual negotiated dimensions — never trust requested values.
+        // usePoseLandmarker reads video.videoWidth/videoHeight directly so no further wiring needed;
+        // _actualWidth/_actualHeight are logged here for future diagnostic use.
+        if (isAndroid && track) {
+          const actualSettings = track.getSettings()
+          const _actualWidth  = actualSettings.width  // ~640 on Android
+          const _actualHeight = actualSettings.height // ~480 on Android
+          void _actualWidth; void _actualHeight
         }
 
         if (videoRef.current) {

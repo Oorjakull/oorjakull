@@ -1,8 +1,10 @@
 package com.oorjakull.app;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -38,6 +40,14 @@ public class MainActivity extends BridgeActivity implements ModifiedMainActivity
 			settings.setMediaPlaybackRequiresUserGesture(false);
 			settings.setBuiltInZoomControls(false);
 			settings.setDisplayZoomControls(false);
+
+			// OorjaKull Android fix: MediaPipe WASM/WebGL needs compatible mixed content handling
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+				settings.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
+			}
+
+			// OorjaKull Android fix: prevent accidental scroll interrupting the MediaPipe frame loop
+			this.bridge.getWebView().setOverScrollMode(View.OVER_SCROLL_NEVER);
 		}
 	}
 
