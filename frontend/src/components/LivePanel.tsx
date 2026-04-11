@@ -123,9 +123,9 @@ export default function LivePanel(props: {
         const video = videoRef.current
         const canvas = canvasRef.current
 
-        // OorjaKull Android fix: WebView fires loadedmetadata before videoWidth is non-zero.
-        // Skip canvas sync until dimensions are confirmed. Not needed on Chrome desktop.
-        if (isAndroid && (!video.videoWidth || !video.videoHeight)) {
+        // Skip canvas sync until stream dimensions are confirmed — videoWidth is 0
+        // before the first frame arrives on both Android WebView and desktop browsers.
+        if (!video.videoWidth || !video.videoHeight) {
           raf = requestAnimationFrame(tick)
           return
         }
@@ -158,12 +158,21 @@ export default function LivePanel(props: {
             // Single frame failure — do NOT navigate away, continue to next frame
           }
         } else {
-          // Web path — unchanged
-          const landmarks = await getLandmarksFromVideo(video)
-          if (landmarks && landmarks.length === 33) {
-            drawSkeleton(canvas, landmarks)
-            const visibilityMean = landmarks.reduce((a, l) => a + l.visibility, 0) / landmarks.length
-            props.onLandmarks(landmarks, visibilityMean)
+          try {
+            const landmarks = await getLandmarksFromVideo(video)
+            consecutiveFrameErrors = 0
+            if (landmarks && landmarks.length === 33) {
+              drawSkeleton(canvas, landmarks)
+              const visibilityMean = landmarks.reduce((a, l) => a + l.visibility, 0) / landmarks.length
+              props.onLandmarks(landmarks, visibilityMean)
+            }
+          } catch (err) {
+            consecutiveFrameErrors++
+            console.error(`[OorjaKull Web] MediaPipe frame error (${consecutiveFrameErrors}):`, err)
+            if (consecutiveFrameErrors >= MAX_CONSECUTIVE_ERRORS) {
+              setStreamError('Camera stream failed. Please reload.')
+              return
+            }
           }
         }
       }
