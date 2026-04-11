@@ -236,10 +236,10 @@ export default function ChatBot({
 
   return (
     <div
-      className="fixed right-4 z-[60] flex flex-col items-end gap-3"
+      className={`fixed right-4 flex flex-col items-end gap-3 ${avoidBottomNav ? 'z-[120]' : 'z-[60]'}`}
       style={{
         bottom: avoidBottomNav
-          ? 'calc(4.5rem + env(safe-area-inset-bottom, 0px))'
+          ? 'calc(5.5rem + env(safe-area-inset-bottom, 0px))'
           : 'max(1rem, env(safe-area-inset-bottom, 0px))',
       }}
     >
