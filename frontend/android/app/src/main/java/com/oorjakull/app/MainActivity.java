@@ -1,6 +1,8 @@
 package com.oorjakull.app;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,6 +10,9 @@ import android.view.View;
 import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.getcapacitor.BridgeActivity;
 import com.getcapacitor.BridgeWebChromeClient;
@@ -21,9 +26,31 @@ import ee.forgr.capacitor.social.login.SocialLoginPlugin;
 // ModifiedMainActivityForSocialLoginPlugin is VERY VERY important for Google scopes support!
 public class MainActivity extends BridgeActivity implements ModifiedMainActivityForSocialLoginPlugin {
 
+	private static final int PERMISSIONS_REQUEST_CODE = 1001;
+	private static final String[] REQUIRED_PERMISSIONS = {
+		Manifest.permission.CAMERA,
+		Manifest.permission.RECORD_AUDIO
+	};
+
+	/** Returns true only if every required permission is already granted. */
+	private boolean hasRequiredPermissions() {
+		for (String permission : REQUIRED_PERMISSIONS) {
+			if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		// Request camera + microphone permissions upfront on first launch so the
+		// system dialog appears immediately rather than mid-session when getUserMedia fires.
+		if (!hasRequiredPermissions()) {
+			ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
+		}
 
 		if (this.bridge != null && this.bridge.getWebView() != null) {
 			this.bridge.getWebView().setWebChromeClient(new BridgeWebChromeClient(this.bridge) {
