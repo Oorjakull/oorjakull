@@ -389,6 +389,11 @@ export function useVoiceGuide(
         return
       }
 
+      // Warm up AudioContext synchronously while still in the user-gesture call stack.
+      // Browsers block AudioContext.resume() inside async callbacks — calling it here
+      // (before any await) ensures the context is running by the time playBlob fires.
+      getAudioContext()
+
       // Capture generation before async — if cancel() fires before the blob arrives,
       // the generation counter will have incremented and we skip playback entirely.
       // This prevents stale framing TTS from playing after cancelVoice() was called.
@@ -411,7 +416,7 @@ export function useVoiceGuide(
         }
       })()
     },
-    [voiceEnabled, settings, stopAudio, playBlob, fetchAudioBlob],
+    [voiceEnabled, settings, stopAudio, playBlob, fetchAudioBlob, getAudioContext],
   )
 
   const speakFeedback = useCallback(

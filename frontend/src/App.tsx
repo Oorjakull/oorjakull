@@ -1056,9 +1056,12 @@ export default function App() {
           window.clearInterval(t)
           countdownTimerRef.current = null
           setStatusText('Evaluating… (one-time)')
+          // Stop running immediately so detectionActive goes false before doEvaluate()
+          // starts the LLM call — prevents concurrent MediaPipe + LLM async ops that
+          // can crash Android WebView due to resource exhaustion.
+          setRunning(false)
           window.setTimeout(() => {
             void doEvaluate().finally(() => {
-              setRunning(false)
               setStatusText('Feedback ready.')
             })
           }, 250)
