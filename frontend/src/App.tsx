@@ -264,6 +264,7 @@ export default function App() {
   const [authLoading, setAuthLoading] = useState(false)
   const [activeSection, setActiveSection] = useState<'yoga' | 'breathwork'>('yoga')
   const [activeBottomTab, setActiveBottomTab] = useState<'yoga' | 'breathwork' | 'account'>('yoga')
+  const [profileRefreshKey, setProfileRefreshKey] = useState(0)
   const [userName, setUserName] = useState('')
   const [signedInWithGoogle, setSignedInWithGoogle] = useState(false)
   const [expectedPose, setExpectedPose] = useState<ExpectedPose>('Warrior II')
@@ -786,7 +787,7 @@ export default function App() {
       stopSession()
       // Read pose results BEFORE addSessionSummary() (called on sequence-complete screen) resets them
       const sessionResults = chatStore.sessionResultsRef.current
-      // Persist session to Supabase (fire-and-forget)
+      // Persist session to Supabase, then refresh profile data
       if (safety.isAuthenticated && safety.sessionId) {
         const durationSeconds = sessionStartTsRef.current
           ? Math.round((Date.now() - sessionStartTsRef.current) / 1000)
@@ -798,8 +799,15 @@ export default function App() {
           completed: r.score !== null,
           hold_seconds: 0,
         }))
-        safety.completeSession({ duration_seconds: durationSeconds, pose_attempts: poseAttempts })
-          .catch((err) => console.warn('Session persist failed:', err))
+        ;(async () => {
+          try {
+            await safety.completeSession({ duration_seconds: durationSeconds, pose_attempts: poseAttempts })
+          } catch (err) {
+            console.warn('Session persist failed:', err)
+          } finally {
+            setProfileRefreshKey((k) => k + 1)
+          }
+        })()
       }
       sessionStartTsRef.current = null
       // Build Madhu session context
@@ -854,6 +862,15 @@ export default function App() {
 
 
   function handleFramingReady() {
+    // Guard: if the user left the frame during the countdown, advanceFramingSubPhase()
+    // will have already dropped the sub-phase back to 'posing' or 'detecting'.
+    // Don't transition — let framing resume naturally.
+    if (framingSubPhaseRef.current !== 'countdown') return
+
+    // Belt-and-suspenders: no landmarks or very low visibility means the camera
+    // has no usable data, so transitioning would crash the evaluator.
+    if (!latestLandmarksRef.current || latestVisibilityRef.current < 0.5) return
+
     cancelVoice()
     setExperiencePhase('evaluating')
     startSession()
@@ -900,7 +917,7 @@ export default function App() {
     // Read pose results BEFORE addSessionSummary() resets them
     const sessionResults = chatStore.sessionResultsRef.current
 
-    // Persist session to Supabase (fire-and-forget)
+    // Persist session to Supabase, then refresh profile data
     if (safety.isAuthenticated && safety.sessionId) {
       const durationSeconds = sessionStartTsRef.current
         ? Math.round((Date.now() - sessionStartTsRef.current) / 1000)
@@ -912,8 +929,15 @@ export default function App() {
         completed: r.score !== null,
         hold_seconds: 0,
       }))
-      safety.completeSession({ duration_seconds: durationSeconds, pose_attempts: poseAttempts })
-        .catch((err) => console.warn('Session persist failed:', err))
+      ;(async () => {
+        try {
+          await safety.completeSession({ duration_seconds: durationSeconds, pose_attempts: poseAttempts })
+        } catch (err) {
+          console.warn('Session persist failed:', err)
+        } finally {
+          setProfileRefreshKey((k) => k + 1)
+        }
+      })()
     }
     sessionStartTsRef.current = null
 
@@ -1477,6 +1501,7 @@ export default function App() {
               onToggleTheme={toggleTheme}
               googleSub={safety.googleSub || ''}
               baseUrl={baseUrl}
+              refreshKey={profileRefreshKey}
               onEditHealthProfile={() => {
                 setActiveBottomTab('yoga')
                 setExperiencePhase('health-check')

@@ -33,6 +33,7 @@ interface AccountScreenProps {
   // New: session history + health profile
   googleSub: string
   baseUrl: string
+  refreshKey?: number
   onEditHealthProfile: () => void
 }
 
@@ -63,7 +64,7 @@ export default function AccountScreen(props: AccountScreenProps) {
     creditsRemaining, creditsUsed, isUnlimited, onShowUpgrade,
     voiceOn, onToggleVoice, voiceSettings, onChangeVoiceSettings, onPreviewVoice,
     theme, onToggleTheme,
-    googleSub, baseUrl, onEditHealthProfile,
+    googleSub, baseUrl, refreshKey, onEditHealthProfile,
   } = props
 
   const [activeTab, setActiveTab] = useState<Tab>('profile')
@@ -72,15 +73,21 @@ export default function AccountScreen(props: AccountScreenProps) {
   const [historyLoading, setHistoryLoading] = useState(false)
   const [historyLoaded, setHistoryLoaded] = useState(false)
 
-  // Load progression metrics on mount (for Profile tab)
+  // Load progression metrics on mount and whenever a session is completed
   useEffect(() => {
     if (!googleSub) return
     fetchUserProgression({ baseUrl, googleSub })
       .then(setProgression)
       .catch(() => {})
-  }, [googleSub, baseUrl])
+  }, [googleSub, baseUrl, refreshKey])
 
-  // Load history lazily when History tab is first opened
+  // Reset history loaded flag when a session completes so history re-fetches
+  useEffect(() => {
+    if (!googleSub) return
+    setHistoryLoaded(false)
+  }, [refreshKey, googleSub])
+
+  // Load history lazily when History tab is first opened (or after reset)
   useEffect(() => {
     if (activeTab !== 'history' || historyLoaded || !googleSub) return
     setHistoryLoading(true)
