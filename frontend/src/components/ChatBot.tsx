@@ -151,11 +151,23 @@ function SessionSummaryCard({ summary }: { summary: NonNullable<ChatMessage['ses
 
 /* ── Main Component ──────────────────────────────────────────────────────── */
 
+const PERFORMANCE_KEYWORDS = [
+  'last session', 'how did i do', 'my score', 'my progress',
+  'my performance', 'how was my', 'what did i score', 'my yoga',
+  'session history', 'my results',
+]
+
+function isPerformanceQuery(text: string): boolean {
+  const lower = text.toLowerCase()
+  return PERFORMANCE_KEYWORDS.some((kw) => lower.includes(kw))
+}
+
 interface ChatBotProps {
   messages: ChatMessage[]
   unreadCount: number
   open: boolean
   onToggle: () => void
+  sessionContext?: string | null
   onSendMessage: (text: string) => void
   onBotReply: (text: string) => void
   onBotSuggestion?: (suggestion: ProductSuggestion) => void
@@ -170,6 +182,7 @@ export default function ChatBot({
   unreadCount,
   open,
   onToggle,
+  sessionContext,
   onSendMessage,
   onBotReply,
   onBotSuggestion,
@@ -205,11 +218,12 @@ export default function ChatBot({
       }))
 
     try {
-      // Call backend assistant endpoint
+      // Call backend assistant endpoint; inject session context only for performance queries
       const result = await callAssistant({
         baseUrl,
         message: text,
         messages: history,
+        sessionContext: isPerformanceQuery(text) ? (sessionContext ?? null) : null,
       })
       onBotReply(result.reply)
       if (result.suggestion && onBotSuggestion) {

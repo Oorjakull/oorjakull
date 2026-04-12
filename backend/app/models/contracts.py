@@ -107,6 +107,7 @@ class AssistantRequest(BaseModel):
     """Request body for the assistant endpoint."""
     message: str = Field(min_length=1, max_length=2000)
     messages: list[AssistantMessage] = Field(default_factory=list, max_length=20)
+    session_context: str | None = Field(default=None, max_length=1500, description="Optional recent session summary injected for performance queries")
 
 
 class ProductSuggestion(BaseModel):

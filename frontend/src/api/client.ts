@@ -168,11 +168,13 @@ export type ProductSuggestion = {
 /**
  * Call the backend assistant endpoint and get a conversational response from Madhu.
  * Returns the reply text and an optional product suggestion card.
+ * Optionally pass sessionContext (recent session summary) for performance-related queries.
  */
 export async function callAssistant(params: {
   baseUrl: string
   message: string
   messages?: Array<{ role: 'user' | 'assistant'; content: string }>
+  sessionContext?: string | null
 }): Promise<{ reply: string; suggestion?: ProductSuggestion | null }> {
   const res = await fetch(`${params.baseUrl}/api/assistant`, {
     method: 'POST',
@@ -180,6 +182,7 @@ export async function callAssistant(params: {
     body: JSON.stringify({
       message: params.message,
       messages: params.messages || [],
+      session_context: params.sessionContext ?? null,
     }),
   })
 
@@ -321,4 +324,89 @@ export async function fetchUserCredits(params: {
     throw new Error(`Credits fetch error: ${res.status}`)
   }
   return (await res.json()) as UserCredits
+}
+
+// ── User session history ────────────────────────────────────────────────────
+
+export type SessionPoseAttempt = {
+  session_id: string
+  pose_id: string
+  peak_score: number | null
+  avg_score: number | null
+  completed: boolean
+}
+
+export type UserSessionRecord = {
+  session_id: string
+  flow_id: string | null
+  started_at: string | null
+  ended_at: string | null
+  duration_seconds: number
+  final_risk_score: number
+  poses: SessionPoseAttempt[]
+}
+
+export async function fetchUserSessions(params: {
+  baseUrl: string
+  googleSub: string
+}): Promise<UserSessionRecord[]> {
+  const res = await fetch(`${params.baseUrl}/api/user/sessions`, {
+    headers: { Authorization: `Bearer ${params.googleSub}` },
+  })
+  if (!res.ok) return []
+  const data = (await res.json()) as { sessions: UserSessionRecord[] }
+  return data.sessions
+}
+
+// ── User preferences ────────────────────────────────────────────────────────
+
+export type UserPreferences = {
+  language_preference: string
+}
+
+export async function fetchUserPreferences(params: {
+  baseUrl: string
+  googleSub: string
+}): Promise<UserPreferences> {
+  const res = await fetch(`${params.baseUrl}/api/user/preferences`, {
+    headers: { Authorization: `Bearer ${params.googleSub}` },
+  })
+  if (!res.ok) return { language_preference: 'en-IN' }
+  return (await res.json()) as UserPreferences
+}
+
+export async function updateUserPreferences(params: {
+  baseUrl: string
+  googleSub: string
+  language_preference: string
+}): Promise<void> {
+  await fetch(`${params.baseUrl}/api/user/preferences`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${params.googleSub}`,
+    },
+    body: JSON.stringify({ language_preference: params.language_preference }),
+  })
+}
+
+// ── User progression ────────────────────────────────────────────────────────
+
+export type UserProgression = {
+  total_sessions: number
+  total_practice_minutes: number
+  avg_risk_score_last_5: number
+  last_session_risk_score: number
+  pose_stats: Record<string, { attempts: number; best_score: number; completions: number }>
+}
+
+export async function fetchUserProgression(params: {
+  baseUrl: string
+  googleSub: string
+}): Promise<UserProgression> {
+  const res = await fetch(`${params.baseUrl}/api/user/progression`, {
+    headers: { Authorization: `Bearer ${params.googleSub}` },
+  })
+  if (!res.ok) throw new Error(`Progression fetch error: ${res.status}`)
+  return (await res.json()) as UserProgression
 }

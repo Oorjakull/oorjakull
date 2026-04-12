@@ -65,9 +65,13 @@ class AssistantService:
         self,
         user_message: str,
         conversation_history: list[dict[str, str]] | None = None,
+        session_context: str | None = None,
     ) -> AssistantResponse:
         """
         Generate a response from Madhu given a user message and optional conversation history.
+
+        Args:
+            session_context: Optional recent session summary to inject when user asks about performance.
 
         Returns:
             AssistantResponse with reply text and optional product suggestion.
@@ -77,6 +81,17 @@ class AssistantService:
         messages: list[dict[str, str]] = [
             {"role": "system", "content": MADHU_SYSTEM_PROMPT}
         ]
+
+        # Inject session context as a pseudo-turn so Madhu can reference past performance
+        if session_context:
+            messages.append({
+                "role": "user",
+                "content": f"[CONTEXT — user's recent session data, for reference only]\n{session_context}"
+            })
+            messages.append({
+                "role": "assistant",
+                "content": "I have your recent session details. How can I help you today?"
+            })
 
         if conversation_history:
             messages.extend(conversation_history[-10:])
@@ -128,4 +143,3 @@ class AssistantService:
             else:
                 print(f"Assistant error: {e}")
                 return _fallback
-                return "I'm having a moment of stillness — please try again shortly."

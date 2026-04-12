@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import type { AlignmentResponse, BreathworkProtocol, ExpectedPose, Landmark, Severity, TrainMedia, UserLevel } from './api/client'
-import { evaluateAlignment, fetchTrainPoses } from './api/client'
+import { evaluateAlignment, fetchTrainPoses, fetchUserPreferences, updateUserPreferences } from './api/client'
+import type { VoiceLanguageCode } from './hooks/useVoiceGuide'
 import { getApiBaseUrl } from './api/baseUrl'
 import InstructorPanel from './components/InstructorPanel'
 import LandingPage from './components/LandingPage'
@@ -341,6 +342,8 @@ export default function App() {
   )
 
   const clientIdRef = useRef<string>(newClientId())
+  const sessionStartTsRef = useRef<number | null>(null)
+  const [madhuSessionContext, setMadhuSessionContext] = useState<string | null>(null)
 
   const { speak, speakFeedback, prefetch, cancel: cancelVoice } = useVoiceGuide(voiceOn, voiceSettings)
   const {
@@ -384,6 +387,20 @@ export default function App() {
     if (!voiceOn) return
     prefetch(STATIC_VOICE_PROMPTS_TO_PREFETCH)
   }, [voiceOn, prefetch])
+
+  // Load language preference from backend when user authenticates (covers both fresh login and localStorage restore)
+  useEffect(() => {
+    if (!safety.isAuthenticated || !safety.googleSub) return
+    fetchUserPreferences({ baseUrl, googleSub: safety.googleSub })
+      .then((prefs) => {
+        setVoiceSettings((prev) => ({
+          ...prev,
+          languageCode: prefs.language_preference as VoiceLanguageCode,
+        }))
+      })
+      .catch(() => {})
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [safety.isAuthenticated, safety.googleSub])
 
   const countdownTimerRef = useRef<number | null>(null)
   const latestLandmarksRef = useRef<Landmark[] | null>(null)
@@ -639,6 +656,8 @@ export default function App() {
     setVisibleLandmarkCount(0)
     setSignedInWithGoogle(false)
     setUserName('')
+    sessionStartTsRef.current = null
+    setMadhuSessionContext(null)
     safety.signOut()
     setExperiencePhase('welcome')
   }
@@ -675,6 +694,17 @@ export default function App() {
     // 'account' just shows the AccountScreen overlay — no phase change needed
   }
 
+  function handleChangeVoiceSettings(s: VoiceSettingsType) {
+    setVoiceSettings(s)
+    if (safety.isAuthenticated && safety.googleSub) {
+      updateUserPreferences({
+        baseUrl,
+        googleSub: safety.googleSub,
+        language_preference: s.languageCode,
+      }).catch(() => {})
+    }
+  }
+
   function handleStartBreathwork(protocol: BreathworkProtocol) {
     cancelVoice()
     stopSession()
@@ -704,6 +734,12 @@ export default function App() {
     resetAlignmentState()
     setVisibleLandmarkCount(0)
     setIsInSequence(false)
+    // Start session: record start time and create DB record to capture session_id
+    sessionStartTsRef.current = Date.now()
+    if (safety.isAuthenticated && safety.hasProfile) {
+      safety.requestSessionPlan('single', [pose])
+        .catch((err) => console.warn('Session plan failed (non-critical):', err))
+    }
     setExperiencePhase('intro')
   }
 
@@ -724,6 +760,13 @@ export default function App() {
     setSequenceIndex(0)
     setSequenceResults([])
     setExpectedPose(seq.steps[0].pose as ExpectedPose)
+    // Start session: record start time and create DB record to capture session_id
+    sessionStartTsRef.current = Date.now()
+    if (safety.isAuthenticated && safety.hasProfile) {
+      const poseIds = seq.steps.map((s) => s.pose)
+      safety.requestSessionPlan(seq.id, poseIds)
+        .catch((err) => console.warn('Session plan failed (non-critical):', err))
+    }
     setExperiencePhase('intro')
   }
 
@@ -741,6 +784,31 @@ export default function App() {
     if (nextIndex >= sequencePoses.length) {
       cancelVoice()
       stopSession()
+      // Read pose results BEFORE addSessionSummary() (called on sequence-complete screen) resets them
+      const sessionResults = chatStore.sessionResultsRef.current
+      // Persist session to Supabase (fire-and-forget)
+      if (safety.isAuthenticated && safety.sessionId) {
+        const durationSeconds = sessionStartTsRef.current
+          ? Math.round((Date.now() - sessionStartTsRef.current) / 1000)
+          : 0
+        const poseAttempts = sessionResults.map((r) => ({
+          pose_id: r.pose,
+          peak_score: r.score ?? 0,
+          avg_score: r.score ?? 0,
+          completed: r.score !== null,
+          hold_seconds: 0,
+        }))
+        safety.completeSession({ duration_seconds: durationSeconds, pose_attempts: poseAttempts })
+          .catch((err) => console.warn('Session persist failed:', err))
+      }
+      sessionStartTsRef.current = null
+      // Build Madhu session context
+      if (sessionResults.length > 0) {
+        const lines = sessionResults.map((r) => `${r.pose}: score ${r.score ?? 'N/A'}`)
+        setMadhuSessionContext(
+          `Session (${new Date().toLocaleDateString()}):\n${lines.join('\n')}`
+        )
+      }
       resetAlignmentState()
       setVisibleLandmarkCount(0)
       setExperiencePhase('sequence-complete')
@@ -765,6 +833,7 @@ export default function App() {
     setIsInSequence(false)
     setSequenceResults([])
     setSequenceIndex(0)
+    sessionStartTsRef.current = null
     setExperiencePhase('landing')
   }
 
@@ -827,6 +896,35 @@ export default function App() {
     stopVoiceCommandListening()
     cancelVoice()
     stopSession()
+
+    // Read pose results BEFORE addSessionSummary() resets them
+    const sessionResults = chatStore.sessionResultsRef.current
+
+    // Persist session to Supabase (fire-and-forget)
+    if (safety.isAuthenticated && safety.sessionId) {
+      const durationSeconds = sessionStartTsRef.current
+        ? Math.round((Date.now() - sessionStartTsRef.current) / 1000)
+        : 0
+      const poseAttempts = sessionResults.map((r) => ({
+        pose_id: r.pose,
+        peak_score: r.score ?? 0,
+        avg_score: r.score ?? 0,
+        completed: r.score !== null,
+        hold_seconds: 0,
+      }))
+      safety.completeSession({ duration_seconds: durationSeconds, pose_attempts: poseAttempts })
+        .catch((err) => console.warn('Session persist failed:', err))
+    }
+    sessionStartTsRef.current = null
+
+    // Build Madhu session context from this session's results
+    if (sessionResults.length > 0) {
+      const lines = sessionResults.map((r) => `${r.pose}: score ${r.score ?? 'N/A'}`)
+      setMadhuSessionContext(
+        `Session (${new Date().toLocaleDateString()}):\n${lines.join('\n')}`
+      )
+    }
+
     chatStore.addSessionSummary()
     chatStore.setChatOpen(true)
     resetAlignmentState()
@@ -1370,10 +1468,16 @@ export default function App() {
               voiceOn={voiceOn}
               onToggleVoice={setVoiceOn}
               voiceSettings={voiceSettings}
-              onChangeVoiceSettings={setVoiceSettings}
+              onChangeVoiceSettings={handleChangeVoiceSettings}
               onPreviewVoice={() => speak('Namaste. Welcome to your practice.')}
               theme={theme}
               onToggleTheme={toggleTheme}
+              googleSub={safety.googleSub || ''}
+              baseUrl={baseUrl}
+              onEditHealthProfile={() => {
+                setActiveBottomTab('yoga')
+                setExperiencePhase('health-check')
+              }}
             />
           </div>
         )}
@@ -1768,6 +1872,7 @@ export default function App() {
           }}
           userName={userName}
           baseUrl={baseUrl}
+          sessionContext={madhuSessionContext}
           avoidBottomNav={experiencePhase === 'landing' && isNativePlatform}
         />
       )}

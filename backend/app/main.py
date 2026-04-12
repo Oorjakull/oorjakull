@@ -313,7 +313,11 @@ def assistant_message(req: AssistantRequest) -> dict[str, str]:
     history = [{"role": msg.role, "content": msg.content} for msg in req.messages]
 
     # Generate response (returns AssistantResponse with reply + optional suggestion)
-    return assistant_service.generate_response(user_message=req.message, conversation_history=history)
+    return assistant_service.generate_response(
+        user_message=req.message,
+        conversation_history=history,
+        session_context=req.session_context,
+    )
 
 
 @app.post("/api/tts")
@@ -840,3 +844,93 @@ def user_progression(
 
     prog = ProgressionService()
     return prog.get_user_progression(user["id"])
+
+
+# ── User Session History ────────────────────────────────────────────────────
+
+@app.get("/api/user/sessions")
+def user_sessions(
+    user: dict = Depends(get_current_user),
+) -> dict[str, _Any]:
+    """Return the last 20 completed sessions with their pose attempts."""
+    from app.core.db import get_supabase
+
+    sb = get_supabase()
+    sessions_resp = (
+        sb.table("session_logs")
+        .select("id, flow_id, started_at, ended_at, duration_seconds, final_risk_score, state")
+        .eq("user_id", str(user["id"]))
+        .eq("state", "completed")
+        .order("ended_at", desc=True)
+        .limit(20)
+        .execute()
+    )
+    session_data = sessions_resp.data or []
+    if not session_data:
+        return {"sessions": []}
+
+    session_ids = [s["id"] for s in session_data]
+    attempts_resp = (
+        sb.table("pose_attempt_logs")
+        .select("session_id, pose_id, peak_score, avg_score, completed")
+        .in_("session_id", session_ids)
+        .execute()
+    )
+    attempt_data = attempts_resp.data or []
+
+    by_session: dict[str, list] = {}
+    for a in attempt_data:
+        sid = a["session_id"]
+        by_session.setdefault(sid, []).append(a)
+
+    result = []
+    for s in session_data:
+        result.append({
+            "session_id": s["id"],
+            "flow_id": s.get("flow_id"),
+            "started_at": s.get("started_at"),
+            "ended_at": s.get("ended_at"),
+            "duration_seconds": s.get("duration_seconds", 0),
+            "final_risk_score": s.get("final_risk_score", 0),
+            "poses": by_session.get(s["id"], []),
+        })
+    return {"sessions": result}
+
+
+# ── User Preferences ────────────────────────────────────────────────────────
+
+class UserPreferencesUpdate(_BM):
+    language_preference: str = _F(default="en-IN", description="BCP-47 language code, e.g. en-IN, hi-IN")
+
+
+@app.get("/api/user/preferences")
+def get_user_preferences(
+    user: dict = Depends(get_current_user),
+) -> dict[str, _Any]:
+    """Return the user's saved preferences (language, etc.)."""
+    from app.core.db import get_supabase
+
+    sb = get_supabase()
+    row = (
+        sb.table("users")
+        .select("language_preference")
+        .eq("id", str(user["id"]))
+        .single()
+        .execute()
+    )
+    return {"language_preference": (row.data or {}).get("language_preference", "en-IN")}
+
+
+@app.patch("/api/user/preferences")
+def update_user_preferences(
+    update: UserPreferencesUpdate,
+    user: dict = Depends(get_current_user),
+) -> dict[str, str]:
+    """Save the user's preferences (language, etc.)."""
+    from app.core.db import get_supabase
+
+    sb = get_supabase()
+    sb.table("users").update(
+        {"language_preference": update.language_preference}
+    ).eq("id", str(user["id"])).execute()
+    return {"status": "ok"}

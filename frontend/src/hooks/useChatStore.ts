@@ -175,5 +175,6 @@ export function useChatStore(userName: string) {
     addSessionSummary,
     addSuggestionMessage,
     markRead,
+    sessionResultsRef,
   }
 }
